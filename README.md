@@ -1,2 +1,5 @@
-# standardised-image-reconstruction
-The IPASC standardised image reconstruction project.
+# IPASC Standardised Image Reconstruction Project
+
+The IPASC standardised image reconstruction project
+
+**- under development -**
