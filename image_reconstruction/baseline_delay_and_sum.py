@@ -14,7 +14,7 @@ import torch
 from image_reconstruction import ReconstructionAlgorithm
 
 
-class BaselineDelayAndSumReconstruction(ReconstructionAlgorithm):
+class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
 
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
