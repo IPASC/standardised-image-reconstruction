@@ -3,3 +3,5 @@ ipasc_tool
 googledrivedownloader
 torch
 pytest
+matplotlib
+imageio
