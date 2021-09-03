@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 from abc import ABC, abstractmethod
 import numpy as np
-from ipasc_tool import load_data
+from ipasc_tool import load_data, PAData
 import os
 
 
@@ -15,6 +15,9 @@ class ReconstructionAlgorithm(ABC):
     algorithms.
 
     """
+    def __init__(self):
+        super(ReconstructionAlgorithm, self).__init__()
+        self.ipasc_data: PAData = PAData()
 
     def reconstruct_time_series_data(self, path_to_ipasc_hdf5: str, **kwargs):
         """
@@ -36,17 +39,29 @@ class ReconstructionAlgorithm(ABC):
             raise AssertionError(f"The given file path must point to an hdf5 file that ends with '.hdf5'")
 
         # data loading
-        ipasc_data = load_data(path_to_ipasc_hdf5)
-        field_of_view = ipasc_data.get_field_of_view()
+        self.ipasc_data = load_data(path_to_ipasc_hdf5)
+        field_of_view = self.ipasc_data.get_field_of_view()
         detection_elements = dict()
-        detection_elements['positions'] = ipasc_data.get_detector_position()
-        detection_elements['orientations'] = ipasc_data.get_detector_orientation()
-        detection_elements['sizes'] = ipasc_data.get_detector_size()
-        time_series_data = ipasc_data.binary_time_series_data
+        detection_elements['positions'] = self.ipasc_data.get_detector_position()
+        detection_elements['orientations'] = self.ipasc_data.get_detector_orientation()
+        detection_elements['geometry'] = self.ipasc_data.get_detector_geometry()
+        detection_elements['geometry_type'] = self.ipasc_data.get_detector_geometry_type()
+        time_series_data = self.ipasc_data.binary_time_series_data
 
-        # calling of the abstract implementation method implemented by the respective algorithm
-        return self.implementation(time_series_data=time_series_data, detection_elements=detection_elements,
-                                   field_of_view=field_of_view, kwargs=kwargs)
+        num_wavelengths = np.shape(time_series_data)[2]
+        num_frames = np.shape(time_series_data)[3]
+        wavelengths = []
+        for wl_idx in range(num_wavelengths):
+            frames = []
+            for frame_idx in range(num_frames):
+                frames.append(self.implementation(time_series_data=time_series_data[:, :, wl_idx, frame_idx],
+                                                  detection_elements=detection_elements,
+                                                  field_of_view=field_of_view, **kwargs))
+            wavelengths.append(frames)
+
+        result = np.moveaxis(np.asarray(wavelengths), [0, 1, 2, 3, 4], [3, 4, 0, 1, 2])
+        print(np.shape(result))
+        return result
 
     @abstractmethod
     def implementation(self, time_series_data: np.ndarray, detection_elements: dict,
@@ -55,7 +70,7 @@ class ReconstructionAlgorithm(ABC):
         This method is extended by each class that represents one photoacoustic image reconstruction algorithm.
 
         :param time_series_data: A 4D numpy array with the following internal array definition:
-                                [detectors, time samples, wavelength, frames]
+                                [detectors, time samples]
         :param detection_elements: A dictionary that describes the detection geometry.
                                    The dictionary contains three entries:
                                    ** "positions": The positions of the detection elements relative to the field of view
