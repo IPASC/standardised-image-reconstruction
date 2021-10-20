@@ -29,8 +29,8 @@ class TestClassBase(unittest.TestCase):
             raise FileNotFoundError(f"Could not find {self.file_name} in the test package and could not"
                                     f"download automatically from google drive. In order to run the tests,"
                                     f"please manually download the file from "
-                                    f"https://drive.google.com/file/d/1RzzNrwGewkyX8be"
-                                    f"Voi7zHiQ4BxdUkbRQ/view?usp=sharing, name it {self.file_name},"
+                                    f"https://drive.google.com/file/d/{download_url}"
+                                    f"/view?usp=sharing, name it {self.file_name},"
                                     f"and place it into the 'tests/reconstruction_algorithms' folder.")
 
     def download_expected_result_file(self):
@@ -45,8 +45,8 @@ class TestClassBase(unittest.TestCase):
             raise FileNotFoundError(f"Could not find {self.file_name_result} in the test package and could not"
                                     f"download automatically from google drive. In order to run the tests,"
                                     f"please manually download the file from "
-                                    f"https://drive.google.com/file/d/1l_9QTqCcIqW58d_"
-                                    f"YHPcTixUyB0OrSkq5/view?usp=sharing, name it {self.file_name_result},"
+                                    f"https://drive.google.com/file/d/{download_url}"
+                                    f"/view?usp=sharing, name it {self.file_name_result},"
                                     f"and place it into the 'tests/reconstruction_algorithms' folder.")
 
     def __init__(self, arg):

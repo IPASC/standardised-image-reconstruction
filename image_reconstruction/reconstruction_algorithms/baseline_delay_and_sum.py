@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
 """
 import numpy as np
 import torch
-from image_reconstruction import ReconstructionAlgorithm
+from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
 
 
 class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
