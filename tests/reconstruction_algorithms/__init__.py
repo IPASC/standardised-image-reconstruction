@@ -49,8 +49,8 @@ class TestClassBase(unittest.TestCase):
                                     f"YHPcTixUyB0OrSkq5/view?usp=sharing, name it {self.file_name_result},"
                                     f"and place it into the 'tests/reconstruction_algorithms' folder.")
 
-    def __init__(self, arg):
-        super(TestClassBase, self).__init__(arg)
+    def __init__(self):
+        super(TestClassBase, self).__init__()
         self.file_name = "sample_file.hdf5"
         self.file_name_result = "sample_result.png"
         self.ipasc_hdf5_file_path = os.path.abspath("./"+self.file_name)
@@ -73,5 +73,5 @@ class TestClassBase(unittest.TestCase):
         plt.imshow(np.rot90(result[:, 0, :, 0, 0], -1))
         plt.axis("off")
         plt.tight_layout()
-        plt.show()
-        plt.close()
+        #plt.show()
+        #plt.close()
