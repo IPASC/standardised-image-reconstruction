@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT
 """
 
 from tests.reconstruction_algorithms import TestClassBase
-from image_reconstruction.baseline_delay_and_sum import BaselineDelayAndSumAlgorithm
+from image_reconstruction.reconstruction_algorithms.baseline_delay_and_sum import BaselineDelayAndSumAlgorithm
 from image_reconstruction.baseline_delay_and_sum_fnumber import BaselineDelayAndSumAlgorithmFnumber
 
 
