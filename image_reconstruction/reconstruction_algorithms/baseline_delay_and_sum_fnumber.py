@@ -16,6 +16,8 @@ from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorit
 
 class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
 
+    fnumber = 0.5
+
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
                        field_of_view: np.ndarray,
@@ -46,6 +48,9 @@ class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
         spacing_m = 0.0005
         if "spacing_m" in kwargs:
             spacing_m = kwargs["spacing_m"]
+
+        if "fnumber" in kwargs:
+            self.fnumber = kwargs["fnumber"]
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         time_spacing_in_ms = self.ipasc_data.get_sampling_rate()
@@ -141,10 +146,9 @@ class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
         values = time_series_data[jj, delays]
 
         # Add fNumber
-        fnumber = 1 # The value must be changed in other places...
-        if (fnumber>0):
+        if (self.fnumber>0):
             invalid_indices2 = torch.where(torch.logical_not(torch.abs(xx * spacing_in_m - sensor_positions[:, 0][jj]) \
-                < (zz * spacing_in_m - sensor_positions[:, 1][jj]) /fnumber/2))
+                < (zz * spacing_in_m - sensor_positions[:, 1][jj]) /self.fnumber/2))
         else:
             invalid_indices2 = invalid_indices
 

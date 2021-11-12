@@ -16,6 +16,9 @@ from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorit
 
 class BaselineDelayAndSumAlgorithmpDAS(ReconstructionAlgorithm):
 
+    p_factor = 2
+    fnumber = .5
+
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
                        field_of_view: np.ndarray,
@@ -46,6 +49,12 @@ class BaselineDelayAndSumAlgorithmpDAS(ReconstructionAlgorithm):
         spacing_m = 0.0005
         if "spacing_m" in kwargs:
             spacing_m = kwargs["spacing_m"]
+
+        if "p_factor" in kwargs:
+            self.p_factor = kwargs["p_factor"]
+
+        if "fnumber" in kwargs:
+            self.fnumber = kwargs["fnumber"]
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         time_spacing_in_ms = self.ipasc_data.get_sampling_rate()
@@ -78,15 +87,15 @@ class BaselineDelayAndSumAlgorithmpDAS(ReconstructionAlgorithm):
                                                       time_spacing_in_ms,
                                                       torch_device)
 
-        p = 2.5 # the p power of the DAS
+
         # We do sign(s)*abs(s)^(1/p)
-        values = torch.mul( torch.sign(values), torch.pow(torch.abs(values), 1/p))
+        values = torch.mul( torch.sign(values), torch.pow(torch.abs(values), 1/self.p_factor))
 
         # we do the sum
         _sum = torch.sum(values, dim=3)
 
         # we come back in the correct domain : sign(s)*abs(s)^(p)
-        _sum = torch.mul( torch.sign(_sum), torch.pow(torch.abs(_sum), p))
+        _sum = torch.mul( torch.sign(_sum), torch.pow(torch.abs(_sum), self.p_factor))
         counter = torch.count_nonzero(values, dim=3)
 
         torch.divide(_sum, counter, out=output)
@@ -150,10 +159,9 @@ class BaselineDelayAndSumAlgorithmpDAS(ReconstructionAlgorithm):
         values = time_series_data[jj, delays]
 
         # Add fNumber
-        fnumber = 0 # The value must be changed in other places...
-        if (fnumber>0):
+        if (self.fnumber>0):
             invalid_indices2 = torch.where(torch.logical_not(torch.abs(xx * spacing_in_m - sensor_positions[:, 0][jj]) \
-                < (zz * spacing_in_m - sensor_positions[:, 1][jj]) /fnumber/2))
+                < (zz * spacing_in_m - sensor_positions[:, 1][jj]) /self.fnumber/2))
         else:
             invalid_indices2 = invalid_indices
 

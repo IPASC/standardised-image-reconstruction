@@ -11,6 +11,9 @@ from image_reconstruction.reconstruction_algorithms.baseline_delay_and_sum_pDAS 
 
 class TestDelayAndSum(TestClassBase):
 
+    p_factor = 3
+    fnumber = 2
+
     def test_delay_and_sum_reconstruction_is_running_through(self):
         reco = BaselineDelayAndSumAlgorithm()
         result = reco.reconstruct_time_series_data(self.ipasc_hdf5_file_path, **{
@@ -24,7 +27,8 @@ class TestDelayAndSum(TestClassBase):
         reco = BaselineDelayAndSumAlgorithmFnumber()
         result = reco.reconstruct_time_series_data(self.ipasc_hdf5_file_path, **{
             "spacing_m": 0.0001,
-            "speed_of_sound_m_s": 1540
+            "speed_of_sound_m_s": 1540,
+            "fnumber": self.fnumber
         })
         self.visualise_result(result)
 
@@ -32,6 +36,8 @@ class TestDelayAndSum(TestClassBase):
         reco = BaselineDelayAndSumAlgorithmpDAS()
         result = reco.reconstruct_time_series_data(self.ipasc_hdf5_file_path, **{
             "spacing_m": 0.0001,
-            "speed_of_sound_m_s": 1540
+            "speed_of_sound_m_s": 1540,
+            "p_factor": self.p_factor,
+            "fnumber": self.fnumber
         })
         self.visualise_result(result)
