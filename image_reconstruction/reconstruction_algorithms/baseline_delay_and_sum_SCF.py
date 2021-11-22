@@ -14,7 +14,7 @@ import torch
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
 
 
-class BaselineDelayAndSumAlgorithmpDAS(ReconstructionAlgorithm):
+class BaselineDelayAndSumAlgorithmSCF(ReconstructionAlgorithm):
 
     p_factor = 1
     fnumber = 0
@@ -88,6 +88,9 @@ class BaselineDelayAndSumAlgorithmpDAS(ReconstructionAlgorithm):
                                                       torch_device)
 
 
+        # We extract and sum the sign of the value
+        _SCF = torch.sum(torch.sign(values), dim=3)
+
         # We do sign(s)*abs(s)^(1/p)
         values = torch.mul( torch.sign(values), torch.pow(torch.abs(values), 1/self.p_factor))
 
@@ -97,6 +100,11 @@ class BaselineDelayAndSumAlgorithmpDAS(ReconstructionAlgorithm):
         # we come back in the correct domain : sign(s)*abs(s)^(p)
         _sum = torch.mul( torch.sign(_sum), torch.pow(torch.abs(_sum), self.p_factor))
         counter = torch.count_nonzero(values, dim=3)
+
+        # We divide by the number of nonzeros value the sum of the SCF of before (mean calculation)
+        _SCF = torch.divide(_SCF, counter)
+        # We multiply with the SCF coeeficient
+        _sum = torch.mul(_sum, _SCF)
 
         torch.divide(_sum, counter, out=output)
 

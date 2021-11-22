@@ -7,8 +7,9 @@ out.fnumber = 0.5
 out.test_delay_and_sum_reconstruction_is_running_through()
 out.test_delay_and_sum_reconstruction_is_running_through_fnumber()
 out.test_delay_and_sum_reconstruction_is_running_through_pDAS()
+out.test_delay_and_sum_reconstruction_is_running_through_SCF()
 
-# On peut utiliser la classe PDAS avec p=1 et un fnumber
+# We can use the pDAS version for both the fnumber only or pDAS version
 #out.p_factor = 1
 #out.test_delay_and_sum_reconstruction_is_running_through_pDAS()
 
