@@ -23,7 +23,9 @@ class TestClassBase(unittest.TestCase):
         download_urls = [("14o3Bi5A_OGaZd0nfcx89Vy3AijB3emLO",
                           "1oaFPFGd0wTJ35u0NCG_IgYUktJ5XgM4Y"),
                          ("1BdSLl4BSxpxXDwWcBKKVV4nHULPe7IS8",
-                          "1IXq5_stsyxLjtqWYvFebzUDXxSQZiwZt")]
+                          "1IXq5_stsyxLjtqWYvFebzUDXxSQZiwZt"),
+                         ("1jwNkiSkou8EJv7ucg3WkrIkU6Ye3Q4ut",
+                          "11GoY647IodbdAEg9fMPfhboabvEVH_oh")]
 
         for download_url in download_urls:
             ts_path = os.path.join(self.ipasc_hdf5_file_path, f"{download_url[0]}_ipasc.hdf5")
@@ -73,7 +75,8 @@ class TestClassBase(unittest.TestCase):
 
     def visualise_result(self, result: np.ndarray, reference: np.ndarray):
         result = result[:, 0, :, 0, 0]
-        reference = reference[0, :, :]
+        if len(np.shape(reference)) == 3:
+            reference = reference[0, :, :]
         plt.figure(figsize=(9, 3))
 
         plt.subplot(1, 3, 1)
