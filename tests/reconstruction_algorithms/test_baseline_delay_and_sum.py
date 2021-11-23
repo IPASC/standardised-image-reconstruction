@@ -1,5 +1,6 @@
 """
 SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
+SPDX-FileCopyrightText: 2021 Janek Groehl
 SPDX-License-Identifier: MIT
 """
 
@@ -16,39 +17,30 @@ class TestDelayAndSum(TestClassBase):
     fnumber = 2
 
     def test_delay_and_sum_reconstruction_is_running_through(self):
-        reco = BaselineDelayAndSumAlgorithm()
-        result = reco.reconstruct_time_series_data(self.ipasc_hdf5_file_path, **{
+        self.run_tests(BaselineDelayAndSumAlgorithm(), **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540
         })
-        self.visualise_result(result)
-
 
     def test_delay_and_sum_reconstruction_is_running_through_fnumber(self):
-        reco = BaselineDelayAndSumAlgorithmFnumber()
-        result = reco.reconstruct_time_series_data(self.ipasc_hdf5_file_path, **{
+        self.run_tests(BaselineDelayAndSumAlgorithmFnumber(), **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540,
             "fnumber": self.fnumber
         })
-        self.visualise_result(result)
 
     def test_delay_and_sum_reconstruction_is_running_through_pDAS(self):
-        reco = BaselineDelayAndSumAlgorithmpDAS()
-        result = reco.reconstruct_time_series_data(self.ipasc_hdf5_file_path, **{
+        self.run_tests(BaselineDelayAndSumAlgorithmpDAS(), **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540,
             "p_factor": self.p_factor,
             "fnumber": self.fnumber
         })
-        self.visualise_result(result)
 
     def test_delay_and_sum_reconstruction_is_running_through_SCF(self):
-        reco = BaselineDelayAndSumAlgorithmSCF()
-        result = reco.reconstruct_time_series_data(self.ipasc_hdf5_file_path, **{
+        self.run_tests(BaselineDelayAndSumAlgorithmSCF(), **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540,
             "p_factor": self.p_factor,
             "fnumber": self.fnumber
         })
-        self.visualise_result(result)

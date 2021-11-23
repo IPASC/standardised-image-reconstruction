@@ -57,7 +57,7 @@ class BaselineDelayAndSumAlgorithmSCF(ReconstructionAlgorithm):
             self.fnumber = kwargs["fnumber"]
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        time_spacing_in_ms = self.ipasc_data.get_sampling_rate()
+        time_spacing_in_ms = 1.0 / self.ipasc_data.get_sampling_rate()
         time_series_data = torch.from_numpy(time_series_data).to(torch_device)
         positions = detection_elements["positions"]
         sensor_positions = torch.from_numpy(positions).to(torch_device)

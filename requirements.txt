@@ -5,3 +5,4 @@ torch
 pytest
 matplotlib
 imageio
+scipy

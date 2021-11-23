@@ -42,12 +42,14 @@ class ReconstructionAlgorithm(ABC):
         # data loading
         self.ipasc_data = load_data(path_to_ipasc_hdf5)
         field_of_view = self.ipasc_data.get_field_of_view()
+        print("FOV: ", field_of_view)
         detection_elements = dict()
         detection_elements['positions'] = self.ipasc_data.get_detector_position()
         detection_elements['orientations'] = self.ipasc_data.get_detector_orientation()
         detection_elements['geometry'] = self.ipasc_data.get_detector_geometry()
         detection_elements['geometry_type'] = self.ipasc_data.get_detector_geometry_type()
         time_series_data = self.ipasc_data.binary_time_series_data
+        print(np.shape(time_series_data))
 
         num_wavelengths = np.shape(time_series_data)[2]
         num_frames = np.shape(time_series_data)[3]

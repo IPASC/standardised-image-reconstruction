@@ -6,7 +6,7 @@ published in the SIMPA repository also under the MIT license:
 https://github.com/CAMI-DKFZ/simpa
 
 SPDX-FileCopyrightText: 2021 Computer Assisted Medical Interventions Group, DKFZ
-SPDX-FileCopyrightText: 2021 VISION Lab, Cancer Research UK Cambridge Institute (CRUK CI)
+SPDX-FileCopyrightText: 2021 Janek Groehl
 SPDX-License-Identifier: MIT
 """
 import numpy as np
@@ -48,7 +48,7 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
             spacing_m = kwargs["spacing_m"]
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        time_spacing_in_ms = self.ipasc_data.get_sampling_rate()
+        time_spacing_in_s = 1.0 / self.ipasc_data.get_sampling_rate()
         time_series_data = torch.from_numpy(time_series_data).to(torch_device)
         positions = detection_elements["positions"]
         sensor_positions = torch.from_numpy(positions).to(torch_device)
@@ -75,7 +75,7 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
                                                       field_of_view_voxels,
                                                       spacing_m,
                                                       speed_of_sound_in_m_per_s,
-                                                      time_spacing_in_ms,
+                                                      time_spacing_in_s,
                                                       torch_device)
 
         _sum = torch.sum(values, dim=3)
