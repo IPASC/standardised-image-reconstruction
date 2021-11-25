@@ -59,46 +59,39 @@ class TestClassBase(unittest.TestCase):
                                     f"and place it into the 'tests/reconstruction_algorithms' folder.")
 
     def __init__(self, arg):
-        super(TestClassBase, self).__init__(arg)
+        # super(TestClassBase, self).__init__(arg)
         self.current_hdf5_file = ""
         self.ipasc_hdf5_file_path = os.path.abspath("./")
         self.download_sample_files()
 
-    def run_tests(self, algorithm, **kwargs):
+    def run_tests(self, algorithm, image_idx=0, visualise=True, **kwargs):
 
-        hdf5_files = glob.glob(os.path.join(self.current_hdf5_file, "*.hdf5"))
+        hdf5_file = glob.glob(os.path.join(self.current_hdf5_file, "*.hdf5"))[image_idx]
 
-        for hdf5_file in hdf5_files:
-            result = algorithm.reconstruct_time_series_data(hdf5_file, **kwargs)
-            reference = np.load(hdf5_file.replace("_ipasc.hdf5", "_reference.npz"))["reconstruction"]
+        result = algorithm.reconstruct_time_series_data(hdf5_file, **kwargs)
+        reference = np.load(hdf5_file.replace("_ipasc.hdf5", "_reference.npz"))["reconstruction"]
+        if visualise:
             self.visualise_result(result, reference)
+        return result
 
     def visualise_result(self, result: np.ndarray, reference: np.ndarray):
         result = result[:, 0, :, 0, 0]
         if len(np.shape(reference)) == 3:
             reference = reference[0, :, :]
-        plt.figure(figsize=(9, 3))
+        plt.figure(figsize=(6, 3))
 
-        plt.subplot(1, 3, 1)
+        plt.subplot(1, 2, 1)
         plt.title("Reference Reconstruction [a.u.]")
         plt.axis("off")
         plt.imshow(reference)
         plt.colorbar()
 
-        plt.subplot(1, 3, 2)
+        plt.subplot(1, 2, 2)
         plt.title("Reconstruction Result [a.u.]")
         plt.imshow(result)
         plt.colorbar()
         plt.axis("off")
 
-        plt.subplot(1, 3, 3)
-        plt.title("Relative difference [%]")
-        cur_shape = np.asarray(np.shape(result))
-        tar_shape = np.asarray(np.shape(reference))
-        result = zoom(result, tar_shape/cur_shape)
-        plt.imshow(np.abs(reference - result) / reference * 100, cmap="Reds", vmin=0, vmax=100)
-        plt.colorbar()
-        plt.axis("off")
         plt.tight_layout()
         plt.show()
         plt.close()

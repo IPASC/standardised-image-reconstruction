@@ -16,29 +16,29 @@ class TestDelayAndSum(TestClassBase):
     p_factor = 1
     fnumber = 2
 
-    def test_delay_and_sum_reconstruction_is_running_through(self):
-        self.run_tests(BaselineDelayAndSumAlgorithm(), **{
+    def test_delay_and_sum_reconstruction_is_running_through(self, image_idx=0, visualise=True):
+        return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540
         })
 
-    def test_delay_and_sum_reconstruction_is_running_through_fnumber(self):
-        self.run_tests(BaselineDelayAndSumAlgorithmFnumber(), **{
+    def test_delay_and_sum_reconstruction_is_running_through_fnumber(self, image_idx=0, visualise=True):
+        return self.run_tests(BaselineDelayAndSumAlgorithmFnumber(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540,
             "fnumber": self.fnumber
         })
 
-    def test_delay_and_sum_reconstruction_is_running_through_pDAS(self):
-        self.run_tests(BaselineDelayAndSumAlgorithmpDAS(), **{
+    def test_delay_and_sum_reconstruction_is_running_through_pDAS(self, image_idx=0, visualise=True):
+        return self.run_tests(BaselineDelayAndSumAlgorithmpDAS(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540,
             "p_factor": self.p_factor,
             "fnumber": self.fnumber
         })
 
-    def test_delay_and_sum_reconstruction_is_running_through_SCF(self):
-        self.run_tests(BaselineDelayAndSumAlgorithmSCF(), **{
+    def test_delay_and_sum_reconstruction_is_running_through_SCF(self, image_idx=0, visualise=True):
+        return self.run_tests(BaselineDelayAndSumAlgorithmSCF(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540,
             "p_factor": self.p_factor,
