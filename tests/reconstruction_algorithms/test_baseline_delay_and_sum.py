@@ -16,10 +16,29 @@ class TestDelayAndSum(TestClassBase):
     p_factor = 1
     fnumber = 2
 
-    def test_delay_and_sum_reconstruction_is_running_through(self, image_idx=0, visualise=True):
+    def test_vanilla_delay_and_sum_reconstruction_is_running_through(self, image_idx=0, visualise=True):
         return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540
+        })
+
+    def test_delay_and_sum_reconstruction_bandpass_is_running_through(self, image_idx=0, visualise=True):
+        return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
+            "spacing_m": 0.0001,
+            "speed_of_sound_m_s": 1540,
+            "lowcut": 5000,
+            "highcut": 7000000,
+            "order": 9
+        })
+
+    def test_delay_and_sum_reconstruction_bandpass_envelope_is_running_through(self, image_idx=0, visualise=True):
+        return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
+            "spacing_m": 0.0001,
+            "speed_of_sound_m_s": 1540,
+            "lowcut": 5000,
+            "highcut": 7000000,
+            "order": 9,
+            "envelope": True
         })
 
     def test_delay_and_sum_reconstruction_is_running_through_fnumber(self, image_idx=0, visualise=True):
