@@ -45,6 +45,10 @@ class TestDelayAndSum(TestClassBase):
         return self.run_tests(BaselineDelayAndSumAlgorithmFnumber(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540,
+            "lowcut": 5000,
+            "highcut": 7000000,
+            "order": 9,
+            "envelope": True,
             "fnumber": self.fnumber
         })
 
@@ -52,7 +56,10 @@ class TestDelayAndSum(TestClassBase):
         return self.run_tests(BaselineDelayAndSumAlgorithmpDAS(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540,
-            "p_factor": self.p_factor,
+            "lowcut": 5000,
+            "highcut": 7000000,
+            "order": 9,
+            "envelope": True,
             "fnumber": self.fnumber
         })
 
@@ -60,6 +67,10 @@ class TestDelayAndSum(TestClassBase):
         return self.run_tests(BaselineDelayAndSumAlgorithmSCF(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
             "speed_of_sound_m_s": 1540,
+            "lowcut": 5000,
+            "highcut": 7000000,
+            "order": 9,
+            "envelope": True,
             "p_factor": self.p_factor,
             "fnumber": self.fnumber
         })
