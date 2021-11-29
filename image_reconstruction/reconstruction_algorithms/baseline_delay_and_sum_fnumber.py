@@ -59,6 +59,7 @@ class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
         sensor_positions = torch.from_numpy(positions).to(torch_device)
 
         field_of_view_voxels = np.round(field_of_view / spacing_m).astype(int)
+        print("FOV [vox]:", field_of_view_voxels)
 
         x_dim = (field_of_view_voxels[1] - field_of_view_voxels[0])
         y_dim = (field_of_view_voxels[3] - field_of_view_voxels[2])
