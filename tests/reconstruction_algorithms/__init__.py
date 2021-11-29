@@ -59,7 +59,7 @@ class TestClassBase(unittest.TestCase):
                                     f"and place it into the 'tests/reconstruction_algorithms' folder.")
 
     def __init__(self, arg):
-        super(TestClassBase, self).__init__(arg)
+        #super(TestClassBase, self).__init__(arg)
         self.current_hdf5_file = ""
         self.ipasc_hdf5_file_path = os.path.abspath("./")
         self.download_sample_files()
