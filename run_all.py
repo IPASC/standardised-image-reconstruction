@@ -48,38 +48,38 @@ IMAGE_IDX = 2
 SPEED_OF_SOUND = 1480
 
 out = TestDelayAndSum()
-out.p_factor = 1
+out.p_factor = 1.5
 out.fnumber = 2.5
-result1 = out.test_vanilla_delay_and_sum_reconstruction_is_running_through(IMAGE_IDX, visualise=False,
-                                                                           speed_of_sound=SPEED_OF_SOUND)
-result2 = out.test_delay_and_sum_reconstruction_bandpass_is_running_through(IMAGE_IDX, visualise=False,
+out.p_SCF = 1
+out.lowcut = 3e6
+out.highcut = 4e6
                                                                             speed_of_sound=SPEED_OF_SOUND)
 result3 = out.test_delay_and_sum_reconstruction_bandpass_pre_envelope_is_running_through(IMAGE_IDX, visualise=False,
                                                                                      speed_of_sound=SPEED_OF_SOUND)
-result4 = out.test_delay_and_sum_reconstruction_bandpass_post_envelope_is_running_through(IMAGE_IDX, visualise=False,
-                                                                                     speed_of_sound=SPEED_OF_SOUND)
-# result4 = out.test_delay_and_sum_reconstruction_is_running_through_SCF(IMAGE_IDX, visualise=False,
-#                                                                        speed_of_sound=SPEED_OF_SOUND)
+result4 = out.test_delay_and_sum_reconstruction_is_running_through_fnumber(IMAGE_IDX, visualise=False)
+result5 = out.test_delay_and_sum_reconstruction_is_running_through_pDAS(IMAGE_IDX, visualise=False)
+out.fnumber = 0
+result6 = out.test_delay_and_sum_reconstruction_is_running_through_SCF(IMAGE_IDX, visualise=False)
 
 plt.figure(figsize=(16, 4))
-plt.suptitle("Various DAS reconstructions")
-plt.subplot(1, 4, 1)
-plt.title("Vanilla")
+plt.subplot(2, 3, 1)
+plt.title("Vanilla DAS")
 plt.imshow(result1[:, 0, :, 0, 0].T)
-plt.colorbar()
-plt.subplot(1, 4, 2)
-plt.title("BP")
+plt.subplot(2, 3, 2)
+plt.title("BP DAS")
 plt.imshow(result2[:, 0, :, 0, 0].T)
-plt.colorbar()
-plt.subplot(1, 4, 3)
-plt.title("BP + Hilbert on p(t)")
+plt.subplot(2, 3, 3)
+plt.title("BP + Envelope DAS")
 plt.imshow(result3[:, 0, :, 0, 0].T)
-plt.colorbar()
-plt.subplot(1, 4, 4)
-plt.title("BP + Hilbert on p0")
+plt.subplot(2, 3, 4)
+plt.title("DAS fnumber")
 plt.imshow(result4[:, 0, :, 0, 0].T)
-plt.colorbar()
-
+plt.subplot(2, 3, 5)
+plt.title("pDAS")
+plt.imshow(result5[:, 0, :, 0, 0].T)
+plt.subplot(2, 3, 6)
+plt.title("SCF-DAS")
+plt.imshow(result6[:, 0, :, 0, 0].T)
 plt.tight_layout()
 plt.show()
 

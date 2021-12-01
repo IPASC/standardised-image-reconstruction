@@ -12,7 +12,8 @@ SPDX-License-Identifier: MIT
 import numpy as np
 import torch
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
-
+from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
+from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1D
 
 class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
 
@@ -49,8 +50,27 @@ class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
         if "spacing_m" in kwargs:
             spacing_m = kwargs["spacing_m"]
 
-        if "fnumber" in kwargs:
-            self.fnumber = kwargs["fnumber"]
+        lowcut = None
+        if "lowcut" in kwargs:
+            lowcut = kwargs["lowcut"]
+
+        highcut = None
+        if "highcut" in kwargs:
+            highcut = kwargs["highcut"]
+
+        filter_order = 5
+        if "filter_order" in kwargs:
+            filter_order = kwargs["filter_order"]
+
+        envelope = False
+        if "envelope" in kwargs:
+            envelope = kwargs["envelope"]
+
+        if lowcut is not None or highcut is not None:
+            time_series_data = butter_bandpass_filter(time_series_data, lowcut, highcut,
+                                                      self.ipasc_data.get_sampling_rate(),
+                                                      filter_order)
+
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         time_spacing_in_ms = 1.0 / self.ipasc_data.get_sampling_rate()
@@ -59,7 +79,6 @@ class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
         sensor_positions = torch.from_numpy(positions).to(torch_device)
 
         field_of_view_voxels = np.round(field_of_view / spacing_m).astype(int)
-        print("FOV [vox]:", field_of_view_voxels)
 
         x_dim = (field_of_view_voxels[1] - field_of_view_voxels[0])
         y_dim = (field_of_view_voxels[3] - field_of_view_voxels[2])
@@ -85,6 +104,10 @@ class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
                                                       torch_device)
 
         _sum = torch.sum(values, dim=3)
+
+        #if envelope:
+        #    _sum = torch.from_numpy(hilbert_transform_1D(_sum, axis=1))
+
         counter = torch.count_nonzero(values, dim=3)
         torch.divide(_sum, counter, out=output)
 

@@ -12,11 +12,13 @@ SPDX-License-Identifier: MIT
 import numpy as np
 import torch
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
-
+from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
+from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1D
 
 class BaselineDelayAndSumAlgorithmSCF(ReconstructionAlgorithm):
 
     p_factor = 1
+    p_SCF = 1
     fnumber = 0
 
     def implementation(self, time_series_data: np.ndarray,
@@ -53,8 +55,33 @@ class BaselineDelayAndSumAlgorithmSCF(ReconstructionAlgorithm):
         if "p_factor" in kwargs:
             self.p_factor = kwargs["p_factor"]
 
+        if "p_SCF" in kwargs:
+            self.p_SCF = kwargs["p_SCF"]
+
         if "fnumber" in kwargs:
             self.fnumber = kwargs["fnumber"]
+
+        lowcut = None
+        if "lowcut" in kwargs:
+            lowcut = kwargs["lowcut"]
+
+        highcut = None
+        if "highcut" in kwargs:
+            highcut = kwargs["highcut"]
+
+        filter_order = 5
+        if "filter_order" in kwargs:
+            filter_order = kwargs["filter_order"]
+
+        envelope = False
+        if "envelope" in kwargs:
+            envelope = kwargs["envelope"]
+
+        if lowcut is not None or highcut is not None:
+            time_series_data = butter_bandpass_filter(time_series_data, lowcut, highcut,
+                                                      self.ipasc_data.get_sampling_rate(),
+                                                      filter_order)
+
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         time_spacing_in_ms = 1.0 / self.ipasc_data.get_sampling_rate()
@@ -89,7 +116,8 @@ class BaselineDelayAndSumAlgorithmSCF(ReconstructionAlgorithm):
 
 
         # We extract and sum the sign of the value
-        _SCF = torch.sum(torch.sign(values), dim=3)
+        _SCF = torch.mean(torch.sign(values), dim=3)
+        _SCF = torch.pow(torch.abs(1-torch.sqrt(1-torch.pow(_SCF, 2))), self.p_SCF)
 
         # We do sign(s)*abs(s)^(1/p)
         values = torch.mul( torch.sign(values), torch.pow(torch.abs(values), 1/self.p_factor))
@@ -101,10 +129,10 @@ class BaselineDelayAndSumAlgorithmSCF(ReconstructionAlgorithm):
         _sum = torch.mul( torch.sign(_sum), torch.pow(torch.abs(_sum), self.p_factor))
         counter = torch.count_nonzero(values, dim=3)
 
-        # We divide by the number of nonzeros value the sum of the SCF of before (mean calculation)
-        _SCF = torch.divide(_SCF, counter)
         # We multiply with the SCF coeeficient
         _sum = torch.mul(_sum, _SCF)
+        #if envelope:
+        #    _sum = torch.from_numpy(hilbert_transform_1D(_sum, axis=1))
 
         torch.divide(_sum, counter, out=output)
 
