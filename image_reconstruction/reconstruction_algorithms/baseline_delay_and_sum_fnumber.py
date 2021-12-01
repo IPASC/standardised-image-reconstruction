@@ -71,8 +71,6 @@ class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
                                                       self.ipasc_data.get_sampling_rate(),
                                                       filter_order)
 
-        if envelope:
-            time_series_data = hilbert_transform_1D(time_series_data, axis=1)
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         time_spacing_in_ms = 1.0 / self.ipasc_data.get_sampling_rate()
@@ -106,6 +104,10 @@ class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
                                                       torch_device)
 
         _sum = torch.sum(values, dim=3)
+
+        #if envelope:
+        #    _sum = torch.from_numpy(hilbert_transform_1D(_sum, axis=1))
+
         counter = torch.count_nonzero(values, dim=3)
         torch.divide(_sum, counter, out=output)
 

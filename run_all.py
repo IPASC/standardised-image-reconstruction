@@ -48,11 +48,15 @@ IMAGE_IDX = 3
 out = TestDelayAndSum()
 out.p_factor = 1.5
 out.fnumber = 2.5
+out.p_SCF = 1
+out.lowcut = 3e6
+out.highcut = 4e6
 result1 = out.test_vanilla_delay_and_sum_reconstruction_is_running_through(IMAGE_IDX, visualise=False)
 result2 = out.test_delay_and_sum_reconstruction_bandpass_is_running_through(IMAGE_IDX, visualise=False)
 result3 = out.test_delay_and_sum_reconstruction_bandpass_envelope_is_running_through(IMAGE_IDX, visualise=False)
 result4 = out.test_delay_and_sum_reconstruction_is_running_through_fnumber(IMAGE_IDX, visualise=False)
 result5 = out.test_delay_and_sum_reconstruction_is_running_through_pDAS(IMAGE_IDX, visualise=False)
+out.fnumber = 0
 result6 = out.test_delay_and_sum_reconstruction_is_running_through_SCF(IMAGE_IDX, visualise=False)
 
 plt.figure()
