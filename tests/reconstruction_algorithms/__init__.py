@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2021 Janek Groehl
 SPDX-License-Identifier: MIT
 """
 
-import unittest
 from google_drive_downloader import GoogleDriveDownloader as gdd
 import os
 import matplotlib.pyplot as plt
@@ -13,7 +12,7 @@ import glob
 from scipy.ndimage import zoom
 
 
-class TestClassBase(unittest.TestCase):
+class TestClassBase():
     """
     This base class can be used for the implementation of image reconstruction test cases.
     It automatically downloads a sample IPASC-formatted HDF5 file and
@@ -58,8 +57,7 @@ class TestClassBase(unittest.TestCase):
                                     f"/view?usp=sharing, name it {file_name},"
                                     f"and place it into the 'tests/reconstruction_algorithms' folder.")
 
-    def __init__(self, arg):
-        super(TestClassBase, self).__init__(arg)
+    def __init__(self):
         self.current_hdf5_file = ""
         self.ipasc_hdf5_file_path = os.path.abspath("./")
         self.download_sample_files()

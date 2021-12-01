@@ -58,8 +58,6 @@ result3 = out.test_delay_and_sum_reconstruction_bandpass_pre_envelope_is_running
                                                                                      speed_of_sound=SPEED_OF_SOUND)
 result4 = out.test_delay_and_sum_reconstruction_bandpass_post_envelope_is_running_through(IMAGE_IDX, visualise=False,
                                                                                      speed_of_sound=SPEED_OF_SOUND)
-# result4 = out.test_delay_and_sum_reconstruction_is_running_through_SCF(IMAGE_IDX, visualise=False,
-#                                                                        speed_of_sound=SPEED_OF_SOUND)
 
 plt.figure(figsize=(16, 4))
 plt.suptitle("Various DAS reconstructions")
