@@ -19,13 +19,13 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-IMAGE_IDX = 2
+# IMAGE_IDX = 2
 # Experimental image provided by Manojit Pramanik. It is a point absorber
 # in a homogeneous medium. SOS=1480
 #
 # #####################################################################
 #
-# IMAGE_IDX = 3
+IMAGE_IDX = 3
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are
@@ -45,17 +45,21 @@ IMAGE_IDX = 2
 #
 # #####################################################################
 
-SPEED_OF_SOUND = 1480
+SPEED_OF_SOUND = 1540
 
 out = TestDelayAndSum()
-out.p_factor = 1.5
-out.fnumber = 2.5
+out.p_factor = 1
+out.fnumber = 0
 out.p_SCF = 1
 out.lowcut = 3e6
 out.highcut = 4e6
-                                                                            speed_of_sound=SPEED_OF_SOUND)
-result3 = out.test_delay_and_sum_reconstruction_bandpass_pre_envelope_is_running_through(IMAGE_IDX, visualise=False,
-                                                                                     speed_of_sound=SPEED_OF_SOUND)
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+
+result1 = out.test_vanilla_delay_and_sum_reconstruction_is_running_through(IMAGE_IDX, visualise=False)
+result2 = out.test_delay_and_sum_reconstruction_bandpass_is_running_through(IMAGE_IDX, visualise=False)
+result3 = out.test_delay_and_sum_reconstruction_bandpass_pre_envelope_is_running_through(IMAGE_IDX, visualise=False)
+out.p_factor = 1.5
+out.fnumber = 2.5
 result4 = out.test_delay_and_sum_reconstruction_is_running_through_fnumber(IMAGE_IDX, visualise=False)
 result5 = out.test_delay_and_sum_reconstruction_is_running_through_pDAS(IMAGE_IDX, visualise=False)
 out.fnumber = 0

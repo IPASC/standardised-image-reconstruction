@@ -25,8 +25,7 @@ class TestDelayAndSum(TestClassBase):
     p_SCF = 1
     fnumber = 2
 
-    def test_vanilla_delay_and_sum_reconstruction_is_running_through(self, image_idx=0, visualise=True,
-                                                                     speed_of_sound=1540):
+    def test_vanilla_delay_and_sum_reconstruction_is_running_through(self, image_idx=0, visualise=True):
         return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": self.spacing_m,
             "speed_of_sound_m_s": self.speed_of_sound_m_s
@@ -41,8 +40,7 @@ class TestDelayAndSum(TestClassBase):
             "order": self.order
         })
 
-    def test_delay_and_sum_reconstruction_bandpass_pre_envelope_is_running_through(self, image_idx=0, visualise=True,
-                                                                     speed_of_sound=1540):
+    def test_delay_and_sum_reconstruction_bandpass_pre_envelope_is_running_through(self, image_idx=0, visualise=True):
         return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": self.spacing_m,
             "speed_of_sound_m_s": self.speed_of_sound_m_s,
@@ -52,50 +50,46 @@ class TestDelayAndSum(TestClassBase):
             "envelope_time_series": True
         })
 
-    def test_delay_and_sum_reconstruction_bandpass_post_envelope_is_running_through(self, image_idx=0, visualise=True,
-                                                                     speed_of_sound=1540):
+    def test_delay_and_sum_reconstruction_bandpass_post_envelope_is_running_through(self, image_idx=0, visualise=True):
         return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
-            "speed_of_sound_m_s": speed_of_sound,
+            "speed_of_sound_m_s": self.speed_of_sound_m_s,
             "lowcut": 5000,
             "highcut": 7000000,
             "order": 9,
             "envelope_reconstructed": True
         })
 
-    def test_delay_and_sum_reconstruction_is_running_through_fnumber(self, image_idx=0, visualise=True,
-                                                                     speed_of_sound=1540):
+    def test_delay_and_sum_reconstruction_is_running_through_fnumber(self, image_idx=0, visualise=True):
         return self.run_tests(BaselineDelayAndSumAlgorithmFnumber(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": self.spacing_m,
             "speed_of_sound_m_s": self.speed_of_sound_m_s,
             "lowcut": self.lowcut,
             "highcut": self.highcut,
             "order": self.order,
-            "envelope": self.envelope,
+            "envelope_reconstructed": self.envelope,
             "fnumber": self.fnumber
         })
 
-    def test_delay_and_sum_reconstruction_is_running_through_pDAS(self, image_idx=0, visualise=True,
-                                                                     speed_of_sound=1540):
+    def test_delay_and_sum_reconstruction_is_running_through_pDAS(self, image_idx=0, visualise=True):
         return self.run_tests(BaselineDelayAndSumAlgorithmpDAS(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": self.spacing_m,
             "speed_of_sound_m_s": self.speed_of_sound_m_s,
             "lowcut": self.lowcut,
             "highcut": self.highcut,
             "order": self.order,
-            "envelope": self.envelope,
+            "envelope_reconstructed": self.envelope,
             "fnumber": self.fnumber
         })
 
-    def test_delay_and_sum_reconstruction_is_running_through_SCF(self, image_idx=0, visualise=True,
-                                                                     speed_of_sound=1540):
+    def test_delay_and_sum_reconstruction_is_running_through_SCF(self, image_idx=0, visualise=True):
         return self.run_tests(BaselineDelayAndSumAlgorithmSCF(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": self.spacing_m,
             "speed_of_sound_m_s": self.speed_of_sound_m_s,
             "lowcut": self.lowcut,
             "highcut": self.highcut,
             "order": self.order,
-            "envelope": self.envelope,
+            "envelope_reconstructed": self.envelope,
             "p_factor": self.p_factor,
             "p_SCF": self.p_SCF,
             "fnumber": self.fnumber
