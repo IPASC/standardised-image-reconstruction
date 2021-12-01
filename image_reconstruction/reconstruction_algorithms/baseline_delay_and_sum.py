@@ -12,7 +12,8 @@ SPDX-License-Identifier: MIT
 import numpy as np
 import torch
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
-
+from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
+from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1D
 
 class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
 
@@ -46,6 +47,34 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         spacing_m = 0.0005
         if "spacing_m" in kwargs:
             spacing_m = kwargs["spacing_m"]
+
+        lowcut = None
+        if "lowcut" in kwargs:
+            lowcut = kwargs["lowcut"]
+
+        highcut = None
+        if "highcut" in kwargs:
+            highcut = kwargs["highcut"]
+
+        filter_order = 5
+        if "filter_order" in kwargs:
+            filter_order = kwargs["filter_order"]
+
+        envelope_time_series = False
+        if "envelope_time_series" in kwargs:
+            envelope_time_series = kwargs["envelope_time_series"]
+
+        envelope_reconstructed = False
+        if "envelope_reconstructed" in kwargs:
+            envelope_reconstructed = kwargs["envelope_reconstructed"]
+
+        if lowcut is not None or highcut is not None:
+            time_series_data = butter_bandpass_filter(time_series_data, lowcut, highcut,
+                                                      self.ipasc_data.get_sampling_rate(),
+                                                      filter_order)
+
+        if envelope_reconstructed:
+            time_series_data = hilbert_transform_1D(time_series_data, axis=1)
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         time_spacing_in_s = 1.0 / self.ipasc_data.get_sampling_rate()
@@ -83,6 +112,9 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         torch.divide(_sum, counter, out=output)
 
         reconstructed = output.cpu().numpy()
+
+        if envelope_time_series:
+            reconstructed = hilbert_transform_1D(reconstructed, axis=1)
 
         return reconstructed
 
