@@ -19,13 +19,13 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-# IMAGE_IDX = 2
+IMAGE_IDX = 2
 # Experimental image provided by Manojit Pramanik. It is a point absorber
-# in a homogeneous medium.
+# in a homogeneous medium. SOS=1480
 #
 # #####################################################################
 #
-IMAGE_IDX = 3
+# IMAGE_IDX = 3
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are
@@ -45,28 +45,41 @@ IMAGE_IDX = 3
 #
 # #####################################################################
 
+SPEED_OF_SOUND = 1480
+
 out = TestDelayAndSum()
 out.p_factor = 1
 out.fnumber = 2.5
-result1 = out.test_vanilla_delay_and_sum_reconstruction_is_running_through(IMAGE_IDX, visualise=False)
-result2 = out.test_delay_and_sum_reconstruction_bandpass_is_running_through(IMAGE_IDX, visualise=False)
-result3 = out.test_delay_and_sum_reconstruction_bandpass_envelope_is_running_through(IMAGE_IDX, visualise=False)
-result4 = out.test_delay_and_sum_reconstruction_is_running_through_SCF(IMAGE_IDX, visualise=False)
+result1 = out.test_vanilla_delay_and_sum_reconstruction_is_running_through(IMAGE_IDX, visualise=False,
+                                                                           speed_of_sound=SPEED_OF_SOUND)
+result2 = out.test_delay_and_sum_reconstruction_bandpass_is_running_through(IMAGE_IDX, visualise=False,
+                                                                            speed_of_sound=SPEED_OF_SOUND)
+result3 = out.test_delay_and_sum_reconstruction_bandpass_pre_envelope_is_running_through(IMAGE_IDX, visualise=False,
+                                                                                     speed_of_sound=SPEED_OF_SOUND)
+result4 = out.test_delay_and_sum_reconstruction_bandpass_post_envelope_is_running_through(IMAGE_IDX, visualise=False,
+                                                                                     speed_of_sound=SPEED_OF_SOUND)
+# result4 = out.test_delay_and_sum_reconstruction_is_running_through_SCF(IMAGE_IDX, visualise=False,
+#                                                                        speed_of_sound=SPEED_OF_SOUND)
 
-
-plt.figure()
-plt.subplot(2, 2, 1)
-plt.title("Vanilla DAS")
+plt.figure(figsize=(16, 4))
+plt.suptitle("Various DAS reconstructions")
+plt.subplot(1, 4, 1)
+plt.title("Vanilla")
 plt.imshow(result1[:, 0, :, 0, 0].T)
-plt.subplot(2, 2, 2)
-plt.title("BP DAS")
+plt.colorbar()
+plt.subplot(1, 4, 2)
+plt.title("BP")
 plt.imshow(result2[:, 0, :, 0, 0].T)
-plt.subplot(2, 2, 3)
-plt.title("BP + Envelope DAS")
+plt.colorbar()
+plt.subplot(1, 4, 3)
+plt.title("BP + Hilbert on p(t)")
 plt.imshow(result3[:, 0, :, 0, 0].T)
-plt.subplot(2, 2, 4)
-plt.title("SCF-DAS")
+plt.colorbar()
+plt.subplot(1, 4, 4)
+plt.title("BP + Hilbert on p0")
 plt.imshow(result4[:, 0, :, 0, 0].T)
+plt.colorbar()
+
 plt.tight_layout()
 plt.show()
 

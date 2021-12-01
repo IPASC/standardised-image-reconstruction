@@ -60,16 +60,20 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         if "filter_order" in kwargs:
             filter_order = kwargs["filter_order"]
 
-        envelope = False
-        if "envelope" in kwargs:
-            envelope = kwargs["envelope"]
+        envelope_time_series = False
+        if "envelope_time_series" in kwargs:
+            envelope_time_series = kwargs["envelope_time_series"]
+
+        envelope_reconstructed = False
+        if "envelope_reconstructed" in kwargs:
+            envelope_reconstructed = kwargs["envelope_reconstructed"]
 
         if lowcut is not None or highcut is not None:
             time_series_data = butter_bandpass_filter(time_series_data, lowcut, highcut,
                                                       self.ipasc_data.get_sampling_rate(),
                                                       filter_order)
 
-        if envelope:
+        if envelope_reconstructed:
             time_series_data = hilbert_transform_1D(time_series_data, axis=1)
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -108,6 +112,9 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         torch.divide(_sum, counter, out=output)
 
         reconstructed = output.cpu().numpy()
+
+        if envelope_time_series:
+            reconstructed = hilbert_transform_1D(reconstructed, axis=1)
 
         return reconstructed
 

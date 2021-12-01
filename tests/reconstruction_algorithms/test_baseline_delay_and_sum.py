@@ -16,50 +16,67 @@ class TestDelayAndSum(TestClassBase):
     p_factor = 1
     fnumber = 2
 
-    def test_vanilla_delay_and_sum_reconstruction_is_running_through(self, image_idx=0, visualise=True):
+    def test_vanilla_delay_and_sum_reconstruction_is_running_through(self, image_idx=0, visualise=True,
+                                                                     speed_of_sound=1540):
         return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
-            "speed_of_sound_m_s": 1540
+            "speed_of_sound_m_s": speed_of_sound
         })
 
-    def test_delay_and_sum_reconstruction_bandpass_is_running_through(self, image_idx=0, visualise=True):
+    def test_delay_and_sum_reconstruction_bandpass_is_running_through(self, image_idx=0, visualise=True,
+                                                                     speed_of_sound=1540):
         return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
-            "speed_of_sound_m_s": 1540,
+            "speed_of_sound_m_s": speed_of_sound,
             "lowcut": 5000,
             "highcut": 7000000,
             "order": 9
         })
 
-    def test_delay_and_sum_reconstruction_bandpass_envelope_is_running_through(self, image_idx=0, visualise=True):
+    def test_delay_and_sum_reconstruction_bandpass_pre_envelope_is_running_through(self, image_idx=0, visualise=True,
+                                                                     speed_of_sound=1540):
         return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
-            "speed_of_sound_m_s": 1540,
+            "speed_of_sound_m_s": speed_of_sound,
             "lowcut": 5000,
             "highcut": 7000000,
             "order": 9,
-            "envelope": True
+            "envelope_time_series": True
         })
 
-    def test_delay_and_sum_reconstruction_is_running_through_fnumber(self, image_idx=0, visualise=True):
+    def test_delay_and_sum_reconstruction_bandpass_post_envelope_is_running_through(self, image_idx=0, visualise=True,
+                                                                     speed_of_sound=1540):
+        return self.run_tests(BaselineDelayAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
+            "spacing_m": 0.0001,
+            "speed_of_sound_m_s": speed_of_sound,
+            "lowcut": 5000,
+            "highcut": 7000000,
+            "order": 9,
+            "envelope_reconstructed": True
+        })
+
+    def test_delay_and_sum_reconstruction_is_running_through_fnumber(self, image_idx=0, visualise=True,
+                                                                     speed_of_sound=1540):
         return self.run_tests(BaselineDelayAndSumAlgorithmFnumber(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
-            "speed_of_sound_m_s": 1540,
+            "speed_of_sound_m_s": speed_of_sound,
             "fnumber": self.fnumber
         })
 
-    def test_delay_and_sum_reconstruction_is_running_through_pDAS(self, image_idx=0, visualise=True):
+    def test_delay_and_sum_reconstruction_is_running_through_pDAS(self, image_idx=0, visualise=True,
+                                                                     speed_of_sound=1540):
         return self.run_tests(BaselineDelayAndSumAlgorithmpDAS(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
-            "speed_of_sound_m_s": 1540,
+            "speed_of_sound_m_s": speed_of_sound,
             "p_factor": self.p_factor,
             "fnumber": self.fnumber
         })
 
-    def test_delay_and_sum_reconstruction_is_running_through_SCF(self, image_idx=0, visualise=True):
+    def test_delay_and_sum_reconstruction_is_running_through_SCF(self, image_idx=0, visualise=True,
+                                                                     speed_of_sound=1540):
         return self.run_tests(BaselineDelayAndSumAlgorithmSCF(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": 0.0001,
-            "speed_of_sound_m_s": 1540,
+            "speed_of_sound_m_s": speed_of_sound,
             "p_factor": self.p_factor,
             "fnumber": self.fnumber
         })
