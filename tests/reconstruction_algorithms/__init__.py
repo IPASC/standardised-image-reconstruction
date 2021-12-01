@@ -8,28 +8,33 @@ from google_drive_downloader import GoogleDriveDownloader as gdd
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-import glob
-from scipy.ndimage import zoom
 
 
-class TestClassBase():
+class TestClassBase:
     """
     This base class can be used for the implementation of image reconstruction test cases.
     It automatically downloads a sample IPASC-formatted HDF5 file and
     """
 
     def download_sample_files(self):
-        download_urls = [("14o3Bi5A_OGaZd0nfcx89Vy3AijB3emLO",
-                          "1oaFPFGd0wTJ35u0NCG_IgYUktJ5XgM4Y"),
-                         ("1BdSLl4BSxpxXDwWcBKKVV4nHULPe7IS8",
-                          "1IXq5_stsyxLjtqWYvFebzUDXxSQZiwZt"),
-                         ("1jwNkiSkou8EJv7ucg3WkrIkU6Ye3Q4ut",
-                          "11GoY647IodbdAEg9fMPfhboabvEVH_oh")]
+        self.download_urls = [("14o3Bi5A_OGaZd0nfcx89Vy3AijB3emLO",
+                               "1oaFPFGd0wTJ35u0NCG_IgYUktJ5XgM4Y"),
+                              ("1BdSLl4BSxpxXDwWcBKKVV4nHULPe7IS8",
+                               "1IXq5_stsyxLjtqWYvFebzUDXxSQZiwZt"),
+                              ("1jwNkiSkou8EJv7ucg3WkrIkU6Ye3Q4ut",
+                               "11GoY647IodbdAEg9fMPfhboabvEVH_oh"),
+                              ("15PPMPX__ZJQLvYSdWe5CxumvueVrizFy",
+                               "19VIRW9xbqXbxmQ22Yglw_oz8gAorOaz9"),
+                              ("1Om0PjyQ_8v1Ak4vIoQYGBrx1uNxAmvX-",
+                               "17cruZhKispUzzqjRDmK9wQo63vItBas8"),
+                              ("1Bf8Ttx5S_X44TxKCeHg5MzNZwsNRzKZU",
+                               "1RtO1wPdkH1qivFXQLUyGBDGIp7VLXwID"),
+                              ]
 
-        for download_url in download_urls:
+        for download_url in self.download_urls:
             ts_path = os.path.join(self.ipasc_hdf5_file_path, f"{download_url[0]}_ipasc.hdf5")
             reco_path = os.path.join(self.ipasc_hdf5_file_path, f"{download_url[0]}_reference.npz")
-
+            
             if not os.path.exists(ts_path):
                 gdd.download_file_from_google_drive(file_id=download_url[0],
                                                     dest_path=ts_path,
@@ -58,45 +63,39 @@ class TestClassBase():
                                     f"and place it into the 'tests/reconstruction_algorithms' folder.")
 
     def __init__(self):
+        self.download_urls = []
         self.current_hdf5_file = ""
         self.ipasc_hdf5_file_path = os.path.abspath("./")
         self.download_sample_files()
 
-    def run_tests(self, algorithm, **kwargs):
+    def run_tests(self, algorithm, image_idx=0, visualise=True, **kwargs):
 
-        hdf5_files = glob.glob(os.path.join(self.current_hdf5_file, "*.hdf5"))
+        hdf5_file = os.path.join(self.ipasc_hdf5_file_path, self.download_urls[image_idx][0] + "_ipasc.hdf5")
 
-        for hdf5_file in hdf5_files:
-            result = algorithm.reconstruct_time_series_data(hdf5_file, **kwargs)
-            reference = np.load(hdf5_file.replace("_ipasc.hdf5", "_reference.npz"))["reconstruction"]
+        result = algorithm.reconstruct_time_series_data(hdf5_file, **kwargs)
+        reference = np.load(hdf5_file.replace("_ipasc.hdf5", "_reference.npz"))["reconstruction"]
+        if visualise:
             self.visualise_result(result, reference)
+        return result
 
     def visualise_result(self, result: np.ndarray, reference: np.ndarray):
         result = result[:, 0, :, 0, 0]
         if len(np.shape(reference)) == 3:
             reference = reference[0, :, :]
-        plt.figure(figsize=(9, 3))
+        plt.figure(figsize=(6, 3))
 
-        plt.subplot(1, 3, 1)
+        plt.subplot(1, 2, 1)
         plt.title("Reference Reconstruction [a.u.]")
         plt.axis("off")
         plt.imshow(reference)
         plt.colorbar()
 
-        plt.subplot(1, 3, 2)
+        plt.subplot(1, 2, 2)
         plt.title("Reconstruction Result [a.u.]")
         plt.imshow(result)
         plt.colorbar()
         plt.axis("off")
 
-        plt.subplot(1, 3, 3)
-        plt.title("Relative difference [%]")
-        cur_shape = np.asarray(np.shape(result))
-        tar_shape = np.asarray(np.shape(reference))
-        result = zoom(result, tar_shape/cur_shape)
-        plt.imshow(np.abs(reference - result) / reference * 100, cmap="Reds", vmin=0, vmax=100)
-        plt.colorbar()
-        plt.axis("off")
         plt.tight_layout()
         plt.show()
         plt.close()
