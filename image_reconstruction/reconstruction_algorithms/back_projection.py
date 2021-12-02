@@ -14,6 +14,8 @@ import torch
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
 from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
 from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1D
+from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import log_compression
+
 
 
 class BackProjection(ReconstructionAlgorithm):
@@ -140,10 +142,14 @@ class BackProjection(ReconstructionAlgorithm):
 
         reconstructed = output.cpu().numpy()
 
+
         if envelope:
             if envelope_type == "hilbert":
                 # hilbert transform
-                reconstructed = hilbert_transform_1D(reconstructed, axis=1)
+                reconstructed = hilbert_transform_1D(reconstructed, axis=0)
+            elif envelope_type == "log":
+                # hilbert transform + log-compression
+                reconstructed = log_compression(reconstructed, axis=0, dynamic=40) # log-compression on 40 dB
             elif envelope_type == "zero":
                 # zero forcing
                 reconstructed[reconstructed < 0] = 0

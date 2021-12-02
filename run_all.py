@@ -64,6 +64,7 @@ out.highcut = 1e7
 result2 = out.back_project(IMAGE_IDX, visualise=False)
 
 out.envelope = True
+out.envelope_type = "log"
 result3 = out.back_project(IMAGE_IDX, visualise=False)
 
 out.fnumber = 0.5
