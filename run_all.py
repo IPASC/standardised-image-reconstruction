@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-IMAGE_IDX = 3
+# IMAGE_IDX = 3
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are
@@ -49,15 +49,17 @@ out = TestDelayAndSum()
 out.p_factor = 1.5
 out.fnumber = 2.5
 out.p_SCF = 1
-out.lowcut = 3e6
-out.highcut = 4e6
+#out.lowcut = 3e6
+#out.highcut = 4e6
+#out.speed_of_sound_m_s = 1400
+
 result1 = out.test_vanilla_delay_and_sum_reconstruction_is_running_through(IMAGE_IDX, visualise=False)
 result2 = out.test_delay_and_sum_reconstruction_bandpass_is_running_through(IMAGE_IDX, visualise=False)
 result3 = out.test_delay_and_sum_reconstruction_bandpass_envelope_is_running_through(IMAGE_IDX, visualise=False)
 result4 = out.test_delay_and_sum_reconstruction_is_running_through_fnumber(IMAGE_IDX, visualise=False)
-result5 = out.test_delay_and_sum_reconstruction_is_running_through_pDAS(IMAGE_IDX, visualise=False)
-out.fnumber = 0
-result6 = out.test_delay_and_sum_reconstruction_is_running_through_SCF(IMAGE_IDX, visualise=False)
+#result5 = out.test_delay_and_sum_reconstruction_is_running_through_pDAS(IMAGE_IDX, visualise=False)
+#out.fnumber = 0
+#result6 = out.test_delay_and_sum_reconstruction_is_running_through_SCF(IMAGE_IDX, visualise=False)
 
 plt.figure()
 plt.subplot(2, 3, 1)
@@ -72,12 +74,12 @@ plt.imshow(result3[:, 0, :, 0, 0].T)
 plt.subplot(2, 3, 4)
 plt.title("DAS fnumber")
 plt.imshow(result4[:, 0, :, 0, 0].T)
-plt.subplot(2, 3, 5)
-plt.title("pDAS")
-plt.imshow(result5[:, 0, :, 0, 0].T)
-plt.subplot(2, 3, 6)
-plt.title("SCF-DAS")
-plt.imshow(result6[:, 0, :, 0, 0].T)
+#plt.subplot(2, 3, 5)
+#plt.title("pDAS")
+#plt.imshow(result5[:, 0, :, 0, 0].T)
+#plt.subplot(2, 3, 6)
+#plt.title("SCF-DAS")
+#plt.imshow(result6[:, 0, :, 0, 0].T)
 plt.tight_layout()
 plt.show()
 
