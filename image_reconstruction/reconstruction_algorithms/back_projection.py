@@ -16,7 +16,7 @@ from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter im
 from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1D
 
 
-class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
+class BackProjection(ReconstructionAlgorithm):
 
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
@@ -40,6 +40,8 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         :return:
         """
 
+        time_series_data = time_series_data.astype(float)
+
         # parse kwargs with sensible defaults
         speed_of_sound_in_m_per_s = 1540
         if "speed_of_sound_m_s" in kwargs:
@@ -61,21 +63,30 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         if "filter_order" in kwargs:
             filter_order = kwargs["filter_order"]
 
-        envelope_time_series = False
-        if "envelope_time_series" in kwargs:
-            envelope_time_series = kwargs["envelope_time_series"]
+        envelope = False
+        if "envelope" in kwargs:
+            envelope = kwargs["envelope"]
 
-        envelope_reconstructed = False
-        if "envelope_reconstructed" in kwargs:
-            envelope_reconstructed = kwargs["envelope_reconstructed"]
+        envelope_type = None
+        if "envelope_type" in kwargs:
+            envelope_type = kwargs["envelope_type"]
+
+        p_factor = 1
+        if "p_factor" in kwargs:
+            p_factor = kwargs["p_factor"]
+
+        p_SCF = 0
+        if "p_SCF" in kwargs:
+            p_SCF = kwargs["p_SCF"]
+
+        fnumber = 0
+        if "fnumber" in kwargs:
+            fnumber = kwargs["fnumber"]
 
         if lowcut is not None or highcut is not None:
             time_series_data = butter_bandpass_filter(time_series_data, lowcut, highcut,
                                                       self.ipasc_data.get_sampling_rate(),
                                                       filter_order)
-
-        if envelope_reconstructed:
-            time_series_data = hilbert_transform_1D(time_series_data, axis=1)
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         time_spacing_in_s = 1.0 / self.ipasc_data.get_sampling_rate()
@@ -106,16 +117,41 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
                                                       spacing_m,
                                                       speed_of_sound_in_m_per_s,
                                                       time_spacing_in_s,
-                                                      torch_device)
+                                                      torch_device, fnumber)
 
+        # We extract and sum the sign of the value
+        _SCF = torch.mean(torch.sign(values), dim=3)
+        _SCF = torch.pow(torch.abs(1 - torch.sqrt(1 - torch.pow(_SCF, 2))), p_SCF)
+
+        # We do sign(s)*abs(s)^(1/p)
+        values = torch.mul(torch.sign(values), torch.pow(torch.abs(values), 1 / p_factor))
+
+        # we do the sum
         _sum = torch.sum(values, dim=3)
+
+        # we come back in the correct domain : sign(s)*abs(s)^(p)
+        _sum = torch.mul(torch.sign(_sum), torch.pow(torch.abs(_sum), p_factor))
         counter = torch.count_nonzero(values, dim=3)
+
+        # We multiply with the SCF coeeficient
+        _sum = torch.mul(_sum, _SCF)
+
         torch.divide(_sum, counter, out=output)
 
         reconstructed = output.cpu().numpy()
 
-        if envelope_time_series:
-            reconstructed = hilbert_transform_1D(reconstructed, axis=1)
+        if envelope:
+            if envelope_type == "hilbert":
+                # hilbert transform
+                reconstructed = hilbert_transform_1D(reconstructed, axis=1)
+            elif envelope_type == "zero":
+                # zero forcing
+                reconstructed[reconstructed < 0] = 0
+            elif envelope_type == "abs":
+                # absolute value
+                reconstructed = np.abs(reconstructed)
+            else:
+                print("WARN: No envelope type specified!")
 
         return reconstructed
 
@@ -126,7 +162,8 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
                                      spacing_in_m: float,
                                      speed_of_sound_in_m_per_s: float,
                                      time_spacing_in_s: float,
-                                     torch_device: torch.device) -> (torch.tensor, int):
+                                     torch_device: torch.device,
+                                     fnumber: float = 1.0) -> (torch.tensor, int):
         """
         Perform the core computation of Delay and Sum, without summing up the delay dependend values.
 
@@ -171,9 +208,13 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
 
         delays = (torch.round(delays)).long()
         values = time_series_data[jj, delays]
-
-        # set values of invalid indices to 0 so that they don't influence the result
         values[invalid_indices] = 0
+
+        # Add fNumber
+        if fnumber > 0:
+            values[torch.where(torch.logical_not(torch.abs(xx * spacing_in_m - sensor_positions[:, 0][jj])
+                   < (zz * spacing_in_m - sensor_positions[:, 1][jj]) / fnumber / 2))] = 0
+
 
         del delays  # free memory of delays
 
