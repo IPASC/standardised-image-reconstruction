@@ -19,13 +19,13 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-IMAGE_IDX = 2
+# IMAGE_IDX = 2
 # Experimental image provided by Manojit Pramanik. It is a point absorber
 # in a homogeneous medium. SOS=1480
 #
 # #####################################################################
 #
-# IMAGE_IDX = 3
+IMAGE_IDX = 3
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are
@@ -103,6 +103,7 @@ plt.subplot(2, 3, 6)
 plt.title("SCF-DAS")
 plt.imshow(result6[:, 0, :, 0, 0].T)
 plt.colorbar()
+
 plt.tight_layout()
 plt.show()
 
