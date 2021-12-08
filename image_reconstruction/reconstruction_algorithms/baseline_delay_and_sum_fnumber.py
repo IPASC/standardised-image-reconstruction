@@ -6,7 +6,7 @@ published in the SIMPA repository also under the MIT license:
 https://github.com/CAMI-DKFZ/simpa
 
 SPDX-FileCopyrightText: 2021 Computer Assisted Medical Interventions Group, DKFZ
-SPDX-FileCopyrightText: 2021 Janek Groehl
+SPDX-FileCopyrightText: 2021 VISION Lab, Cancer Research UK Cambridge Institute (CRUK CI)
 SPDX-License-Identifier: MIT
 """
 import numpy as np
@@ -15,8 +15,9 @@ from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorit
 from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
 from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1D
 
+class BaselineDelayAndSumAlgorithmFnumber(ReconstructionAlgorithm):
 
-class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
+    fnumber = 0.5
 
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
@@ -61,24 +62,18 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         if "filter_order" in kwargs:
             filter_order = kwargs["filter_order"]
 
-        envelope_time_series = False
-        if "envelope_time_series" in kwargs:
-            envelope_time_series = kwargs["envelope_time_series"]
-
-        envelope_reconstructed = False
-        if "envelope_reconstructed" in kwargs:
-            envelope_reconstructed = kwargs["envelope_reconstructed"]
+        envelope = False
+        if "envelope" in kwargs:
+            envelope = kwargs["envelope"]
 
         if lowcut is not None or highcut is not None:
             time_series_data = butter_bandpass_filter(time_series_data, lowcut, highcut,
                                                       self.ipasc_data.get_sampling_rate(),
                                                       filter_order)
 
-        if envelope_reconstructed:
-            time_series_data = hilbert_transform_1D(time_series_data, axis=1)
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        time_spacing_in_s = 1.0 / self.ipasc_data.get_sampling_rate()
+        time_spacing_in_ms = 1.0 / self.ipasc_data.get_sampling_rate()
         time_series_data = torch.from_numpy(time_series_data).to(torch_device)
         positions = detection_elements["positions"]
         sensor_positions = torch.from_numpy(positions).to(torch_device)
@@ -105,17 +100,18 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
                                                       field_of_view_voxels,
                                                       spacing_m,
                                                       speed_of_sound_in_m_per_s,
-                                                      time_spacing_in_s,
+                                                      time_spacing_in_ms,
                                                       torch_device)
 
         _sum = torch.sum(values, dim=3)
+
+        #if envelope:
+        #    _sum = torch.from_numpy(hilbert_transform_1D(_sum, axis=1))
+
         counter = torch.count_nonzero(values, dim=3)
         torch.divide(_sum, counter, out=output)
 
         reconstructed = output.cpu().numpy()
-
-        if envelope_time_series:
-            reconstructed = hilbert_transform_1D(reconstructed, axis=1)
 
         return reconstructed
 
@@ -165,6 +161,7 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
                             (zz * spacing_in_m - sensor_positions[:, 1][jj]) ** 2) \
                  / (speed_of_sound_in_m_per_s * time_spacing_in_s)
 
+
         # perform index validation
         invalid_indices = torch.where(torch.logical_or(delays < 0, delays >= float(time_series_data.shape[1])))
         torch.clip_(delays, min=0, max=time_series_data.shape[1] - 1)
@@ -172,8 +169,17 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         delays = (torch.round(delays)).long()
         values = time_series_data[jj, delays]
 
+        # Add fNumber
+        if (self.fnumber>0):
+            invalid_indices2 = torch.where(torch.logical_not(torch.abs(xx * spacing_in_m - sensor_positions[:, 0][jj]) \
+                < (zz * spacing_in_m - sensor_positions[:, 1][jj]) /self.fnumber/2))
+        else:
+            invalid_indices2 = invalid_indices
+
+
         # set values of invalid indices to 0 so that they don't influence the result
         values[invalid_indices] = 0
+        values[invalid_indices2] = 0
 
         del delays  # free memory of delays
 
