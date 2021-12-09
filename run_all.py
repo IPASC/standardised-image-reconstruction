@@ -84,7 +84,7 @@ out.fnumber = 0
 out.p_factor = 1
 out.p_SCF = 1
 result6 = out.back_project(IMAGE_IDX, visualise=False)
- 
+
 plt.figure(figsize=(12, 8))
 plt.subplot(2, 3, 1)
 plt.title("Vanilla DAS")
