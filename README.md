@@ -28,3 +28,7 @@ file for a coding reference.
 ## Quality Assessment
 
 **TODO**
+
+## Contribute to the project
+
+Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for information on how to contribute.
