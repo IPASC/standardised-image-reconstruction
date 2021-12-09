@@ -1,21 +1,20 @@
 """
 SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
+SPDX-FileCopyrightText: 2021 Computer Assisted Medical Interventions Group, DKFZ
+SPDX-FileCopyrightText: 2021 Janek Gröhl
+SPDX-FileCopyrightText: 2021 François Varray
+SPDX-License-Identifier: MIT
 
-Please note that the code here is an adapted version of the code
+Please note that the code here is based on the code
 published in the SIMPA repository also under the MIT license:
 https://github.com/CAMI-DKFZ/simpa
-
-SPDX-FileCopyrightText: 2021 Computer Assisted Medical Interventions Group, DKFZ
-SPDX-FileCopyrightText: 2021 Janek Groehl
-SPDX-License-Identifier: MIT
 """
 import numpy as np
 import torch
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
 from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
-from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1D
+from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1_d
 from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import log_compression
-
 
 
 class BackProjection(ReconstructionAlgorithm):
@@ -77,9 +76,9 @@ class BackProjection(ReconstructionAlgorithm):
         if "p_factor" in kwargs:
             p_factor = kwargs["p_factor"]
 
-        p_SCF = 0
+        p_scf = 0
         if "p_SCF" in kwargs:
-            p_SCF = kwargs["p_SCF"]
+            p_scf = kwargs["p_SCF"]
 
         fnumber = 0
         if "fnumber" in kwargs:
@@ -123,7 +122,7 @@ class BackProjection(ReconstructionAlgorithm):
 
         # We extract and sum the sign of the value
         _SCF = torch.mean(torch.sign(values), dim=3)
-        _SCF = torch.pow(torch.abs(1 - torch.sqrt(1 - torch.pow(_SCF, 2))), p_SCF)
+        _SCF = torch.pow(torch.abs(1 - torch.sqrt(1 - torch.pow(_SCF, 2))), p_scf)
 
         # We do sign(s)*abs(s)^(1/p)
         values = torch.mul(torch.sign(values), torch.pow(torch.abs(values), 1 / p_factor))
@@ -142,14 +141,13 @@ class BackProjection(ReconstructionAlgorithm):
 
         reconstructed = output.cpu().numpy()
 
-
         if envelope:
             if envelope_type == "hilbert":
                 # hilbert transform
-                reconstructed = hilbert_transform_1D(reconstructed, axis=0)
+                reconstructed = hilbert_transform_1_d(reconstructed, axis=0)
             elif envelope_type == "log":
-                # hilbert transform + log-compression
-                reconstructed = log_compression(reconstructed, axis=0, dynamic=40) # log-compression on 40 dB
+                # hilbert transform + log-compression on 40 dB
+                reconstructed = log_compression(reconstructed, axis=0, dynamic=40)
             elif envelope_type == "zero":
                 # zero forcing
                 reconstructed[reconstructed < 0] = 0
@@ -161,8 +159,8 @@ class BackProjection(ReconstructionAlgorithm):
 
         return reconstructed
 
-    def compute_delay_and_sum_values(self,
-                                     time_series_data: torch.tensor,
+    @staticmethod
+    def compute_delay_and_sum_values(time_series_data: torch.tensor,
                                      sensor_positions: torch.tensor,
                                      field_of_view_voxels: np.ndarray,
                                      spacing_in_m: float,
@@ -181,9 +179,11 @@ class BackProjection(ReconstructionAlgorithm):
         :param speed_of_sound_in_m_per_s: Speed of sound in units of meters per second
         :param time_spacing_in_s: Inverse sampling rate in units of seconds
         :param torch_device: the pytorch device to compute everything on
+        :param fnumber: the fnumber parameter to limit the sum angles
 
         :return: returns a tuple with
-                 ** values (torch tensor) of the time series data corrected for delay and sensor positioning, ready to be summed up
+                 ** values (torch tensor) of the time series data corrected for delay and sensor positioning, ready to
+                 be summed up
                  ** n_sensor_elements (int) which might be used for later computations
         """
 
@@ -191,22 +191,22 @@ class BackProjection(ReconstructionAlgorithm):
 
         xx, yy, zz, jj = torch.meshgrid(torch.arange(field_of_view_voxels[0],
                                                      field_of_view_voxels[1], device=torch_device)
-                                         if (field_of_view_voxels[1] - field_of_view_voxels[0])
-                                            >= 1 else torch.arange(1, device=torch_device),
+                                        if (field_of_view_voxels[1] - field_of_view_voxels[0])
+                                        >= 1 else torch.arange(1, device=torch_device),
                                         torch.arange(field_of_view_voxels[2],
                                                      field_of_view_voxels[3], device=torch_device)
                                         if (field_of_view_voxels[3] - field_of_view_voxels[2])
-                                           >= 1 else torch.arange(1, device=torch_device),
+                                        >= 1 else torch.arange(1, device=torch_device),
                                         torch.arange(field_of_view_voxels[4],
                                                      field_of_view_voxels[5], device=torch_device)
                                         if (field_of_view_voxels[5] - field_of_view_voxels[4])
-                                           >= 1 else torch.arange(1, device=torch_device),
+                                        >= 1 else torch.arange(1, device=torch_device),
                                         torch.arange(n_sensor_elements, device=torch_device))
 
         delays = torch.sqrt((yy * spacing_in_m - sensor_positions[:, 2][jj]) ** 2 +
                             (xx * spacing_in_m - sensor_positions[:, 0][jj]) ** 2 +
-                            (zz * spacing_in_m - sensor_positions[:, 1][jj]) ** 2) \
-                 / (speed_of_sound_in_m_per_s * time_spacing_in_s)
+                            (zz * spacing_in_m - sensor_positions[:, 1][jj]) ** 2) / (speed_of_sound_in_m_per_s *
+                                                                                      time_spacing_in_s)
 
         # perform index validation
         invalid_indices = torch.where(torch.logical_or(delays < 0, delays >= float(time_series_data.shape[1])))
@@ -220,7 +220,6 @@ class BackProjection(ReconstructionAlgorithm):
         if fnumber > 0:
             values[torch.where(torch.logical_not(torch.abs(xx * spacing_in_m - sensor_positions[:, 0][jj])
                    < (zz * spacing_in_m - sensor_positions[:, 1][jj]) / fnumber / 2))] = 0
-
 
         del delays  # free memory of delays
 

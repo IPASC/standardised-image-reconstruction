@@ -1,8 +1,15 @@
+"""
+SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
+SPDX-FileCopyrightText: 2021 Janek Gröhl
+SPDX-FileCopyrightText: 2021 François Varray
+SPDX-License-Identifier: MIT
+"""
+
 from scipy.signal import hilbert, hilbert2
 import numpy as np
 
 
-def hilbert_transform_1D(signal, axis=-1):
+def hilbert_transform_1_d(signal, axis=-1):
     """
 
     :param signal:
@@ -12,13 +19,14 @@ def hilbert_transform_1D(signal, axis=-1):
     return np.abs(hilbert(signal, axis=axis))
 
 
-def hilbert_transform_2D(signal):
+def hilbert_transform_2_d(signal):
     """
 
     :param signal: a NxM numpy ndarray
     :return: the 2D hilbert transform of the signal
     """
     return np.abs(hilbert2(signal))
+
 
 def log_compression(signal, axis=-1, dynamic=40):
     """
@@ -29,10 +37,10 @@ def log_compression(signal, axis=-1, dynamic=40):
     :return:
     """
     # do the hilbert transform
-    env = hilbert_transform_1D(signal, axis)
+    env = hilbert_transform_1_d(signal, axis)
     # do 20log10 on the normalized image
     env = 20*np.log10(env/np.nanmax(env))
-    # put to zeros everythin that is outside the desired dynamic
-    env[np.where(env<-dynamic)] = -dynamic
+    # put to zeros everything that is outside the desired dynamic
+    env[np.where(env < -dynamic)] = -dynamic
 
     return env

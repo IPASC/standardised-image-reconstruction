@@ -1,5 +1,6 @@
 """
 SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
+SPDX-FileCopyrightText: 2021 Janek Gröhl
 SPDX-License-Identifier: MIT
 """
 
@@ -42,7 +43,7 @@ class ReconstructionAlgorithm(ABC):
         # data loading
         self.ipasc_data = load_data(path_to_ipasc_hdf5)
         field_of_view = self.ipasc_data.get_field_of_view()
-        print("FOV [m]:", field_of_view)
+        print("Reconstructing in this field of view FOV [m]:", field_of_view)
         detection_elements = dict()
         detection_elements['positions'] = self.ipasc_data.get_detector_position()
         detection_elements['orientations'] = self.ipasc_data.get_detector_orientation()

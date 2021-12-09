@@ -6,14 +6,14 @@ published in the SIMPA repository also under the MIT license:
 https://github.com/CAMI-DKFZ/simpa
 
 SPDX-FileCopyrightText: 2021 Computer Assisted Medical Interventions Group, DKFZ
-SPDX-FileCopyrightText: 2021 Janek Groehl
+SPDX-FileCopyrightText: 2021 Janek Gröhl
 SPDX-License-Identifier: MIT
 """
 import numpy as np
 import torch
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
 from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
-from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1D
+from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1_d
 
 
 class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
@@ -75,7 +75,7 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
                                                       filter_order)
 
         if envelope_reconstructed:
-            time_series_data = hilbert_transform_1D(time_series_data, axis=1)
+            time_series_data = hilbert_transform_1_d(time_series_data, axis=1)
 
         torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         time_spacing_in_s = 1.0 / self.ipasc_data.get_sampling_rate()
@@ -115,12 +115,12 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         reconstructed = output.cpu().numpy()
 
         if envelope_time_series:
-            reconstructed = hilbert_transform_1D(reconstructed, axis=1)
+            reconstructed = hilbert_transform_1_d(reconstructed, axis=1)
 
         return reconstructed
 
-    def compute_delay_and_sum_values(self,
-                                     time_series_data: torch.tensor,
+    @staticmethod
+    def compute_delay_and_sum_values(time_series_data: torch.tensor,
                                      sensor_positions: torch.tensor,
                                      field_of_view_voxels: np.ndarray,
                                      spacing_in_m: float,
@@ -140,7 +140,8 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
         :param torch_device: the pytorch device to compute everything on
 
         :return: returns a tuple with
-                 ** values (torch tensor) of the time series data corrected for delay and sensor positioning, ready to be summed up
+                 ** values (torch tensor) of the time series data corrected for delay and sensor positioning,
+                 ready to be summed up
                  ** n_sensor_elements (int) which might be used for later computations
         """
 
@@ -148,22 +149,22 @@ class BaselineDelayAndSumAlgorithm(ReconstructionAlgorithm):
 
         xx, yy, zz, jj = torch.meshgrid(torch.arange(field_of_view_voxels[0],
                                                      field_of_view_voxels[1], device=torch_device)
-                                         if (field_of_view_voxels[1] - field_of_view_voxels[0])
-                                            >= 1 else torch.arange(1, device=torch_device),
+                                        if (field_of_view_voxels[1] - field_of_view_voxels[0])
+                                        >= 1 else torch.arange(1, device=torch_device),
                                         torch.arange(field_of_view_voxels[2],
                                                      field_of_view_voxels[3], device=torch_device)
                                         if (field_of_view_voxels[3] - field_of_view_voxels[2])
-                                           >= 1 else torch.arange(1, device=torch_device),
+                                        >= 1 else torch.arange(1, device=torch_device),
                                         torch.arange(field_of_view_voxels[4],
                                                      field_of_view_voxels[5], device=torch_device)
                                         if (field_of_view_voxels[5] - field_of_view_voxels[4])
-                                           >= 1 else torch.arange(1, device=torch_device),
+                                        >= 1 else torch.arange(1, device=torch_device),
                                         torch.arange(n_sensor_elements, device=torch_device))
 
         delays = torch.sqrt((yy * spacing_in_m - sensor_positions[:, 2][jj]) ** 2 +
                             (xx * spacing_in_m - sensor_positions[:, 0][jj]) ** 2 +
                             (zz * spacing_in_m - sensor_positions[:, 1][jj]) ** 2) \
-                 / (speed_of_sound_in_m_per_s * time_spacing_in_s)
+            / (speed_of_sound_in_m_per_s * time_spacing_in_s)
 
         # perform index validation
         invalid_indices = torch.where(torch.logical_or(delays < 0, delays >= float(time_series_data.shape[1])))

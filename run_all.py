@@ -1,3 +1,10 @@
+"""
+SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
+SPDX-FileCopyrightText: 2021 Janek Gröhl
+SPDX-FileCopyrightText: 2021 François Varray
+SPDX-License-Identifier: MIT
+"""
+
 from tests.reconstruction_algorithms.test_baseline_delay_and_sum import TestDelayAndSum
 import matplotlib.pyplot as plt
 
@@ -19,13 +26,13 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-# IMAGE_IDX = 2
+IMAGE_IDX = 2
 # Experimental image provided by Manojit Pramanik. It is a point absorber
 # in a homogeneous medium. SOS=1480
 #
 # #####################################################################
 #
-IMAGE_IDX = 3
+# IMAGE_IDX = 3
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are

@@ -1,10 +1,10 @@
 """
 SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
-SPDX-FileCopyrightText: 2021 Janek Groehl
+SPDX-FileCopyrightText: 2021 Janek Gröhl
 SPDX-License-Identifier: MIT
 """
 
-from google_drive_downloader import GoogleDriveDownloader as gdd
+from google_drive_downloader import GoogleDriveDownloader
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,16 +36,16 @@ class TestClassBase:
             reco_path = os.path.join(self.ipasc_hdf5_file_path, f"{download_url[0]}_reference.npz")
             
             if not os.path.exists(ts_path):
-                gdd.download_file_from_google_drive(file_id=download_url[0],
-                                                    dest_path=ts_path,
-                                                    overwrite=False)
+                GoogleDriveDownloader.download_file_from_google_drive(file_id=download_url[0],
+                                                                      dest_path=ts_path,
+                                                                      overwrite=False)
             else:
                 print(f"File {ts_path} already in folder. Did not re-download")
 
             if not os.path.exists(reco_path):
-                gdd.download_file_from_google_drive(file_id=download_url[1],
-                                                    dest_path=reco_path,
-                                                    overwrite=False)
+                GoogleDriveDownloader.download_file_from_google_drive(file_id=download_url[1],
+                                                                      dest_path=reco_path,
+                                                                      overwrite=False)
             else:
                 print(f"File {reco_path} already in folder. Did not re-download")
 
@@ -78,7 +78,8 @@ class TestClassBase:
             self.visualise_result(result, reference)
         return result
 
-    def visualise_result(self, result: np.ndarray, reference: np.ndarray):
+    @staticmethod
+    def visualise_result(result: np.ndarray, reference: np.ndarray):
         result = result[:, 0, :, 0, 0]
         if len(np.shape(reference)) == 3:
             reference = reference[0, :, :]
