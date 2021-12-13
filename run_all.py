@@ -58,56 +58,62 @@ out = TestDelayAndSum()
 out.p_factor = 1
 out.fnumber = 0
 out.p_SCF = 0
-out.lowcut = None
-out.highcut = None
 out.speed_of_sound_m_s = SPEED_OF_SOUND
 out.envelope = False
 out.envelope_type = "abs"
 
-result1 = out.back_project(IMAGE_IDX, visualise=False)
 
 out.lowcut = 5e4
 out.highcut = 1e7
-result2 = out.back_project(IMAGE_IDX, visualise=False)
+#out.lowcut = 3e6
+#out.highcut = 6e6
 
 out.envelope = True
 out.envelope_type = "log"
-result3 = out.back_project(IMAGE_IDX, visualise=False)
+result1 = out.back_project(IMAGE_IDX, visualise=False)
 
-out.fnumber = 0.5
-result4 = out.back_project(IMAGE_IDX, visualise=False)
+out.fnumber = 1.
+result2 = out.back_project(IMAGE_IDX, visualise=False)
 
 out.p_factor = 1.5
-result5 = out.back_project(IMAGE_IDX, visualise=False)
+result3 = out.back_project(IMAGE_IDX, visualise=False)
 
 out.fnumber = 0
 out.p_factor = 1
 out.p_SCF = 1
+result4 = out.back_project(IMAGE_IDX, visualise=False)
+
+out.p_SCF = 0
+out.p_PCF = 1
+result5 = out.back_project(IMAGE_IDX, visualise=False)
+
+out.p_SCF = 2
+out.p_PCF = 1
 result6 = out.back_project(IMAGE_IDX, visualise=False)
 
 plt.figure(figsize=(12, 8))
 plt.subplot(2, 3, 1)
-plt.title("Vanilla DAS")
+plt.title("BP + Envelope DAS")
 plt.imshow(result1[:, 0, :, 0, 0].T)
 plt.colorbar()
 plt.subplot(2, 3, 2)
-plt.title("BP DAS")
+plt.title("DAS fnumber")
 plt.imshow(result2[:, 0, :, 0, 0].T)
 plt.colorbar()
 plt.subplot(2, 3, 3)
-plt.title("BP + Envelope DAS")
+plt.title("pDAS + fnumber")
 plt.imshow(result3[:, 0, :, 0, 0].T)
 plt.colorbar()
 plt.subplot(2, 3, 4)
-plt.title("DAS fnumber")
+plt.title("SCF-DAS + fnumber")
 plt.imshow(result4[:, 0, :, 0, 0].T)
 plt.colorbar()
 plt.subplot(2, 3, 5)
-plt.title("pDAS")
+plt.title("PCF-DAS + fnumber")
 plt.imshow(result5[:, 0, :, 0, 0].T)
 plt.colorbar()
 plt.subplot(2, 3, 6)
-plt.title("SCF-DAS")
+plt.title("CSF-PCF-DAS + fnumber")
 plt.imshow(result6[:, 0, :, 0, 0].T)
 plt.colorbar()
 

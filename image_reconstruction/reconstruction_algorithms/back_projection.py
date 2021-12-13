@@ -11,6 +11,7 @@ https://github.com/CAMI-DKFZ/simpa
 """
 import numpy as np
 import torch
+from scipy.signal import hilbert
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
 from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
 from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1_d
@@ -80,6 +81,10 @@ class BackProjection(ReconstructionAlgorithm):
         if "p_SCF" in kwargs:
             p_scf = kwargs["p_SCF"]
 
+        p_pcf = 0
+        if "p_PCF" in kwargs:
+            p_pcf = kwargs["p_PCF"]
+
         fnumber = 0
         if "fnumber" in kwargs:
             fnumber = kwargs["fnumber"]
@@ -120,9 +125,32 @@ class BackProjection(ReconstructionAlgorithm):
                                                       time_spacing_in_s,
                                                       torch_device, fnumber)
 
+        # If PCF is computed, we do a second bemforming, but only on the phase
+        # Reference, Camacho 2009, IEEE Trans. UFFC
+        if p_pcf:
+            # compute the phase -> we impose a fnumber = 0 for maximum phase calculation
+            raw_phase = torch.from_numpy(hilbert(time_series_data.cpu().numpy(), axis=0)).to(torch_device)
+            raw_phase = raw_phase.angle()
+            # do beamforming with the phase -> we impose a fnumber = 0 for maximum phase calculation
+            phase, _ = self.compute_delay_and_sum_values(raw_phase,
+                                                         sensor_positions,
+                                                         field_of_view_voxels,
+                                                         spacing_m,
+                                                         speed_of_sound_in_m_per_s,
+                                                         time_spacing_in_s,
+                                                         torch_device, 0)
+            sigma   = torch.std(phase, dim=3)
+            sigma_A = torch.std(torch.add(phase, torch.mul(torch.sign(phase), torch.tensor(-np.pi))), dim=3)
+            sf = torch.minimum(sigma, sigma_A)
+            sigma_0 = np.pi/np.sqrt(3)
+            _PCF = 1-p_pcf/sigma_0*sf
+            _PCF[torch.where(_PCF<0)] = 0 # equivalent to _PCF = max(0, 1-p_pcf/sigma_0*sf)
+
+
         # We extract and sum the sign of the value
-        _SCF = torch.mean(torch.sign(values), dim=3)
-        _SCF = torch.pow(torch.abs(1 - torch.sqrt(1 - torch.pow(_SCF, 2))), p_scf)
+        if p_scf:
+            _SCF = torch.mean(torch.sign(values), dim=3)
+            _SCF = torch.pow(torch.abs(1 - torch.sqrt(1 - torch.pow(_SCF, 2))), p_scf)
 
         # We do sign(s)*abs(s)^(1/p)
         values = torch.mul(torch.sign(values), torch.pow(torch.abs(values), 1 / p_factor))
@@ -135,7 +163,12 @@ class BackProjection(ReconstructionAlgorithm):
         counter = torch.count_nonzero(values, dim=3)
 
         # We multiply with the SCF coeeficient
-        _sum = torch.mul(_sum, _SCF)
+        if p_scf:
+            _sum = torch.mul(_sum, _SCF)
+
+        # We multiply with the PCF factor is necessary
+        if p_pcf:
+            _sum = torch.mul(_sum, _PCF)
 
         torch.divide(_sum, counter, out=output)
 
@@ -156,6 +189,10 @@ class BackProjection(ReconstructionAlgorithm):
                 reconstructed = np.abs(reconstructed)
             else:
                 print("WARN: No envelope type specified!")
+
+        #if p_pcf:
+        #    reconstructed = _PCF.cpu().numpy()
+        #    reconstructed = (reconstructed)*40
 
         return reconstructed
 
