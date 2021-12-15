@@ -3,8 +3,8 @@
 
 | Name | Institution | Contributions |
 | ---- | --- | ------------- |
-| Janek Gröhl | University of Cambridge | Baseline back-projection algorithm; general maintenance |
-| François Varray | Creatis, Université de Lyon | Back-projection variant implementations: fnumber, pDAS, SCF; general testing |
+| Janek Gröhl | University of Cambridge | General Maintenance; Code Infrastructure; Image Reconstruction: baseline back-projection algorithm;  |
+| François Varray | Creatis, Université de Lyon | Image Reconstruction: back-projection variant implementations: fnumber, pDAS, SCF; general testing |
 
 # How to contribute
 
