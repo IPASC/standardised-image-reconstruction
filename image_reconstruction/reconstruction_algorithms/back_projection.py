@@ -21,19 +21,32 @@ class BackProjection(ReconstructionAlgorithm):
         """
         Implementation of a baseline delay and sum algorithm without any additional features.
 
-        :param time_series_data: A 2D numpy array with the following internal array definition:
-                                [detectors, time samples]
-        :param detection_elements: A dictionary that describes the detection geometry.
-                                   The dictionary contains three entries:
-                                   ** "positions": The positions of the detection elements relative to the field of view
-                                   ** "orientations": The orientations of the detection elements
-                                   ** "sizes": The sizes of the detection elements.
-        :param field_of_view: A 1D 6 element-long numpy array that contains the extent of the field of view in x, y and
-                              z direction in the same coordinate system as the detection element positions.
-        :param kwargs: the list of parameters for the delay and sum reconstruction includes the following parameters:
+        Parameters
+        ----------
+        time_series_data: A 2D numpy array with the following internal array definition:
+                          [detectors, time samples]
+        detection_elements: A dictionary that describes the detection geometry.
+                            The dictionary contains three entries:
+                            ** "positions": The positions of the detection elements relative to the field of view
+                            ** "orientations": The orientations of the detection elements
+                            ** "sizes": The sizes of the detection elements.
+        field_of_view: A 1D 6 element-long numpy array that contains the extent of the field of view in x, y and
+                       z direction in the same coordinate system as the detection element positions.
+        kwargs: the list of parameters for the delay and sum reconstruction includes the following parameters:
             ** 'spacing_m' the target isotropic reconstruction spacing in units of meters
             ** 'speed_of_sound_m_s' the target speed of sound in units of meters per second
-        :return:
+            ** 'lowcut' the highpass frequency for the bandpass filter
+            ** 'highcut' the lowpass frequency for the bandpass filter
+            ** 'filter_order' the order of the butter filter
+            ** 'envelope_type' the type of envelope detection to be performed
+            ** 'p_factor' the p-factor TODO include paper reference
+            ** 'p_SCF' the SCF-factor TODO include paper reference
+            ** 'p_PCF' the PCF-factor TODO include paper reference
+            ** 'fnumber' the fnumber TODO include paper reference
+
+        Returns
+        -------
+        A reconstructed image
         """
 
         time_series_data = time_series_data.astype(float)
