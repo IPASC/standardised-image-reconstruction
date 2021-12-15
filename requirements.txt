@@ -1,5 +1,5 @@
 numpy
-ipasc_tool
+pacfish
 googledrivedownloader
 torch
 pytest
