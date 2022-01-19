@@ -80,23 +80,20 @@ class TestClassBase:
 
     @staticmethod
     def visualise_result(result: np.ndarray, reference: np.ndarray):
-        #result = result[:, 0, :, 0, 0]
-        result = result[0, 0, :, :]
+        result = result[:, 0, :, 0, 0]
         if len(np.shape(reference)) == 3:
             reference = reference[0, :, :]
         plt.figure(figsize=(6, 3))
 
         plt.subplot(1, 2, 1)
         plt.title("Reference Reconstruction [a.u.]")
-        plt.axis("off")
         plt.imshow(reference)
         plt.colorbar()
 
         plt.subplot(1, 2, 2)
         plt.title("Reconstruction Result [a.u.]")
-        plt.imshow(result, extent=(0.3, 38.4, 0, 39.4))
+        plt.imshow(result)
         plt.colorbar()
-        #plt.axis("off")
 
         plt.tight_layout()
         plt.show()
