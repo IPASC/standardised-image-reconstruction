@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 """
 
 from tests.reconstruction_algorithms.test_baseline_delay_and_sum import TestDelayAndSum
+from tests.reconstruction_algorithms.test_fftbased_jaeger import TestFFTbasedJaeger
 import matplotlib.pyplot as plt
 
 # #####################################################################
@@ -84,30 +85,45 @@ out.p_SCF = 2
 out.p_PCF = 1
 result6 = out.back_project(IMAGE_IDX, visualise=False)
 
+out = TestFFTbasedJaeger()
+out.envelope = True
+out.envelope_type = "log"
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.time_delay = 0
+out.zero_padding_transducer_dimension = 0
+out.zero_padding_time_dimension = 0
+out.coefficientT = 5
+out.image_sampling = 1
+result7 = out.fftbasedJaeger(IMAGE_IDX, visualise=False)
+
 plt.figure(figsize=(12, 8))
-plt.subplot(2, 3, 1)
+plt.subplot(2, 4, 1)
 plt.title("BP + Envelope DAS")
 plt.imshow(result1[:, 0, :, 0, 0].T)
 plt.colorbar()
-plt.subplot(2, 3, 2)
+plt.subplot(2, 4, 2)
 plt.title("DAS fnumber")
 plt.imshow(result2[:, 0, :, 0, 0].T)
 plt.colorbar()
-plt.subplot(2, 3, 3)
+plt.subplot(2, 4, 3)
 plt.title("pDAS + fnumber")
 plt.imshow(result3[:, 0, :, 0, 0].T)
 plt.colorbar()
-plt.subplot(2, 3, 4)
+plt.subplot(2, 4, 4)
 plt.title("SCF-DAS + fnumber")
 plt.imshow(result4[:, 0, :, 0, 0].T)
 plt.colorbar()
-plt.subplot(2, 3, 5)
+plt.subplot(2, 4, 5)
 plt.title("PCF-DAS + fnumber")
 plt.imshow(result5[:, 0, :, 0, 0].T)
 plt.colorbar()
-plt.subplot(2, 3, 6)
+plt.subplot(2, 4, 6)
 plt.title("CSF-PCF-DAS + fnumber")
 plt.imshow(result6[:, 0, :, 0, 0].T)
+plt.colorbar()
+plt.subplot(2, 4, 7)
+plt.title("FFT-based")
+plt.imshow(result7[:, 0, :, 0, 0].T)
 plt.colorbar()
 
 plt.tight_layout()

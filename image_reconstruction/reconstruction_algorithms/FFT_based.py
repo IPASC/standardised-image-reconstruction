@@ -10,6 +10,8 @@ from math import *
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
 from scipy.signal import hilbert
 from scipy.ndimage import zoom
+from image_reconstruction.reconstruction_utils.post_processing import hilbert_transform_1_d
+from image_reconstruction.reconstruction_utils.post_processing import log_compression
 
 
 class FFTbasedAlgorithm(ReconstructionAlgorithm):
@@ -76,6 +78,14 @@ class FFTbasedAlgorithm(ReconstructionAlgorithm):
         if "target_resolution" in kwargs:
             target_resolution = kwargs["target_resolution"]
 
+        envelope = False
+        if "envelope" in kwargs:
+            envelope = kwargs["envelope"]
+
+        envelope_type = None
+        if "envelope_type" in kwargs:
+            envelope_type = kwargs["envelope_type"]
+
         rekon, rekonuncut = self.rekon_OA_freqdom(time_series_data,
                                                   pitch=element_pitch,
                                                   sampling_rate=self.ipasc_data.get_sampling_rate(),
@@ -122,6 +132,22 @@ class FFTbasedAlgorithm(ReconstructionAlgorithm):
         rekon = rekon[target_voxels[0]:target_voxels[1],
                 target_voxels[2]:target_voxels[3],
                 target_voxels[4]:target_voxels[5]]
+
+        if envelope:
+            if envelope_type == "hilbert":
+                # hilbert transform
+                rekon = hilbert_transform_1_d(rekon, axis=0)
+            elif envelope_type == "log":
+                # hilbert transform + log-compression on 40 dB
+                rekon = log_compression(rekon, axis=0, dynamic=40)
+            elif envelope_type == "zero":
+                # zero forcing
+                rekon[rekon < 0] = 0
+            elif envelope_type == "abs":
+                # absolute value
+                rekon = np.abs(rekon)
+            else:
+                print("WARN: No envelope type specified!")
 
         return rekon
 

@@ -17,6 +17,8 @@ class TestFFTbasedJaeger(TestClassBase):
     zero_padding_time_dimension = 1
     coefficientT = 5
     image_sampling = 1
+    envelope = False
+    envelope_type = None
 
     def fftbasedJaeger(self, image_idx=0, visualise=True):
         return self.run_tests(FFTbasedAlgorithm(), image_idx=image_idx, visualise=visualise, **{
@@ -25,5 +27,7 @@ class TestFFTbasedJaeger(TestClassBase):
             "zeroX": self.zero_padding_transducer_dimension,
             "zeroT": self.zero_padding_time_dimension,
             "coeffT": self.coefficientT,
-            "samplingX": self.image_sampling
+            "samplingX": self.image_sampling,
+            "envelope": self.envelope,
+            "envelope_type": self.envelope_type
         })
