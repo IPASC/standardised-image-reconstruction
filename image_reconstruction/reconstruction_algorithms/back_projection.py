@@ -7,9 +7,6 @@ SPDX-License-Identifier: MIT
 import numpy as np
 from image_reconstruction.reconstruction_utils.beamforming import back_projection
 from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
-from image_reconstruction.reconstruction_utils.pre_processing import butter_bandpass_filter
-from image_reconstruction.reconstruction_utils.post_processing import hilbert_transform_1_d
-from image_reconstruction.reconstruction_utils.post_processing import log_compression
 
 
 class BackProjection(ReconstructionAlgorithm):
@@ -19,7 +16,13 @@ class BackProjection(ReconstructionAlgorithm):
                        field_of_view: np.ndarray,
                        **kwargs):
         """
-        Implementation of a baseline delay and sum algorithm without any additional features.
+        Implementation of a delay and sum algorithm.
+
+        The baseline implementation reflects the reconstruction algorithm described by Xu and Wang, 2005::
+
+            Xu, Minghua, and Lihong V. Wang.
+            "Universal back-projection algorithm for photoacoustic computed tomography."
+            Physical Review E 71.1 (2005): 016706.
 
         Parameters
         ----------
@@ -32,6 +35,7 @@ class BackProjection(ReconstructionAlgorithm):
                             ** "sizes": The sizes of the detection elements.
         field_of_view: A 1D 6 element-long numpy array that contains the extent of the field of view in x, y and
                        z direction in the same coordinate system as the detection element positions.
+
         kwargs: the list of parameters for the delay and sum reconstruction includes the following parameters:
             ** 'spacing_m' the target isotropic reconstruction spacing in units of meters
             ** 'speed_of_sound_m_s' the target speed of sound in units of meters per second
@@ -60,26 +64,6 @@ class BackProjection(ReconstructionAlgorithm):
         if "spacing_m" in kwargs:
             spacing_m = kwargs["spacing_m"]
 
-        lowcut = None
-        if "lowcut" in kwargs:
-            lowcut = kwargs["lowcut"]
-
-        highcut = None
-        if "highcut" in kwargs:
-            highcut = kwargs["highcut"]
-
-        filter_order = 5
-        if "filter_order" in kwargs:
-            filter_order = kwargs["filter_order"]
-
-        envelope = False
-        if "envelope" in kwargs:
-            envelope = kwargs["envelope"]
-
-        envelope_type = None
-        if "envelope_type" in kwargs:
-            envelope_type = kwargs["envelope_type"]
-
         p_factor = 1
         if "p_factor" in kwargs:
             p_factor = kwargs["p_factor"]
@@ -96,31 +80,15 @@ class BackProjection(ReconstructionAlgorithm):
         if "fnumber" in kwargs:
             fnumber = kwargs["fnumber"]
 
-        if lowcut is not None or highcut is not None:
-            time_series_data = butter_bandpass_filter(signal=time_series_data,
-                                                      sampling_rate=self.ipasc_data.get_sampling_rate(),
-                                                      lowcut=lowcut,
-                                                      highcut=highcut,
-                                                      order=filter_order)
-
-        reconstructed = back_projection(time_series_data, detection_elements, self.ipasc_data.get_sampling_rate(),
-                                        field_of_view, spacing_m, speed_of_sound_in_m_per_s,
-                                        fnumber, p_scf, p_factor, p_pcf)
-
-        if envelope:
-            if envelope_type == "hilbert":
-                # hilbert transform
-                reconstructed = hilbert_transform_1_d(reconstructed, axis=0)
-            elif envelope_type == "log":
-                # hilbert transform + log-compression on 40 dB
-                reconstructed = log_compression(reconstructed, axis=0, dynamic=40)
-            elif envelope_type == "zero":
-                # zero forcing
-                reconstructed[reconstructed < 0] = 0
-            elif envelope_type == "abs":
-                # absolute value
-                reconstructed = np.abs(reconstructed)
-            else:
-                print("WARN: No envelope type specified!")
+        reconstructed = back_projection(time_series_data=time_series_data,
+                                        detection_elements=detection_elements,
+                                        sampling_rate=self.ipasc_data.get_sampling_rate(),
+                                        field_of_view=field_of_view,
+                                        spacing_m=spacing_m,
+                                        speed_of_sound_in_m_per_s=speed_of_sound_in_m_per_s,
+                                        fnumber=fnumber,
+                                        p_scf=p_scf,
+                                        p_factor=p_factor,
+                                        p_pcf=p_pcf)
 
         return reconstructed

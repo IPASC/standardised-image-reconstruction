@@ -1,0 +1,85 @@
+"""
+SPDX-FileCopyrightText: 2022 International Photoacoustic Standardisation Consortium (IPASC)
+SPDX-FileCopyrightText: 2022 Mengjie Shi
+SPDX-FileCopyrightText: 2022 Janek Gröhl
+SPDX-License-Identifier: MIT
+"""
+
+import numpy as np
+from image_reconstruction.reconstruction_utils.beamforming.fft_based_jaeger_2007 import fft_based_reconstruction_2d
+from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorithm
+
+
+class FftBasedJaeger2007(ReconstructionAlgorithm):
+
+    def implementation(self, time_series_data: np.ndarray,
+                       detection_elements: dict,
+                       field_of_view: np.ndarray,
+                       **kwargs):
+        """
+         Implementation of a FFT-based algorithm.
+
+         The baseline implementation reflects the reconstruction algorithm described by Jaeger et al., 2007::
+
+            Jaeger, Michael, et al.
+            "Fourier reconstruction in optoacoustic imaging using truncated regularized inverse k-space interpolation."
+            Inverse Problems 23.6 (2007): S51.
+
+         :param time_series_data: A 2D numpy array with the following internal array definition:
+                                 [detectors, time samples]
+         :param detection_elements: A dictionary that describes the detection geometry.
+                                    The dictionary contains three entries:
+                                    ** "positions": The positions of the detection elements relative to the field of view
+                                    ** "orientations": The orientations of the detection elements
+                                    ** "sizes": The sizes of the detection elements.
+         :param field_of_view: A 1D 6 element-long numpy array that contains the extent of the field of view in x, y and
+                               z direction in the same coordinate system as the detection element positions.
+
+
+         :param kwargs: the list of parameters for the fourier domain reconstruction includes the following parameters:
+             ** 'speed_of_sound_m_s' the target speed of sound in units of meters per second
+             ** 'delay': time delay from laser irradiation to signal acquisition start (default 0)
+             ** 'zero_pad_detectors': 1=zero pad in lateral (X) direction; 0=don't typically 1
+             ** 'zero_pad_time': 1=zero pad in axial (t,time) direction; 0=don't typically 1
+             ** 'fourier_coefficients_dim': signal fourier coefficients a single image fourier coefficient is interploated (5)
+             ** 'samplingX': 1,defines how many image lines are reconstructed per transducer element. For value>1, the additional image lines are equidistantly placed between the transducer elements
+             ** 'spacing_m': the target resolution in meters. Default resolution is 0.1 mm.
+
+         :return:
+         """
+        speed_of_sound_in_m_per_s = 1480
+        if "speed_of_sound_m_s" in kwargs:
+            speed_of_sound_in_m_per_s = kwargs["speed_of_sound_m_s"]
+
+        delay = 0
+        if "delay" in kwargs:
+            delay = kwargs["delay"]
+
+        zero_pad_detectors = 1
+        if "zero_pad_detectors" in kwargs:
+            zero_pad_detectors = kwargs["zero_pad_detectors"]
+
+        zero_pad_time = 1
+        if "zero_pad_time" in kwargs:
+            zero_pad_time = kwargs["zero_pad_time"]
+
+        coeffT = 5
+        if "fourier_coefficients_dim" in kwargs:
+            coeffT = kwargs["fourier_coefficients_dim"]
+
+        spacing_m = 0.0001
+        if "spacing_m" in kwargs:
+            spacing_m = kwargs["spacing_m"]
+
+        reconstruction = fft_based_reconstruction_2d(time_series_data,
+                                                     detection_elements=detection_elements,
+                                                     sampling_rate=self.ipasc_data.get_sampling_rate(),
+                                                     sos=speed_of_sound_in_m_per_s,
+                                                     delay=delay,
+                                                     zero_pad_detectors=zero_pad_detectors,
+                                                     zero_pad_time=zero_pad_time,
+                                                     fourier_coefficients_dim=coeffT,
+                                                     spacing_m=spacing_m,
+                                                     field_of_view=field_of_view)
+
+        return reconstruction

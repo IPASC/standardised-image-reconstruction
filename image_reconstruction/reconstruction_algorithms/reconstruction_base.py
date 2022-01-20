@@ -8,6 +8,8 @@ import os
 import numpy as np
 from abc import ABC, abstractmethod
 from pacfish import PAData, load_data
+from image_reconstruction.reconstruction_utils.post_processing import apply_post_processing
+from image_reconstruction.reconstruction_utils.pre_processing import apply_pre_processing
 
 
 class ReconstructionAlgorithm(ABC):
@@ -58,9 +60,13 @@ class ReconstructionAlgorithm(ABC):
         for wl_idx in range(num_wavelengths):
             frames = []
             for frame_idx in range(num_frames):
-                frames.append(self.implementation(time_series_data=time_series_data[:, :, wl_idx, frame_idx],
-                                                  detection_elements=detection_elements,
-                                                  field_of_view=field_of_view, **kwargs))
+                ts_data = time_series_data[:, :, wl_idx, frame_idx]
+                ts_data = apply_pre_processing(ts_data, self.ipasc_data.get_sampling_rate(), **kwargs)
+                reconstruction = self.implementation(time_series_data=ts_data,
+                                                     detection_elements=detection_elements,
+                                                     field_of_view=field_of_view, **kwargs)
+                reconstruction = apply_post_processing(reconstruction, **kwargs)
+                frames.append(reconstruction)
             wavelengths.append(frames)
 
         result = np.moveaxis(np.asarray(wavelengths), [0, 1, 2, 3, 4], [3, 4, 0, 1, 2])

@@ -63,19 +63,16 @@ def absolute_value(signal):
     return np.abs(signal)
 
 
-def log_compression(signal, axis=-1, dynamic=40):
+def log_compression(signal, axis=-1):
     """
 
     :param signal:
     :param axis: The axis the hilbert transform should be computed on
-    :param dynamic: the dynmaic in dB to be displayed
     :return:
     """
     # do the hilbert transform
     env = hilbert_transform_1_d(signal, axis)
     # do 20log10 on the normalized image
     env = 20*np.log10(env/np.nanmax(env))
-    # put to zeros everything that is outside the desired dynamic
-    env[np.where(env < -dynamic)] = -dynamic
 
     return env

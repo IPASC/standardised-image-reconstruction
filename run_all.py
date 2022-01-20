@@ -27,13 +27,13 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-# IMAGE_IDX = 2
+IMAGE_IDX = 2
 # Experimental image provided by Manojit Pramanik. It is a point absorber
 # in a homogeneous medium. SOS=1480
 #
 # #####################################################################
 #
-IMAGE_IDX = 3
+# IMAGE_IDX = 3
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are
@@ -53,7 +53,7 @@ IMAGE_IDX = 3
 #
 # #####################################################################
 
-SPEED_OF_SOUND = 1540
+SPEED_OF_SOUND = 1480
 
 out = TestDelayAndSum()
 out.p_factor = 1
@@ -90,10 +90,9 @@ out.envelope = True
 out.envelope_type = "log"
 out.speed_of_sound_m_s = SPEED_OF_SOUND
 out.time_delay = 0
-out.zero_padding_transducer_dimension = 0
-out.zero_padding_time_dimension = 0
+out.zero_padding_transducer_dimension = 1
+out.zero_padding_time_dimension = 1
 out.coefficientT = 5
-out.image_sampling = 1
 result7 = out.fftbasedJaeger(IMAGE_IDX, visualise=False)
 
 plt.figure(figsize=(12, 8))
