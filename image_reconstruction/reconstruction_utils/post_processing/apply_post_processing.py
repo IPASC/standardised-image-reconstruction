@@ -1,7 +1,6 @@
 
 import numpy as np
 from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1_d
-from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import log_compression
 
 
 def apply_post_processing(reconstruction, **kwargs):
@@ -18,9 +17,21 @@ def apply_post_processing(reconstruction, **kwargs):
         if envelope_type == "hilbert":
             # hilbert transform
             reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
+        if envelope_type == "hilbert_squared":
+            # hilbert transform + squaring
+            reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
+            reconstruction = reconstruction**2
         elif envelope_type == "log":
             # hilbert transform + log-compression
-            reconstruction = log_compression(reconstruction, axis=0)
+            reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
+            # do 20log10 on the normalized image
+            reconstruction = 20 * np.log10(reconstruction / np.nanmax(reconstruction))
+        elif envelope_type == "log_squared":
+            # hilbert transform + squaring + log-compression
+            reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
+            reconstruction = reconstruction ** 2
+            # do 20log10 on the normalized image
+            reconstruction = 20 * np.log10(reconstruction / np.nanmax(reconstruction))
         elif envelope_type == "zero":
             # zero forcing
             reconstruction[reconstruction < 0] = 0

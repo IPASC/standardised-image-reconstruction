@@ -54,17 +54,20 @@ IMAGE_IDX = 2
 # #####################################################################
 
 SPEED_OF_SOUND = 1480
+ENVELOPE_TYPE = "hilbert"  # One of "log", "hilbert", "abs", "zero", "hilbert_squared", "log_squared"
+LOWCUT = None  # 5e4
+HIGHCUT = None  # 1e7
 
 out = TestDelayAndSum()
 out.p_factor = 1
 out.fnumber = 0
 out.p_SCF = 0
 out.speed_of_sound_m_s = SPEED_OF_SOUND
-out.lowcut = 5e4
-out.highcut = 1e7
-
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
 out.envelope = True
-out.envelope_type = "log"
+out.envelope_type = ENVELOPE_TYPE
+
 result1 = out.back_project(IMAGE_IDX, visualise=False)
 
 out.fnumber = 1.
@@ -87,48 +90,52 @@ result6 = out.back_project(IMAGE_IDX, visualise=False)
 
 out = TestFFTbasedJaeger()
 out.envelope = True
-out.envelope_type = "log"
+out.envelope_type = ENVELOPE_TYPE
 out.speed_of_sound_m_s = SPEED_OF_SOUND
 out.time_delay = 0
 out.zero_padding_transducer_dimension = 1
 out.zero_padding_time_dimension = 1
 out.coefficientT = 5
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
 result7 = out.fftbasedJaeger(IMAGE_IDX, visualise=False)
 
-plt.figure(figsize=(12, 8))
+vmin = None
+vmax = None
+
+if ENVELOPE_TYPE == "log" or ENVELOPE_TYPE == "log_squared":
+    vmin = -40
+    vmax = 0
+
+plt.figure(figsize=(12, 6))
 plt.subplot(2, 4, 1)
 plt.title("BP + Envelope DAS")
-plt.imshow(result1[:, 0, :, 0, 0].T)
+plt.imshow(result1[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
 plt.subplot(2, 4, 2)
 plt.title("DAS fnumber")
-plt.imshow(result2[:, 0, :, 0, 0].T)
+plt.imshow(result2[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
 plt.subplot(2, 4, 3)
 plt.title("pDAS + fnumber")
-plt.imshow(result3[:, 0, :, 0, 0].T)
+plt.imshow(result3[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
 plt.subplot(2, 4, 4)
 plt.title("SCF-DAS + fnumber")
-plt.imshow(result4[:, 0, :, 0, 0].T)
+plt.imshow(result4[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
 plt.subplot(2, 4, 5)
 plt.title("PCF-DAS + fnumber")
-plt.imshow(result5[:, 0, :, 0, 0].T)
+plt.imshow(result5[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
 plt.subplot(2, 4, 6)
 plt.title("CSF-PCF-DAS + fnumber")
-plt.imshow(result6[:, 0, :, 0, 0].T)
+plt.imshow(result6[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
 plt.subplot(2, 4, 7)
 plt.title("FFT-based")
-plt.imshow(result7[:, 0, :, 0, 0].T)
+plt.imshow(result7[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
 
 plt.tight_layout()
 plt.show()
-
-# Only uncomment the following two lines if a new reference reconstruction should be saved!
-# import numpy as np
-# np.savez("NUMBER_reference.npz",
-#          reconstruction=result1[:, 0, :, 0, 0])
