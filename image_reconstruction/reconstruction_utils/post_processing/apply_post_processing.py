@@ -17,7 +17,7 @@ def apply_post_processing(reconstruction, **kwargs):
         if envelope_type == "hilbert":
             # hilbert transform
             reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
-        if envelope_type == "hilbert_squared":
+        elif envelope_type == "hilbert_squared":
             # hilbert transform + squaring
             reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
             reconstruction = reconstruction**2
@@ -39,6 +39,6 @@ def apply_post_processing(reconstruction, **kwargs):
             # absolute value
             reconstruction = np.abs(reconstruction)
         else:
-            print("WARN: No envelope type specified!")
+            print(f"WARN: No valid envelope type specified! Was: {envelope_type}")
 
     return reconstruction

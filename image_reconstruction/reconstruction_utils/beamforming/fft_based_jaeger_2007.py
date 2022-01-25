@@ -215,6 +215,17 @@ def fft_based_reconstruction_2d(time_series_data,
 
     reconstructed_image = reconstructed_image.T
     reko_shape = np.shape(reconstructed_image)
+
+    if field_of_view[0] < 0:
+        field_of_view[1] = field_of_view[1] - field_of_view[0]
+        field_of_view[0] = 0
+    if field_of_view[2] < 0:
+        field_of_view[3] = field_of_view[3] - field_of_view[2]
+        field_of_view[2] = 0
+    if field_of_view[4] < 0:
+        field_of_view[5] = field_of_view[5] - field_of_view[4]
+        field_of_view[4] = 0
+
     target_voxels = (field_of_view / spacing_m).astype(np.int)
     if x_aligned:
         reconstructed_image = reconstructed_image.reshape((reko_shape[0], 1, reko_shape[1]))
@@ -228,7 +239,7 @@ def fft_based_reconstruction_2d(time_series_data,
 
     # cropping
     reconstructed_image = reconstructed_image[target_voxels[0]:target_voxels[1],
-                          target_voxels[2]:target_voxels[3],
-                          target_voxels[4]:target_voxels[5]]
+                                              target_voxels[2]:target_voxels[3],
+                                              target_voxels[4]:target_voxels[5]]
 
     return reconstructed_image
