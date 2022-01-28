@@ -159,9 +159,9 @@ def compute_delay_and_sum_values(time_series_data: torch.tensor,
                                     >= 1 else torch.arange(1, device=torch_device),
                                     torch.arange(n_sensor_elements, device=torch_device))
 
-    delays = torch.sqrt((yy * spacing_in_m - sensor_positions[:, 2][jj]) ** 2 +
+    delays = torch.sqrt((yy * spacing_in_m - sensor_positions[:, 1][jj]) ** 2 +
                         (xx * spacing_in_m - sensor_positions[:, 0][jj]) ** 2 +
-                        (zz * spacing_in_m - sensor_positions[:, 1][jj]) ** 2) / (speed_of_sound_in_m_per_s *
+                        (zz * spacing_in_m - sensor_positions[:, 2][jj]) ** 2) / (speed_of_sound_in_m_per_s *
                                                                                   time_spacing_in_s)
 
     # perform index validation

@@ -47,12 +47,19 @@ class ReconstructionAlgorithm(ABC):
         field_of_view = self.ipasc_data.get_field_of_view()
         # TODO: if field of view is None, set a default field of view.
         print("Reconstructing in this field of view FOV [m]:", field_of_view)
+
         detection_elements = dict()
         detection_elements['positions'] = self.ipasc_data.get_detector_position()
         detection_elements['orientations'] = self.ipasc_data.get_detector_orientation()
         detection_elements['geometry'] = self.ipasc_data.get_detector_geometry()
         detection_elements['geometry_type'] = self.ipasc_data.get_detector_geometry_type()
         time_series_data = self.ipasc_data.binary_time_series_data
+
+        if len(np.shape(time_series_data)) == 2:
+            # Assume wavelengths and frame are singleton dimensions
+            time_series_data = np.reshape(time_series_data, (np.shape(time_series_data)[0],
+                                                             np.shape(time_series_data)[1],
+                                                             1, 1))
 
         num_wavelengths = np.shape(time_series_data)[2]
         num_frames = np.shape(time_series_data)[3]

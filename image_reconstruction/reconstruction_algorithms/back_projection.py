@@ -59,6 +59,8 @@ class BackProjection(ReconstructionAlgorithm):
         speed_of_sound_in_m_per_s = 1540
         if "speed_of_sound_m_s" in kwargs:
             speed_of_sound_in_m_per_s = kwargs["speed_of_sound_m_s"]
+        elif self.ipasc_data.get_speed_of_sound() is not None:
+            speed_of_sound_in_m_per_s = self.ipasc_data.get_speed_of_sound()
 
         spacing_m = 0.0005
         if "spacing_m" in kwargs:
