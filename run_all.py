@@ -57,7 +57,7 @@ IMAGE_IDX = 3
 #
 # #####################################################################
 
-SPEED_OF_SOUND = 1480
+SPEED_OF_SOUND = 1540
 ENVELOPE_TYPE = "hilbert"  # One of "log", "hilbert", "abs", "zero", "hilbert_squared", "log_squared"
 LOWCUT = None  # 5e4
 HIGHCUT = None  # 1e7
@@ -74,11 +74,13 @@ out.envelope_type = ENVELOPE_TYPE
 
 result1 = out.back_project(IMAGE_IDX, visualise=False)
 
-out.fnumber = 1.
+out.fnumber = 1.0
 result2 = out.back_project(IMAGE_IDX, visualise=False)
 
+out.fnumber = 0
 out.p_factor = 1.5
 result3 = out.back_project(IMAGE_IDX, visualise=False)
+
 out.fnumber = 0
 out.p_factor = 1
 out.p_SCF = 1
@@ -87,10 +89,6 @@ result4 = out.back_project(IMAGE_IDX, visualise=False)
 out.p_SCF = 0
 out.p_PCF = 1
 result5 = out.back_project(IMAGE_IDX, visualise=False)
-
-out.p_SCF = 2
-out.p_PCF = 1
-result6 = out.back_project(IMAGE_IDX, visualise=False)
 
 out = TestFFTbasedJaeger()
 out.envelope = True
@@ -102,7 +100,7 @@ out.zero_padding_time_dimension = 1
 out.coefficientT = 5
 out.lowcut = LOWCUT
 out.highcut = HIGHCUT
-result7 = out.fftbasedJaeger(IMAGE_IDX, visualise=False)
+result6 = out.fftbasedJaeger(IMAGE_IDX, visualise=False)
 
 out = TestFFTbasedHauptmann()
 out.speed_of_sound_m_s = SPEED_OF_SOUND
@@ -110,7 +108,7 @@ out.lowcut = LOWCUT
 out.highcut = HIGHCUT
 out.envelope = True
 out.envelope_type = ENVELOPE_TYPE
-result8 = out.fft_recon(IMAGE_IDX, visualise=False)
+result7 = out.fft_recon(IMAGE_IDX, visualise=False)
 
 vmin = None
 vmax = None
@@ -119,39 +117,43 @@ if ENVELOPE_TYPE == "log" or ENVELOPE_TYPE == "log_squared":
     vmin = -40
     vmax = 0
 
-plt.figure(figsize=(12, 6))
-plt.subplot(2, 4, 1)
-plt.title("BP + Envelope DAS")
+plt.figure(figsize=(12, 9))
+plt.subplot(3, 4, 1)
+plt.title("DAS")
 plt.imshow(result1[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 2)
-plt.title("DAS fnumber")
+plt.subplot(3, 4, 2)
+plt.title("DAS + fnumber")
 plt.imshow(result2[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 3)
-plt.title("pDAS + fnumber")
+plt.subplot(3, 4, 3)
+plt.title("DAS + p-factor")
 plt.imshow(result3[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 4)
-plt.title("SCF-DAS + fnumber")
+plt.subplot(3, 4, 4)
+plt.title("DAS + SCF")
 plt.imshow(result4[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 5)
-plt.title("PCF-DAS + fnumber")
+plt.subplot(3, 4, 5)
+plt.title("DAS + PCF")
 plt.imshow(result5[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 6)
-plt.title("CSF-PCF-DAS + fnumber")
+plt.subplot(3, 4, 6)
+plt.title("FFT-based (Jaeger)")
 plt.imshow(result6[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 7)
-plt.title("FFT-based (Jaeger)")
+plt.subplot(3, 4, 7)
+plt.title("FFT-based (Hauptmann)")
 plt.imshow(result7[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 8)
-plt.title("FFT-based (Hauptmann)")
-plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
-plt.colorbar()
+# plt.subplot(3, 4, 8)
+# plt.title("")
+# plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+# plt.colorbar()
+# plt.subplot(3, 4, 9)
+# plt.title("")
+# plt.imshow(result9[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+# plt.colorbar()
 
 plt.tight_layout()
 plt.show()
