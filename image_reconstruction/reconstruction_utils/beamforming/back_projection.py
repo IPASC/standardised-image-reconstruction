@@ -14,6 +14,7 @@ import torch
 import numpy as np
 from scipy.signal import hilbert
 
+
 def back_projection(time_series_data, detection_elements, sampling_rate,
                     field_of_view, spacing_m, speed_of_sound_in_m_per_s,
                     fnumber, p_scf, p_factor, p_pcf):

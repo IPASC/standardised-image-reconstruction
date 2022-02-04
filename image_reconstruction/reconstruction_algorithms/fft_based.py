@@ -20,9 +20,9 @@ class FftBasedJaeger2007(ReconstructionAlgorithm):
                        field_of_view: np.ndarray,
                        **kwargs):
         """
-         Implementation of a FFT-based algorithm.
+         Implementation of an FFT-based algorithm.
 
-         The baseline implementation reflects the reconstruction algorithm described by Jaeger et al., 2007::
+         The implementation reflects the reconstruction algorithm described by Jaeger et al., 2007::
 
             Jaeger, Michael, et al.
             "Fourier reconstruction in optoacoustic imaging using truncated regularized inverse k-space interpolation."
@@ -95,7 +95,13 @@ class FFTbasedHauptmann2018(ReconstructionAlgorithm):
                        field_of_view: np.ndarray,
                        **kwargs):
         """
-        Implementation of a baseline FFT based reconstruction algorithm without any additional features.
+        Implementation of an FFT-based reconstruction algorithm.
+
+        The implementation reflects the reconstruction algorithm described by Hauptmann et al., 2018::
+
+            Hauptmann, Andreas, et al.
+            "Approximate k-space models and deep learning for fast photoacoustic reconstruction."
+            International Workshop on Machine Learning for Medical Image Reconstruction. Springer, Cham, 2018.
 
         Parameters
         ----------
@@ -111,10 +117,6 @@ class FFTbasedHauptmann2018(ReconstructionAlgorithm):
         kwargs: the list of parameters for the delay and sum reconstruction includes the following parameters:
             ** 'spacing_m' the target isotropic reconstruction spacing in units of meters
             ** 'speed_of_sound_m_s' the target speed of sound in units of meters per second
-            ** 'lowcut' the highpass frequency for the bandpass filter
-            ** 'highcut' the lowpass frequency for the bandpass filter
-            ** 'filter_order' the order of the butter filter
-            ** 'envelope_type' the type of envelope detection to be performed
 
         Returns
         -------
@@ -127,12 +129,14 @@ class FFTbasedHauptmann2018(ReconstructionAlgorithm):
         speed_of_sound_in_m_per_s = 1540
         if "speed_of_sound_m_s" in kwargs:
             speed_of_sound_in_m_per_s = kwargs["speed_of_sound_m_s"]
+        elif self.ipasc_data.get_speed_of_sound() is not None:
+            speed_of_sound_in_m_per_s = self.ipasc_data.get_speed_of_sound()
 
         spacing_m = 0.0005
         if "spacing_m" in kwargs:
             spacing_m = kwargs["spacing_m"]
 
         reconstructed = fft_hauptmann_2d(time_series_data, detection_elements, self.ipasc_data.get_sampling_rate(),
-                                        field_of_view, spacing_m, speed_of_sound_in_m_per_s)
+                                         field_of_view, spacing_m, speed_of_sound_in_m_per_s)
 
         return reconstructed

@@ -39,14 +39,32 @@ class BackProjection(ReconstructionAlgorithm):
         kwargs: the list of parameters for the delay and sum reconstruction includes the following parameters:
             ** 'spacing_m' the target isotropic reconstruction spacing in units of meters
             ** 'speed_of_sound_m_s' the target speed of sound in units of meters per second
-            ** 'lowcut' the highpass frequency for the bandpass filter
-            ** 'highcut' the lowpass frequency for the bandpass filter
-            ** 'filter_order' the order of the butter filter
-            ** 'envelope_type' the type of envelope detection to be performed
             ** 'p_factor' the p-factor TODO include paper reference
-            ** 'p_SCF' the SCF-factor TODO include paper reference
-            ** 'p_PCF' the PCF-factor TODO include paper reference
-            ** 'fnumber' the fnumber TODO include paper reference
+            ** 'p_SCF' the SCF-factor as described in these papers::
+
+                    Kalkhoran, Mohammad Azizian, et al.
+                    "Volumetric pulse echo and optoacoustic imaging by elaborating a weighted synthetic aperture technique."
+                    2015 IEEE International Ultrasonics Symposium (IUS). IEEE, 2015.
+
+                    Camacho, Jorge, Montserrat Parrilla, and Carlos Fritsch.
+                    "Phase coherence imaging."
+                    IEEE transactions on ultrasonics, ferroelectrics, and frequency control 56.5 (2009): 958-974.
+
+            ** 'p_PCF' the PCF-factor as described in these papers::
+
+                    Kalkhoran, Mohammad Azizian, et al.
+                    "Volumetric pulse echo and optoacoustic imaging by elaborating a weighted synthetic aperture technique."
+                    2015 IEEE International Ultrasonics Symposium (IUS). IEEE, 2015.
+
+                    Camacho, Jorge, Montserrat Parrilla, and Carlos Fritsch.
+                    "Phase coherence imaging."
+                    IEEE transactions on ultrasonics, ferroelectrics, and frequency control 56.5 (2009): 958-974.
+
+            ** 'fnumber' the fnumber as described in this paper::
+
+                    Perrot, Vincent, et al.
+                    "So you think you can DAS?
+                    A viewpoint on delay-and-sum beamforming." Ultrasonics 111 (2021): 106309.
 
         Returns
         -------
