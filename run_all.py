@@ -1,5 +1,7 @@
 """
 SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
+SPDX-FileCopyrightText: 2021 Andreas Hauptmann
+SPDX-FileCopyrightText: 2022 Jenni Poimala
 SPDX-FileCopyrightText: 2021 Janek Gröhl
 SPDX-FileCopyrightText: 2021 François Varray
 SPDX-License-Identifier: MIT
@@ -7,6 +9,8 @@ SPDX-License-Identifier: MIT
 
 from tests.reconstruction_algorithms.test_baseline_delay_and_sum import TestDelayAndSum
 from tests.reconstruction_algorithms.test_fftbased_jaeger import TestFFTbasedJaeger
+from tests.reconstruction_algorithms.test_baseline_fft_reconstruction import TestFFTbasedHauptmann
+
 import matplotlib.pyplot as plt
 
 # #####################################################################
@@ -100,6 +104,14 @@ out.lowcut = LOWCUT
 out.highcut = HIGHCUT
 result7 = out.fftbasedJaeger(IMAGE_IDX, visualise=False)
 
+out = TestFFTbasedHauptmann()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+result8 = out.fft_recon(IMAGE_IDX, visualise=False)
+
 vmin = None
 vmax = None
 
@@ -133,8 +145,12 @@ plt.title("CSF-PCF-DAS + fnumber")
 plt.imshow(result6[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
 plt.subplot(2, 4, 7)
-plt.title("FFT-based")
+plt.title("FFT-based (Jaeger)")
 plt.imshow(result7[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
+plt.subplot(2, 4, 8)
+plt.title("FFT-based (Hauptmann)")
+plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
 
 plt.tight_layout()

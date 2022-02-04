@@ -10,16 +10,16 @@ from scipy.ndimage import zoom
 import numpy as np
 
 
-def fft_based_reconstruction_2d(time_series_data,
-                                detection_elements,
-                                sampling_rate,
-                                sos: float,
-                                delay,
-                                zero_pad_detectors,
-                                zero_pad_time,
-                                fourier_coefficients_dim,
-                                spacing_m,
-                                field_of_view):
+def fft_based_jaeger_2d(time_series_data,
+                        detection_elements,
+                        sampling_rate,
+                        sos: float,
+                        delay,
+                        zero_pad_detectors,
+                        zero_pad_time,
+                        fourier_coefficients_dim,
+                        spacing_m,
+                        field_of_view):
     """
 
     :param time_series_data: A 2D numpy array with the following internal array definition:

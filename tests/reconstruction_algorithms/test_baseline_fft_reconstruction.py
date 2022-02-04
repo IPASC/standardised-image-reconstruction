@@ -8,10 +8,10 @@ SPDX-License-Identifier: MIT
 """
 
 from tests.reconstruction_algorithms import TestClassBase
-from image_reconstruction.reconstruction_algorithms.fft_reconstruction import FFTReconstruction
+from image_reconstruction.reconstruction_algorithms.fft_based import FFTbasedHauptmann2018
 
 
-class TestFFTRecon(TestClassBase):
+class TestFFTbasedHauptmann(TestClassBase):
 
     # General parameters
     lowcut = 5000
@@ -24,7 +24,7 @@ class TestFFTRecon(TestClassBase):
   
 
     def fft_recon(self, image_idx=0, visualise=True):
-        return self.run_tests(FFTReconstruction(), image_idx=image_idx, visualise=visualise, **{
+        return self.run_tests(FFTbasedHauptmann2018(), image_idx=image_idx, visualise=visualise, **{
             "spacing_m": self.spacing_m,
             "speed_of_sound_m_s": self.speed_of_sound_m_s,
             "lowcut": self.lowcut,

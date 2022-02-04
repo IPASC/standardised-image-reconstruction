@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 """
 
 from tests.reconstruction_algorithms import TestClassBase
-from image_reconstruction.reconstruction_algorithms.fft_based_reconstruction import FftBasedJaeger2007
+from image_reconstruction.reconstruction_algorithms.fft_based import FftBasedJaeger2007
 
 
 class TestFFTbasedJaeger(TestClassBase):

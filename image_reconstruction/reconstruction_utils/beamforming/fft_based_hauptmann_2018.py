@@ -1,7 +1,7 @@
 """
 SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
-SPDX-FileCopyrightText: 2021 Jenni Poimala
-SPDX-FileCopyrightText: 2021 Andreas Hauptmann
+SPDX-FileCopyrightText: 2022 Jenni Poimala
+SPDX-FileCopyrightText: 2022 Andreas Hauptmann
 SPDX-License-Identifier: MIT
 
 """
@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 
 import copy
 
-def fft_reconstruction(time_series_data, detection_elements, sampling_rate, field_of_view, spacing_m, speed_of_sound_in_m_per_s):
+def fft_hauptmann_2d(time_series_data, detection_elements, sampling_rate, field_of_view, spacing_m, speed_of_sound_in_m_per_s):
     """
 
     Parameters
