@@ -8,36 +8,43 @@
 %
 % author: Ben Cox, Janek Grohl
 % date: 2nd March 2022
-% last update: 22nd March 2022
+% last update: 6th April 2022
 
 function [time_series_data] = ipasc_linear_array_simulation( ...
-    initial_pressure, export_ipasc,...
-    computational_model, y_dim, PML_size)
+        initial_pressure, computational_model, export_ipasc, ...
+        infinite_phantom, PML_size)
+
     arguments
-        initial_pressure double
-        export_ipasc = true
+        initial_pressure {mustBeNumeric}
         computational_model int16 = 3
-        y_dim = 512
-        PML_size = 15
+        export_ipasc logical = true
+        infinite_phantom logical = false
+        PML_size {mustBeNumeric} = 15
     end
     
-    source.p0 = initial_pressure;
-    
+    % set the initial pressure    
+    source.p0 = initial_pressure;    
+
     % =========================================================================
     % DEFINE SIMULATION GRID & OTHER PARAMETERS
     % =========================================================================
     
-    % select which k-Wave code to run
-    % 1: MATLAB CPU code
-    % 2: C++ code
-    % 3: GPU code
-    model = computational_model;
+    % extract the size of the initial pressure volume
+    [Nx,Ny,Nz] = size(initial_pressure);
     
-    % define the size of the grid
-    Nx = 2 * y_dim - 2 * PML_size;
-    Ny = y_dim - 2 * PML_size;
-    Nz = 2 * y_dim - 2 * PML_size;
-    
+    % Check the initial pressure is the right size
+    if infinite_phantom
+        if (Nx~=Nz)||(Ny~=(Nx+2*PML_size)/2)
+            warning(['For these simulations, the x and z dimensions should be the same,'...
+                ' and the y dimension (not including the PML) should be half the other dimensions (when they include the PML).'])   
+        end
+    else
+        if (Nx~=Nz)||((Ny+2*PML_size)~=(Nx+2*PML_size)/2)
+            warning(['For these simulations, the x and z dimensions should be the same,'...
+                ' and the y dimension should be half the other dimensions (when the PMLs are included).'])   
+        end
+    end
+            
     % define the domain size in the x-direction
     Lx = 40e-3;     % [m]
     
@@ -84,19 +91,28 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
     % =========================================================================
     % RUN SIMULATION
     % =========================================================================
-    
-    % simulation parameters
-    % Turn off PML in the y-direction to simulate an infinite cylinder.
-    input_args = {'PMLSize', PML_size, 'PMLInside', false, 'PMLAlpha', [2, 0, 2]...
-         'PlotPML', false, 'PlotSim', true, 'Smooth', false, 'DataCast', 'single'};        
+
+    % Set the simulation parameters
+
+    if infinite_phantom
+        % Turn off PML in the y-direction to simulate an infinite cylinder.
+        input_args = {'PMLSize', [PML_size, 0, PML_size], 'PMLInside', false, 'PMLAlpha', [2, 0, 2]...
+            'PlotPML', false, 'Smooth', false, 'DataCast', 'single'};             
+    else
+        input_args = {'PMLSize', PML_size, 'PMLInside', false, ...
+            'PlotPML', false, 'Smooth', false, 'DataCast', 'single'};             
+    end
      
-    % run the relevant model
-    switch model
+    % run the chosen code; plot the output if running the matlab version
+    switch computational_model
         case 1
+            input_args = [input_args(:)', {'PlotSim'}, {true}]; 
             sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
         case 2
+            input_args = [input_args(:)', {'PlotSim'}, {false}];            
             sensor_data = kspaceFirstOrder3DC(kgrid, medium, source, sensor, input_args{:});
         case 3
+            input_args = [input_args(:)', {'PlotSim'}, {false}];            
             sensor_data = kspaceFirstOrder3DG(kgrid, medium, source, sensor, input_args{:});
     end
     
