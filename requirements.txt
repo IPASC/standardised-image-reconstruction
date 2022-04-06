@@ -1,7 +1,9 @@
 numpy
-ipasc_tool
+pacfish
 googledrivedownloader
 torch
 pytest
 matplotlib
 imageio
+scipy
+simpa
