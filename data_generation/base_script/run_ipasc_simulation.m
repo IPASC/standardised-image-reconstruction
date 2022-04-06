@@ -1,6 +1,11 @@
 % Script compute the output of a linear array transducer detecting a
 % photoacoustically generated wavefield
 %
+% SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
+% SPDX-FileCopyrightText: 2022 Ben Cox
+% SPDX-FileCopyrightText: 2022 Janek Grohl
+% SPDX-License-Identifier: MIT
+%
 % author: Ben Cox, Janek Grohl
 % date: 22nd March 2022
 % last update: 22nd March 2022
