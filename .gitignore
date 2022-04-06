@@ -133,4 +133,4 @@ dmypy.json
 
 *.hdf5
 *.npz
-*.png
+*.png.DS_Store
