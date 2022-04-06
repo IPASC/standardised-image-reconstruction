@@ -20,7 +20,7 @@ clearvars
 % Nx = 1024 - 2 * PML = 994
 % Ny = 512 - 2 * PML = 482
 % Nz = 1024 - 2 * PML = 994
-% 
+%
 % This corresponds to a the following dimensions / spacing combination:
 % SPACING_MM = 0.0390625 (approx 39 microns)
 % X_DIM_MM = 38.828125
