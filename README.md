@@ -13,7 +13,7 @@ How these modules are intended to be used is described in the following sections
 
 ## Getting Started
 
-0. Install git and python3 for your platform (Linux, Mac, or Windows).
+0. Install [git](https://git-scm.com/downloads) and [python3](https://www.python.org/downloads/) for your platform.
 1. Clone the repository with `git clone https://github.com/IPASC/standardised-image-reconstruction.git`.
 2. Enter the directory: `cd standardised-image-reconstruction` (Linux and Mac).
 3. **Optional** [Create a virtual enviroment](https://docs.python.org/3/library/venv.html) with `python3 -m venv env` and enter it with `source env/bin/activate` (Linux and Mac).
