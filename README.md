@@ -11,6 +11,15 @@ The project is divided into three tasks:
 Each of these tasks has one module in this repository where the code is collected.
 How these modules are intended to be used is described in the following sections:
 
+## Getting Started
+
+0. Install [git](https://git-scm.com/downloads) and [python3](https://www.python.org/downloads/) for your platform.
+1. Clone the repository with `git clone https://github.com/IPASC/standardised-image-reconstruction.git`.
+2. Enter the directory: `cd standardised-image-reconstruction` (Linux and Mac).
+3. **Optional** [Create a virtual enviroment](https://docs.python.org/3/library/venv.html) with `python3 -m venv env` and enter it with `source env/bin/activate` (Linux and Mac).
+4. [Install dependences](https://pip.pypa.io/en/stable/cli/pip_install/?highlight=requirements) `pip install -r requirements.txt`
+5. Make sure everything works by running `python3 run_all.py`
+
 ## Data Generation
 
 Data simulaion will be done using optical and acoustic forward modelling.
