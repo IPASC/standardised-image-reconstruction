@@ -3,9 +3,9 @@ SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consort
 
 Please note that the code here is an adapted version of the code
 published in the SIMPA repository also under the MIT license:
-https://github.com/CAMI-DKFZ/simpa
+https://github.com/IMSY-DKFZ/simpa
 
-SPDX-FileCopyrightText: 2021 Computer Assisted Medical Interventions Group, DKFZ
+SPDX-FileCopyrightText: 2021 Division of Intelligent Medical Systems, DKFZ
 SPDX-FileCopyrightText: Janek Groehl
 SPDX-License-Identifier: MIT
 """

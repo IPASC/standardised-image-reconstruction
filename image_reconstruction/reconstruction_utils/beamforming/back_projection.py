@@ -1,13 +1,13 @@
 """
 SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
-SPDX-FileCopyrightText: 2021 Computer Assisted Medical Interventions Group, DKFZ
+SPDX-FileCopyrightText: 2021 Division of Intelligent Medical Systems, DKFZ
 SPDX-FileCopyrightText: 2021 Janek Gröhl
 SPDX-FileCopyrightText: 2021 François Varray
 SPDX-License-Identifier: MIT
 
 Please note that the code here is based on the code
 published in the SIMPA repository also under the MIT license:
-https://github.com/CAMI-DKFZ/simpa
+https://github.com/IMSY-DKFZ/simpa
 """
 
 import torch
