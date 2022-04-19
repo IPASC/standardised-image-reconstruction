@@ -132,4 +132,5 @@ dmypy.json
 .idea/*
 
 *.hdf5
-*.png
+*.npz
+*.png.DS_Store
