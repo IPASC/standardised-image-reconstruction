@@ -38,7 +38,7 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-IMAGE_IDX = 0
+IMAGE_IDX = 3
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are
@@ -52,13 +52,13 @@ IMAGE_IDX = 0
 #
 # #####################################################################
 #
-# IMAGE_IDX = 5
+IMAGE_IDX = 5
 # Experimental measurement of a point source in a homogeneous medium.
 # Measurement is provided by Mengjie Shi. Apparent SOS: 1380
 #
 # #####################################################################
 
-SPEED_OF_SOUND = 1540
+SPEED_OF_SOUND = 1380
 ENVELOPE_TYPE = "hilbert"  # One of "log", "hilbert", "abs", "zero", "hilbert_squared", "log_squared"
 LOWCUT = None  # 5e4
 HIGHCUT = None  # 1e7
@@ -118,7 +118,18 @@ out.highcut = HIGHCUT
 out.envelope = False
 out.envelope_type = ENVELOPE_TYPE
 out.fnumber = 0
+out.signed_dmas = False
 result8 = out.back_project(IMAGE_IDX, visualise=False)
+
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 0
+out.signed_dmas = True
+result9 = out.back_project(IMAGE_IDX, visualise=False)
 
 
 vmin = None
@@ -129,41 +140,49 @@ if ENVELOPE_TYPE == "log" or ENVELOPE_TYPE == "log_squared":
     vmax = 0
 
 plt.figure(figsize=(12, 9))
-plt.subplot(2, 4, 1)
+plt.subplot(3, 4, 1)
 plt.title("DAS")
 plt.imshow(result1[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 2)
+plt.subplot(3, 4, 2)
 plt.title("DAS + fnumber")
 plt.imshow(result2[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 3)
+plt.subplot(3, 4, 3)
 plt.title("DAS + p-factor")
 plt.imshow(result3[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 4)
+plt.subplot(3, 4, 4)
 plt.title("DAS + SCF")
 plt.imshow(result4[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 5)
+plt.subplot(3, 4, 5)
 plt.title("DAS + PCF")
 plt.imshow(result5[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 6)
+plt.subplot(3, 4, 6)
 plt.title("FFT-based (Jaeger)")
 plt.imshow(result6[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 7)
+plt.subplot(3, 4, 7)
 plt.title("FFT-based (Hauptmann)")
 plt.imshow(result7[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(2, 4, 8)
+plt.subplot(3, 4, 8)
 plt.title("DMAS")
 plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-# plt.subplot(3, 4, 9)
+plt.subplot(3, 4, 9)
+plt.title("sDMAS")
+plt.imshow(result9[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
+# plt.subplot(3, 4, 10)
 # plt.title("")
-# plt.imshow(result9[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+# plt.imshow(result10[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+# plt.colorbar()
+# plt.subplot(3, 4, 11)
+# plt.title("")
+# plt.imshow(result11[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 # plt.colorbar()
 
 plt.tight_layout()

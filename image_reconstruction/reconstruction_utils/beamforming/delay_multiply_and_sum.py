@@ -17,7 +17,7 @@ from image_reconstruction.reconstruction_utils.beamforming.delay_and_sum import 
 
 def delay_multiply_and_sum(time_series_data, detection_elements, sampling_rate,
                            field_of_view, spacing_m, speed_of_sound_in_m_per_s,
-                           fnumber):
+                           fnumber, signed_dmas):
     """
 
     Parameters
@@ -29,6 +29,7 @@ def delay_multiply_and_sum(time_series_data, detection_elements, sampling_rate,
     spacing_m
     speed_of_sound_in_m_per_s
     fnumber
+    signed_dmas
 
     Returns
     -------
@@ -77,5 +78,8 @@ def delay_multiply_and_sum(time_series_data, detection_elements, sampling_rate,
         multiplied_signals = torch.sign(multiplied_signals) * torch.sqrt(torch.abs(multiplied_signals))
         # only take upper triangle without diagonal and sum up along n and m axis (last two)
         output[x] = torch.triu(multiplied_signals, diagonal=1).sum(dim=(-1, -2))
+
+    if signed_dmas:
+        output *= torch.sign(torch.sum(values, dim=3))
 
     return output.cpu().numpy()

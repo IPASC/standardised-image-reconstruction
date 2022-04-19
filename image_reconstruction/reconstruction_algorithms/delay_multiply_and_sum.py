@@ -21,21 +21,45 @@ class DelayMultiplyAndSumAlgorithm(ReconstructionAlgorithm):
                        field_of_view: np.ndarray,
                        **kwargs):
         """
-        Implementation of the delay multiply and sum algorithm.
+        Implementation of a delay and sum algorithm.
 
-        :param time_series_data: A 2D numpy array with the following internal array definition:
-                                [detectors, time samples]
-        :param detection_elements: A dictionary that describes the detection geometry.
-                                   The dictionary contains three entries:
-                                   ** "positions": The positions of the detection elements relative to the field of view
-                                   ** "orientations": The orientations of the detection elements
-                                   ** "sizes": The sizes of the detection elements.
-        :param field_of_view: A 1D 6 element-long numpy array that contains the extent of the field of view in x, y and
-                              z direction in the same coordinate system as the detection element positions.
-        :param kwargs: the list of parameters for the delay and sum reconstruction includes the following parameters:
+        The baseline implementation reflects the reconstruction algorithm described by Xu and Wang, 2005::
+
+            Xu, Minghua, and Lihong V. Wang.
+            "Universal back-projection algorithm for photoacoustic computed tomography."
+            Physical Review E 71.1 (2005): 016706.
+
+        Parameters
+        ----------
+        time_series_data: A 2D numpy array with the following internal array definition:
+                          [detectors, time samples]
+        detection_elements: A dictionary that describes the detection geometry.
+                            The dictionary contains three entries:
+                            ** "positions": The positions of the detection elements relative to the field of view
+                            ** "orientations": The orientations of the detection elements
+                            ** "sizes": The sizes of the detection elements.
+        field_of_view: A 1D 6 element-long numpy array that contains the extent of the field of view in x, y and
+                       z direction in the same coordinate system as the detection element positions.
+
+        kwargs: the list of parameters for the delay and sum reconstruction includes the following parameters:
             ** 'spacing_m' the target isotropic reconstruction spacing in units of meters
             ** 'speed_of_sound_m_s' the target speed of sound in units of meters per second
-        :return:
+
+            ** 'fnumber' the fnumber as described in this paper::
+
+                    Perrot, Vincent, et al.
+                    "So you think you can DAS?
+                    A viewpoint on delay-and-sum beamforming." Ultrasonics 111 (2021): 106309.
+
+            ** 'signed_dmas' boolean to define whether the sign of the original DAS is retained according to::
+
+                    Kirchner, Thomas et al.
+                    "Signed Real-Time Delay Multiply and Sum Beamforming for Multispectral Photoacoustic Imaging"
+                    J. Imaging 2018, 4(10), 121
+
+        Returns
+        -------
+        A reconstructed image
         """
 
         time_series_data = time_series_data.astype(float)
@@ -51,21 +75,13 @@ class DelayMultiplyAndSumAlgorithm(ReconstructionAlgorithm):
         if "spacing_m" in kwargs:
             spacing_m = kwargs["spacing_m"]
 
-        p_factor = 1
-        if "p_factor" in kwargs:
-            p_factor = kwargs["p_factor"]
-
-        p_scf = 0
-        if "p_SCF" in kwargs:
-            p_scf = kwargs["p_SCF"]
-
-        p_pcf = 0
-        if "p_PCF" in kwargs:
-            p_pcf = kwargs["p_PCF"]
-
         fnumber = 0
         if "fnumber" in kwargs:
             fnumber = kwargs["fnumber"]
+
+        signed_dmas = False
+        if "signed_dmas" in kwargs:
+            signed_dmas = kwargs["signed_dmas"]
 
         reconstructed = delay_multiply_and_sum(time_series_data=time_series_data,
                                                detection_elements=detection_elements,
@@ -73,6 +89,7 @@ class DelayMultiplyAndSumAlgorithm(ReconstructionAlgorithm):
                                                field_of_view=field_of_view,
                                                spacing_m=spacing_m,
                                                speed_of_sound_in_m_per_s=speed_of_sound_in_m_per_s,
-                                               fnumber=fnumber)
+                                               fnumber=fnumber,
+                                               signed_dmas=signed_dmas)
 
         return reconstructed
