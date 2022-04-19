@@ -8,6 +8,7 @@ SPDX-License-Identifier: MIT
 """
 
 from tests.reconstruction_algorithms.test_baseline_delay_and_sum import TestDelayAndSum
+from tests.reconstruction_algorithms.test_delay_multiply_and_sum import TestDelayMultiplyAndSum
 from tests.reconstruction_algorithms.test_fftbased_jaeger import TestFFTbasedJaeger
 from tests.reconstruction_algorithms.test_baseline_fft_reconstruction import TestFFTbasedHauptmann
 
@@ -37,7 +38,7 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-IMAGE_IDX = 3
+IMAGE_IDX = 0
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are
@@ -110,6 +111,16 @@ out.envelope = True
 out.envelope_type = ENVELOPE_TYPE
 result7 = out.fft_recon(IMAGE_IDX, visualise=False)
 
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = False
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 0
+result8 = out.back_project(IMAGE_IDX, visualise=False)
+
+
 vmin = None
 vmax = None
 
@@ -118,38 +129,38 @@ if ENVELOPE_TYPE == "log" or ENVELOPE_TYPE == "log_squared":
     vmax = 0
 
 plt.figure(figsize=(12, 9))
-plt.subplot(3, 4, 1)
+plt.subplot(2, 4, 1)
 plt.title("DAS")
 plt.imshow(result1[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(3, 4, 2)
+plt.subplot(2, 4, 2)
 plt.title("DAS + fnumber")
 plt.imshow(result2[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(3, 4, 3)
+plt.subplot(2, 4, 3)
 plt.title("DAS + p-factor")
 plt.imshow(result3[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(3, 4, 4)
+plt.subplot(2, 4, 4)
 plt.title("DAS + SCF")
 plt.imshow(result4[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(3, 4, 5)
+plt.subplot(2, 4, 5)
 plt.title("DAS + PCF")
 plt.imshow(result5[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(3, 4, 6)
+plt.subplot(2, 4, 6)
 plt.title("FFT-based (Jaeger)")
 plt.imshow(result6[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-plt.subplot(3, 4, 7)
+plt.subplot(2, 4, 7)
 plt.title("FFT-based (Hauptmann)")
 plt.imshow(result7[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-# plt.subplot(3, 4, 8)
-# plt.title("")
-# plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
-# plt.colorbar()
+plt.subplot(2, 4, 8)
+plt.title("DMAS")
+plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
 # plt.subplot(3, 4, 9)
 # plt.title("")
 # plt.imshow(result9[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
