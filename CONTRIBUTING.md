@@ -4,6 +4,7 @@
 | Name | Institution | Contributions |
 | ---- | --- | ------------- |
 | Ben Cox | University College London | Data simulation: MATLAB scripts and base phantoms |
+| Kris K Dreher | German cancer Research Center | Image Reconstruction: DMAS and sDMAS beamforming |
 | Janek Gröhl | University of Cambridge | General Maintenance; Code Infrastructure; Image Reconstruction: baseline back-projection algorithm; Data simulation: SIMPA integration |
 | Jenni Poimala | University of Oulu | Image Reconstruction: FFT-based image reconstruction |
 | Mengjie Shi | Kings College London | Image Reconstruction: FFT-based image reconstruction |
