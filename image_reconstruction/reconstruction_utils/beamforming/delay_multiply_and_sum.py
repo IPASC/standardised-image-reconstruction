@@ -22,15 +22,23 @@ def delay_multiply_and_sum(time_series_data, detection_elements, sampling_rate,
 
     Parameters
     ----------
-    time_series_data
-    detection_elements
-    sampling_rate
-    field_of_view
-    spacing_m
-    speed_of_sound_in_m_per_s
-    fnumber
-    signed_dmas
-
+    time_series_data: numpy.ndarray
+        The time series data for each detection element
+    detection_elements: dict
+        A dictionary containing metadata on the detection elements. Must at least contain a numpy array with the detector "positions".
+    sampling_rate: float
+        The sampling rate of the photoacoustic device in Hz
+    field_of_view: numpy.ndarray
+        The definition of the field of view the image should be reconstructed in. Defined as: [xmin, xmax, ymin, ymax, zmin, zmax].
+    spacing_m: float
+        The target voxel spacing in the reconstructed image
+    speed_of_sound_in_m_per_s: float
+        The assumed average speed of sound in the medium
+    fnumber: float
+        fnumber as defined in Perrot et al. 2021
+    signed_dmas: bool
+        whether to retain the sign of the corresponding DAS reconstruction as defined by Kirchner et al. 2018
+       
     Returns
     -------
 
