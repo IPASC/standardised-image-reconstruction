@@ -8,7 +8,7 @@
 %
 % author: Ben Cox, Janek Grohl
 % date: 22nd March 2022
-% last update: 6th April 2022
+% last update: 20th April 2022
 
 clearvars
 
@@ -18,34 +18,18 @@ addpath('../../base_script')
 % DEFINE OR LOAD PHOTOACOUSTIC SOURCE
 % =========================================================================
 
-% Size of the perfectly matched layer around the domain
-PML_size = 15;
-
 % The initial pressure for the study should be a 3D array of these dimensions
-%
-% Nx = 1024 - 2 * PML_size = 994;
-% Ny = 512  - 2 * PML_size = 482;
-% Nz = 1024 - 2 * PML_size = 994;
-%
-% or these, if using the periodicity in k-Wave to generate an infinitely
-% long object, eg a cylinder
-% 
-% Nx = 1024 - 2 * PML_size = 994;
-% Ny = 512;
-% Nz = 1024 - 2 * PML_size = 994;
-Nx = 1024 - 2 * PML_size;
+Nx = 1024;
 Ny = 512;
-Nz = 1024 - 2 * PML_size;
-
+Nz = 1024;
  
-% % simple test case for running locally
+% % % simple test case for running locally
 % Nx = 98;
 % Ny = 64;
 % Nz = 98;
 
 disc = makeDisc(Nx, Nz, Nx/2, Nz/2, Nx/10);    
 initial_pressure = permute(repmat(disc, 1, 1, Ny), [1 3 2]);
-
 
 
 % =========================================================================
@@ -56,7 +40,7 @@ initial_pressure = permute(repmat(disc, 1, 1, Ny), [1 3 2]);
 % 1 - matlab code on CPU
 % 2 - C++ code on CPU
 % 3 - CUDA code on GPU
-computational_model = 1;
+computational_model = 3;
 
 % Export the simulated time series in the IPASC hdf5 file format
 export_ipasc = false;
@@ -72,7 +56,7 @@ infinite_phantom = true;
 % =========================================================================
 
 % Run the simulation function
-time_series_data = ipasc_linear_array_simulation(initial_pressure, computational_model, export_ipasc, infinite_phantom, PML_size);
+time_series_data = ipasc_linear_array_simulation(initial_pressure, computational_model, export_ipasc, infinite_phantom);
 
 % Save the result as a mat file (for now - IPASC data format export to come)
 save('time_series_data.mat','time_series_data')
