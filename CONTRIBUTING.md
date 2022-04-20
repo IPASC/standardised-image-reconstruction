@@ -77,7 +77,7 @@ This is a built-in feature of git and you can automate this by using the `-s` fl
 
 ### Coding conventions
 
-We ask all contributors to follow a couple of conventions and best pratices when contributing code:
+We ask all contributors to follow a couple of conventions and best practices when contributing code:
 - Code is formatted according to the Python PEP-8 coding standard.
 - Contributors create a test case that tests their code.
 - Contributors document their code.
