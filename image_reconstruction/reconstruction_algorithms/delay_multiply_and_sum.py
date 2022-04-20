@@ -21,13 +21,13 @@ class DelayMultiplyAndSumAlgorithm(ReconstructionAlgorithm):
                        field_of_view: np.ndarray,
                        **kwargs):
         """
-        Implementation of a delay and sum algorithm.
+        Implementation of the delay-multiply-and-sum algorithm.
 
-        The baseline implementation reflects the reconstruction algorithm described by Xu and Wang, 2005::
+        The implementation is based on the original publication for the application to ultrasound images by Matrone et al::
 
-            Xu, Minghua, and Lihong V. Wang.
-            "Universal back-projection algorithm for photoacoustic computed tomography."
-            Physical Review E 71.1 (2005): 016706.
+            Matrone, Giulia, Alessandro Stuart Savoia, Giosuè Caliano, and Giovanni Magenes. 
+            "The delay multiply and sum beamforming algorithm in ultrasound B-mode medical imaging."
+            IEEE transactions on medical imaging 34, no. 4 (2014): 940-949.
 
         Parameters
         ----------
