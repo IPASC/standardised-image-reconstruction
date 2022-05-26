@@ -4,10 +4,6 @@ SPDX-FileCopyrightText: 2022 Janek Grohl
 SPDX-License-Identifier: MIT
 """
 
-# ##############################################
-#
-#
-# ##############################################
 from simpa.utils.libraries.structure_library import CircularTubularStructure
 from simpa import Settings, Tags, TISSUE_LIBRARY
 import scipy.io
