@@ -124,12 +124,14 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
     combined_sensor_data = sensor_array.combineSensorData(kgrid, sensor_data);
     time_series_data = combined_sensor_data;
 
+    save_path = strrep(load_path,"_kwave.mat","_ipasc.hdf5");
+
     if export_ipasc
         disp("Exporting to the IPASC data format...")
         kwave_adapter = pacfish.kwave_adapter(sensor_array, time_series_data, medium, kgrid, ...
             [-(N_elements/2 + 0.5)*pitch; (N_elements/2 + 0.5)*pitch; 0; 0; -Nz*dx / 2; Nz*dx / 2]);
         pa_data = kwave_adapter.get_pa_data();
-        pacfish.write_data("time_series_data_ipasc.hdf5", pa_data, 1)
+        pacfish.write_data(save_path, pa_data, 1)
     end
 
 end

@@ -7,6 +7,7 @@ import inspect
 import subprocess
 import numpy as np
 import simpa as sp
+import pacfish as pf
 import scipy.io as sio
 from scipy.spatial.transform import Rotation
 from simpa.utils.calculate import rotation_matrix_between_vectors
@@ -88,7 +89,7 @@ class IpascSimpaKWaveAdapter(AcousticForwardModelBaseAdapter):
         self.logger.info(cmd)
         subprocess.run(cmd)
 
-        raw_time_series_data = sio.loadmat(mat_file_path)[sp.Tags.DATA_FIELD_TIME_SERIES_DATA]
+        raw_time_series_data = pf.load_data(mat_file_path.replace("_kwave.mat", "_ipasc.hdf5")).binary_time_series_data
 
         # delete exported data
 

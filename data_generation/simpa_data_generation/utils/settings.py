@@ -1,5 +1,6 @@
 from simpa import Settings, Tags
 import simpa as sp
+from simpa.utils.tissue_properties import TissueProperties
 import uuid
 
 
@@ -30,6 +31,8 @@ def generate_base_settings(path_manager: sp.PathManager,
     settings[Tags.DATA_FIELD_SPEED_OF_SOUND] = speed_of_sound
     settings[Tags.WAVELENGTHS] = [wavelength]
     settings[Tags.RANDOM_SEED] = random_seed
+    settings[Tags.GPU] = True
+    settings[Tags.DO_FILE_COMPRESSION] = True
 
     settings.set_acoustic_settings({
         Tags.ACOUSTIC_MODEL_BINARY_PATH: path_manager.get_matlab_binary_path(),
@@ -38,6 +41,7 @@ def generate_base_settings(path_manager: sp.PathManager,
     settings.set_reconstruction_settings({
         Tags.ACOUSTIC_MODEL_BINARY_PATH: path_manager.get_matlab_binary_path(),
         Tags.ACOUSTIC_SIMULATION_3D: False,
+        Tags.KWAVE_PROPERTY_ALPHA_POWER: 0.00,
         Tags.KWAVE_PROPERTY_SENSOR_RECORD: "p",
         Tags.KWAVE_PROPERTY_PMLInside: False,
         Tags.KWAVE_PROPERTY_PMLSize: [31, 32],
@@ -49,7 +53,11 @@ def generate_base_settings(path_manager: sp.PathManager,
         Tags.DATA_FIELD_SPEED_OF_SOUND: speed_of_sound,
         Tags.DATA_FIELD_ALPHA_COEFF: 0.01,
         Tags.DATA_FIELD_DENSITY: 1000,
-        Tags.SPACING_MM: settings[Tags.SPACING_MM]
+        Tags.SPACING_MM: settings[Tags.SPACING_MM],
+        Tags.SENSOR_SAMPLING_RATE_MHZ: 50
     })
+
+    settings["FieldOfViewCropping"] = Settings({
+        Tags.DATA_FIELD: TissueProperties.property_tags})
 
     return settings

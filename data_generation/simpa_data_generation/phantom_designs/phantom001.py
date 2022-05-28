@@ -14,7 +14,7 @@ from simpa import Tags
 import simpa as sp
 
 
-def phantom001():
+def phantom001(dim_x_mm, dim_y_mm, dim_z_mm):
     background_dictionary = sp.Settings()
     # Near-zero scattering and absorption in the background
     background_dictionary[Tags.MOLECULE_COMPOSITION] = sp.TISSUE_LIBRARY.constant(1e-10, 1e-10, 1.0)
@@ -22,5 +22,13 @@ def phantom001():
 
     tissue_dict = sp.Settings()
     tissue_dict[Tags.BACKGROUND] = background_dictionary
+
+    tissue_dict["vessel_1"] = sp.define_circular_tubular_structure_settings(
+        tube_start_mm=[dim_x_mm / 2, 0, dim_z_mm / 2],
+        tube_end_mm=[dim_x_mm / 2, dim_y_mm, dim_z_mm / 2],
+        molecular_composition=sp.TISSUE_LIBRARY.constant(1, 1, 0.9),
+        radius_mm=dim_x_mm/10, priority=3, consider_partial_volume=False,
+        adhere_to_deformation=False
+    )
 
     return {Tags.STRUCTURES: tissue_dict}

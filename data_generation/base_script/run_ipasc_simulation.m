@@ -51,10 +51,10 @@ initial_pressure = permute(repmat(disc, 1, 1, aNy), [1 3 2]);
 % 1 - matlab code on CPU
 % 2 - C++ code on CPU
 % 3 - CUDA code on GPU
-computational_model = 1;
+computational_model = 3;
 
 % Export the simulated time series in the IPASC hdf5 file format
-export_ipasc = false;
+export_ipasc = true;
 
 % Turn off the PML in k-Wave in the y-direction in order to use the
 % periodicity built into k-Wave to make phantom effectively infinite in the

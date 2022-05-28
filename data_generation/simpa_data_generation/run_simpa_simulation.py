@@ -27,7 +27,7 @@ spacing = settings[Tags.SPACING_MM]
 # Case 1: using the SIMPA volume creation module
 #
 # ###################################################################################
-settings.set_volume_creation_settings(phantom001())
+settings.set_volume_creation_settings(phantom001(dim_x_mm, dim_y_mm, dim_z_mm))
 
 acoustic_settings = settings.get_acoustic_settings()
 # For this simulation: Use the created absorption map as the input initial pressure
@@ -37,20 +37,28 @@ pipeline = [
     sp.ModelBasedVolumeCreationAdapter(settings),
     IpascSimpaKWaveAdapter(settings),
     sp.TimeReversalAdapter(settings),
-    sp.FieldOfViewCropping(settings)
+    sp.FieldOfViewCropping(settings, "FieldOfViewCropping")
 ]
 
 # Create a device with
 device = sp.PhotoacousticDevice(device_position_mm=np.array([dim_x_mm/2,
                                                              dim_y_mm/2,
                                                              0]),
-                                field_of_view_extent_mm=np.asarray([-15, 15, 0, 0, 0, 20]))
+                                field_of_view_extent_mm=np.asarray([-20, 20, 0, 0, 0, 40]))
 device.set_detection_geometry(sp.LinearArrayDetectionGeometry(device_position_mm=device.device_position_mm,
-                                                              pitch_mm=0.25,
-                                                              number_detector_elements=100,
-                                                              field_of_view_extent_mm=np.asarray([-15, 15, 0, 0, 0, 20])))
+                                                              pitch_mm=0.3,
+                                                              number_detector_elements=128,
+                                                              sampling_frequency_mhz=50,
+                                                              field_of_view_extent_mm=np.asarray([-20, 20, 0, 0, 0, 40])))
 device.add_illumination_geometry(sp.SlitIlluminationGeometry(slit_vector_mm=[100, 0, 0]))
 
 sp.simulate(simulation_pipeline=pipeline,
             settings=settings,
             digital_device_twin=device)
+
+sp.visualise_data(settings=settings,
+                  path_manager=path_manager,
+                  wavelength=800,
+                  show_absorption=True,
+                  show_time_series_data=True,
+                  show_reconstructed_data=True)
