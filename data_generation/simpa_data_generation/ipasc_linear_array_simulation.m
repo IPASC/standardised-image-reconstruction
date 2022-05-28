@@ -36,16 +36,8 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
     [Nx,Ny,Nz] = size(initial_pressure);
 
     % Check the initial pressure is the right size
-    if infinite_phantom
-        if (Nx~=Nz)||(Ny~=(Nx+2*PML_size)/2)
-            warning(['For these simulations, the x and z dimensions should be the same,'...
-                ' and the y dimension (not including the PML) should be half the other dimensions (when they include the PML).'])
-        end
-    else
-        if (Nx~=Nz)||((Ny+2*PML_size)~=(Nx+2*PML_size)/2)
-            warning(['For these simulations, the x and z dimensions should be the same,'...
-                ' and the y dimension should be half the other dimensions (when the PMLs are included).'])
-        end
+    if ~isequal([Nx,Ny,Nz], [1024, 512, 1024])
+        warning(['For these simulations, the dimensions should be [1024, 512, 1024]'])
     end
 
     % define the domain size in the x-direction
@@ -81,8 +73,8 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
 
     % add elements to form the linear array
     N_elements = 128;                                   % number of elements
-    y_position  = -Ly/2;                                    % [m]
-    z_position  = min(kgrid.z_vec);                    % [m]
+    y_position  = -Ly/2;                                % [m]
+    z_position  = min(kgrid.z_vec) + PML_size*kgrid.dz; % [m]
     for N_loop = 0:N_elements-1
         x_position  = (N_loop - N_elements/2 + 0.5) * pitch;    % [m]
         sensor_array.addRectElement([x_position, y_position, z_position], Lx, Ly, theta)
@@ -99,10 +91,10 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
 
     if infinite_phantom
         % Turn off PML in the y-direction to simulate an infinite cylinder.
-        input_args = {'PMLSize', [PML_size, 0, PML_size], 'PMLInside', false, 'PMLAlpha', [2, 0, 2]...
+        input_args = {'PMLSize', [PML_size, 0, PML_size], 'PMLInside', true, 'PMLAlpha', [2, 0, 2]...
             'PlotPML', false, 'Smooth', false, 'DataCast', 'single'};
     else
-        input_args = {'PMLSize', PML_size, 'PMLInside', false, ...
+        input_args = {'PMLSize', PML_size, 'PMLInside', true, ...
             'PlotPML', false, 'Smooth', false, 'DataCast', 'single'};
     end
 
