@@ -3,8 +3,13 @@
 
 | Name | Institution | Contributions |
 | ---- | --- | ------------- |
-| Janek Gröhl | University of Cambridge | General Maintenance; Code Infrastructure; Image Reconstruction: baseline back-projection algorithm;  |
+| Ben Cox | University College London | Data simulation: MATLAB scripts and base phantoms |
+| Kris K Dreher | German cancer Research Center | Image Reconstruction: DMAS and sDMAS beamforming |
+| Janek Gröhl | University of Cambridge | General Maintenance; Code Infrastructure; Image Reconstruction: baseline back-projection algorithm; Data simulation: SIMPA integration |
+| Jenni Poimala | University of Oulu | Image Reconstruction: FFT-based image reconstruction |
+| Mengjie Shi | Kings College London | Image Reconstruction: FFT-based image reconstruction |
 | François Varray | Creatis, Université de Lyon | Image Reconstruction: back-projection variant implementations: fnumber, pDAS, SCF, PCF; general testing |
+
 
 # How to contribute
 
@@ -73,7 +78,7 @@ This is a built-in feature of git and you can automate this by using the `-s` fl
 
 ### Coding conventions
 
-We ask all contributors to follow a couple of conventions and best pratices when contributing code:
+We ask all contributors to follow a couple of conventions and best practices when contributing code:
 - Code is formatted according to the Python PEP-8 coding standard.
 - Contributors create a test case that tests their code.
 - Contributors document their code.

@@ -8,6 +8,7 @@ SPDX-License-Identifier: MIT
 """
 
 from tests.reconstruction_algorithms.test_baseline_delay_and_sum import TestDelayAndSum
+from tests.reconstruction_algorithms.test_delay_multiply_and_sum import TestDelayMultiplyAndSum
 from tests.reconstruction_algorithms.test_fftbased_jaeger import TestFFTbasedJaeger
 from tests.reconstruction_algorithms.test_baseline_fft_reconstruction import TestFFTbasedHauptmann
 
@@ -31,13 +32,13 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-# IMAGE_IDX = 2
+IMAGE_IDX = 2
 # Experimental image provided by Manojit Pramanik. It is a point absorber
 # in a homogeneous medium. SOS=1480
 #
 # #####################################################################
 #
-IMAGE_IDX = 3
+# IMAGE_IDX = 3
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are
@@ -57,8 +58,8 @@ IMAGE_IDX = 3
 #
 # #####################################################################
 
-SPEED_OF_SOUND = 1540
-ENVELOPE_TYPE = "hilbert"  # One of "log", "hilbert", "abs", "zero", "hilbert_squared", "log_squared"
+SPEED_OF_SOUND = 1480
+ENVELOPE_TYPE = "log"  # One of "log", "hilbert", "abs", "zero", "hilbert_squared", "log_squared"
 LOWCUT = None  # 5e4
 HIGHCUT = None  # 1e7
 
@@ -110,6 +111,47 @@ out.envelope = True
 out.envelope_type = ENVELOPE_TYPE
 result7 = out.fft_recon(IMAGE_IDX, visualise=False)
 
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 0
+out.signed_dmas = False
+result8 = out.back_project(IMAGE_IDX, visualise=False)
+
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 1
+out.signed_dmas = False
+result9 = out.back_project(IMAGE_IDX, visualise=False)
+
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 0
+out.signed_dmas = True
+result10 = out.back_project(IMAGE_IDX, visualise=False)
+
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 1
+out.signed_dmas = True
+result11 = out.back_project(IMAGE_IDX, visualise=False)
+
+
 vmin = None
 vmax = None
 
@@ -146,14 +188,22 @@ plt.subplot(3, 4, 7)
 plt.title("FFT-based (Hauptmann)")
 plt.imshow(result7[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-# plt.subplot(3, 4, 8)
-# plt.title("")
-# plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
-# plt.colorbar()
-# plt.subplot(3, 4, 9)
-# plt.title("")
-# plt.imshow(result9[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
-# plt.colorbar()
+plt.subplot(3, 4, 8)
+plt.title("DMAS")
+plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
+plt.subplot(3, 4, 9)
+plt.title("DMAS + fnumber")
+plt.imshow(result9[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
+plt.subplot(3, 4, 10)
+plt.title("sDMAS")
+plt.imshow(result10[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
+plt.subplot(3, 4, 11)
+plt.title("sDMAS + fnumber")
+plt.imshow(result11[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
 
 plt.tight_layout()
 plt.show()
