@@ -68,3 +68,23 @@ file for a coding reference.
 ## Contribute to the project
 
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for information on how to contribute.
+
+## Citations
+
+### FFT-Based Jaeger
+- Jaeger, M., Schüpbach, S., Gertsch, A., Kitz, M., & Frenz, M. (2007). Fourier reconstruction 
+  in optoacoustic imaging using truncated regularized inverse k-space interpolation. Inverse Problems, 
+  23(6), S51.
+### FFT-Based Hauptmann 
+- Hauptmann, A., Cox, B., Lucka, F., Huynh, N., Betcke, M., Beard, P., & Arridge, S. 
+  (2018, September). Approximate k-space models and deep learning for fast photoacoustic 
+  reconstruction. In International Workshop on Machine Learning for Medical Image Reconstruction 
+  (pp. 103-111). Springer, Cham.
+  
+- Köstli, K. P., Frenz, M., Bebie, H., & Weber, H. P. (2001). Temporal backward projection 
+  of optoacoustic pressure transients using Fourier transform methods. Physics in Medicine 
+  & Biology, 46(7), 1863.
+
+- Xu, Y., Feng, D., & Wang, L. V. (2002). Exact frequency-domain reconstruction for 
+  thermoacoustic tomography. I. Planar geometry. IEEE transactions on medical imaging, 
+  21(7), 823-828.
