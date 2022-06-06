@@ -21,6 +21,13 @@ def fft_based_jaeger_2d(time_series_data,
                         spacing_m,
                         field_of_view):
     """
+    Implementation of an FFT-based algorithm.
+    
+    The implementation reflects the reconstruction algorithm described by Jaeger et al., 2007:
+
+      Jaeger, M., Schüpbach, S., Gertsch, A., Kitz, M., & Frenz, M. (2007). Fourier reconstruction 
+      in optoacoustic imaging using truncated regularized inverse k-space interpolation. Inverse Problems, 
+      23(6), S51.
 
     :param time_series_data: A 2D numpy array with the following internal array definition:
                             [detectors, time samples]
