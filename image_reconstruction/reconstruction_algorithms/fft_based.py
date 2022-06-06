@@ -27,6 +27,9 @@ class FftBasedJaeger2007(ReconstructionAlgorithm):
             Jaeger, M., Schüpbach, S., Gertsch, A., Kitz, M., & Frenz, M. (2007). Fourier reconstruction 
             in optoacoustic imaging using truncated regularized inverse k-space interpolation. Inverse Problems, 
             23(6), S51.
+          
+         Parameters
+         ----------
 
          :param time_series_data: A 2D numpy array with the following internal array definition:
                                  [detectors, time samples]
@@ -48,6 +51,9 @@ class FftBasedJaeger2007(ReconstructionAlgorithm):
              ** 'samplingX': 1,defines how many image lines are reconstructed per transducer element. For value>1, the additional image lines are equidistantly placed between the transducer elements
              ** 'spacing_m': the target resolution in meters. Default resolution is 0.1 mm.
 
+         Returns
+         ----------
+         
          :return:
          """
         speed_of_sound_in_m_per_s = 1480
