@@ -28,6 +28,9 @@ def fft_based_jaeger_2d(time_series_data,
       Jaeger, M., Schüpbach, S., Gertsch, A., Kitz, M., & Frenz, M. (2007). Fourier reconstruction 
       in optoacoustic imaging using truncated regularized inverse k-space interpolation. Inverse Problems, 
       23(6), S51.
+      
+    Parameters
+    ----------
 
     :param time_series_data: A 2D numpy array with the following internal array definition:
                             [detectors, time samples]
@@ -42,6 +45,8 @@ def fft_based_jaeger_2d(time_series_data,
     :param spacing_m: The target resolution in meters; default=0.0001
     :param field_of_view: The target field of view in [xmin, xmax, ymin, ymax, zmin, zmax] in meters
 
+    Returns
+    ----------
     :return: reconstructed_image: resulting image, has equal number of samples in axial(z) direction as the signal.
              The number of image lines is: (number of elements -1) *samplingX +1
 
