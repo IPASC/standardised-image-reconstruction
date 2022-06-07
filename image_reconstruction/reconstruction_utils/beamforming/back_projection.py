@@ -20,7 +20,13 @@ def back_projection(time_series_data, detection_elements, sampling_rate,
                     field_of_view, spacing_m, speed_of_sound_in_m_per_s,
                     fnumber, p_scf, p_factor, p_pcf):
     """
-
+    Implementation of a delay and sum algorithm.
+    
+    The baseline implementation reflects the reconstruction algorithm described by Xu and Wang, 2005:
+        
+      Xu, M., & Wang, L. V. (2005). Universal back-projection algorithm for photoacoustic computed 
+      tomography. Physical Review E, 71(1), 016706.
+      
     Parameters
     ----------
     time_series_data
