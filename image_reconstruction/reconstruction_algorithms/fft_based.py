@@ -24,9 +24,12 @@ class FftBasedJaeger2007(ReconstructionAlgorithm):
 
          The implementation reflects the reconstruction algorithm described by Jaeger et al., 2007::
 
-            Jaeger, Michael, et al.
-            "Fourier reconstruction in optoacoustic imaging using truncated regularized inverse k-space interpolation."
-            Inverse Problems 23.6 (2007): S51.
+            Jaeger, M., Schüpbach, S., Gertsch, A., Kitz, M., & Frenz, M. (2007). Fourier reconstruction 
+            in optoacoustic imaging using truncated regularized inverse k-space interpolation. Inverse Problems, 
+            23(6), S51.
+          
+         Parameters
+         ----------
 
          :param time_series_data: A 2D numpy array with the following internal array definition:
                                  [detectors, time samples]
@@ -48,6 +51,9 @@ class FftBasedJaeger2007(ReconstructionAlgorithm):
              ** 'samplingX': 1,defines how many image lines are reconstructed per transducer element. For value>1, the additional image lines are equidistantly placed between the transducer elements
              ** 'spacing_m': the target resolution in meters. Default resolution is 0.1 mm.
 
+         Returns
+         ----------
+         
          :return:
          """
         speed_of_sound_in_m_per_s = 1480
@@ -97,11 +103,21 @@ class FFTbasedHauptmann2018(ReconstructionAlgorithm):
         """
         Implementation of an FFT-based reconstruction algorithm.
 
-        The implementation reflects the reconstruction algorithm described by Hauptmann et al., 2018::
+        The implementation reflects the reconstruction algorithm described by Hauptmann et al., 2018.
+        Additionally, original papers are also cited:
+        
+            Hauptmann, A., Cox, B., Lucka, F., Huynh, N., Betcke, M., Beard, P., & Arridge, S. 
+            (2018, September). Approximate k-space models and deep learning for fast photoacoustic 
+            reconstruction. In International Workshop on Machine Learning for Medical Image Reconstruction 
+            (pp. 103-111). Springer, Cham.
 
-            Hauptmann, Andreas, et al.
-            "Approximate k-space models and deep learning for fast photoacoustic reconstruction."
-            International Workshop on Machine Learning for Medical Image Reconstruction. Springer, Cham, 2018.
+            Köstli, K. P., Frenz, M., Bebie, H., & Weber, H. P. (2001). Temporal backward projection 
+            of optoacoustic pressure transients using Fourier transform methods. Physics in Medicine 
+            & Biology, 46(7), 1863.
+            
+            Xu, Y., Feng, D., & Wang, L. V. (2002). Exact frequency-domain reconstruction for 
+            thermoacoustic tomography. I. Planar geometry. IEEE transactions on medical imaging, 
+            21(7), 823-828.
 
         Parameters
         ----------
