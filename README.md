@@ -88,3 +88,7 @@ Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for information on how to
 - Xu, Y., Feng, D., & Wang, L. V. (2002). Exact frequency-domain reconstruction for 
   thermoacoustic tomography. I. Planar geometry. IEEE transactions on medical imaging, 
   21(7), 823-828.
+  
+### Back Projection
+- Xu, M., & Wang, L. V. (2005). Universal back-projection algorithm for photoacoustic computed 
+  tomography. Physical Review E, 71(1), 016706.
