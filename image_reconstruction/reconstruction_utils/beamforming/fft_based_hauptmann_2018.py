@@ -17,6 +17,23 @@ import copy
 def fft_hauptmann_2d(time_series_data, detection_elements, sampling_rate_hz,
                      field_of_view, spacing_m, speed_of_sound_in_m_per_s):
     """
+    Implementation of an FFT-based reconstruction algorithm.
+    
+    The implementation reflects the reconstruction algorithm described by Hauptmann et al., 2018.
+    Additionally, original papers are also cited:
+
+        Hauptmann, A., Cox, B., Lucka, F., Huynh, N., Betcke, M., Beard, P., & Arridge, S. 
+        (2018, September). Approximate k-space models and deep learning for fast photoacoustic 
+        reconstruction. In International Workshop on Machine Learning for Medical Image Reconstruction 
+        (pp. 103-111). Springer, Cham.
+        
+        Köstli, K. P., Frenz, M., Bebie, H., & Weber, H. P. (2001). Temporal backward projection 
+        of optoacoustic pressure transients using Fourier transform methods. Physics in Medicine 
+        & Biology, 46(7), 1863.
+
+        Xu, Y., Feng, D., & Wang, L. V. (2002). Exact frequency-domain reconstruction for 
+        thermoacoustic tomography. I. Planar geometry. IEEE transactions on medical imaging, 
+        21(7), 823-828.
 
     Parameters
     ----------
