@@ -18,11 +18,10 @@ class BackProjection(ReconstructionAlgorithm):
         """
         Implementation of a delay and sum algorithm.
 
-        The baseline implementation reflects the reconstruction algorithm described by Xu and Wang, 2005::
+        The baseline implementation reflects the reconstruction algorithm described by Xu and Wang, 2005:
 
-            Xu, Minghua, and Lihong V. Wang.
-            "Universal back-projection algorithm for photoacoustic computed tomography."
-            Physical Review E 71.1 (2005): 016706.
+            Xu, M., & Wang, L. V. (2005). Universal back-projection algorithm for photoacoustic computed 
+            tomography. Physical Review E, 71(1), 016706.
 
         Parameters
         ----------

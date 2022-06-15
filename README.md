@@ -103,3 +103,12 @@ Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for information on how to
 - Xu, Y., Feng, D., & Wang, L. V. (2002). Exact frequency-domain reconstruction for 
   thermoacoustic tomography. I. Planar geometry. IEEE transactions on medical imaging, 
   21(7), 823-828.
+  
+### Back Projection
+- Xu, M., & Wang, L. V. (2005). Universal back-projection algorithm for photoacoustic computed 
+  tomography. Physical Review E, 71(1), 016706.
+  
+### Delay-Multiply-and-Sum
+- Matrone, Giulia, Alessandro Stuart Savoia, Giosuè Caliano, and Giovanni Magenes. 
+  "The delay multiply and sum beamforming algorithm in ultrasound B-mode medical imaging."
+  IEEE transactions on medical imaging 34, no. 4 (2014): 940-949.
