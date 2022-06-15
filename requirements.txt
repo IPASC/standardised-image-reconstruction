@@ -7,3 +7,4 @@ matplotlib
 imageio
 scipy
 simpa
+k-wave-python
