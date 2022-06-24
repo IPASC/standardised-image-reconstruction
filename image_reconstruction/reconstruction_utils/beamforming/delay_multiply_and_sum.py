@@ -19,7 +19,14 @@ def delay_multiply_and_sum(time_series_data, detection_elements, sampling_rate,
                            field_of_view, spacing_m, speed_of_sound_in_m_per_s,
                            fnumber, signed_dmas):
     """
+    Implementation of the delay-multiply-and-sum algorithm.
 
+    The implementation is based on the original publication for the application to ultrasound images by Matrone et al:
+
+      Matrone, Giulia, Alessandro Stuart Savoia, Giosuè Caliano, and Giovanni Magenes. 
+      "The delay multiply and sum beamforming algorithm in ultrasound B-mode medical imaging."
+      IEEE transactions on medical imaging 34, no. 4 (2014): 940-949.
+      
     Parameters
     ----------
     time_series_data: numpy.ndarray

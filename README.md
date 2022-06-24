@@ -22,13 +22,28 @@ How these modules are intended to be used is described in the following sections
 
 ## Data Generation
 
-Data simulation will be done using optical and acoustic forward modelling.
 
-### Optical Modelling
+### Simulated Data
 
-TODO
+This part describes the steps that need to be done in order to simulate the virtual phantoms
+used for this project.
 
-### Acoustic Modelling
+#### Prerequisites
+
+Do run the data modelling, you will have to manually download both the [SIMPA](https://github.com/IMSY-DKFZ/simpa) and 
+the [PACFISH](https://github.com/IPASC/PACFISH) GitHub repositories. These folders have to be located within the
+same parent folder on your hard drive, because of the way the code is currently set up. Please see and follow the SIMPA
+and PACFISH install instructions on their respective GitHub pages.
+
+#### Optical Modelling
+
+Optical modelling is optional. If you want to use optical modelling, you can use the pre-implemented
+simulation module in SIMPA that uses [Monte Carlo eXtreme](https://github.com/fangq/mcx), maintained by Qianqian Fang.
+
+MCX requires the availability of an NVIDIA GPU on your computer. You can download pre-compiled 
+binaries fitting your system, or compile mcx yourself from the source code [here](https://sourceforge.net/projects/mcx/files/mcx%20source/).
+
+#### Acoustic Modelling
 
 For the  acoustic forward model, we are using k-Wave (http://k-wave.org/). 
 A base script for the simulation can be found at `data_generation/base_script/`.
@@ -88,3 +103,12 @@ Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for information on how to
 - Xu, Y., Feng, D., & Wang, L. V. (2002). Exact frequency-domain reconstruction for 
   thermoacoustic tomography. I. Planar geometry. IEEE transactions on medical imaging, 
   21(7), 823-828.
+  
+### Back Projection
+- Xu, M., & Wang, L. V. (2005). Universal back-projection algorithm for photoacoustic computed 
+  tomography. Physical Review E, 71(1), 016706.
+  
+### Delay-Multiply-and-Sum
+- Matrone, Giulia, Alessandro Stuart Savoia, Giosuè Caliano, and Giovanni Magenes. 
+  "The delay multiply and sum beamforming algorithm in ultrasound B-mode medical imaging."
+  IEEE transactions on medical imaging 34, no. 4 (2014): 940-949.
