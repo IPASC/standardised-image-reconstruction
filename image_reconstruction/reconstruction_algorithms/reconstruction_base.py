@@ -28,7 +28,11 @@ class ReconstructionAlgorithm(ABC):
         It is independent of the actual algorithm implementation and performs input validation of the
         IPASC HDF5 file container and implements data loading.
 
-        :param path_to_ipasc_hdf5: A string that
+        Parameters
+        ----------
+        path_to_ipasc_hdf5
+            A string that points to an HDF5 file containing data that is compatible with the
+            IPASC data format
         :param kwargs:
         :return:
         """
@@ -102,4 +106,12 @@ class ReconstructionAlgorithm(ABC):
                  [x samples, y samples, z samples, wavelength, frames]
         """
 
+        pass
+
+    @abstractmethod
+    def get_name(self) -> str:
+        """
+
+        :return: A human-interpretable string representing the name of this algorithm
+        """
         pass
