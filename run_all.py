@@ -32,13 +32,13 @@ import matplotlib.pyplot as plt
 #
 # #####################################################################
 #
-IMAGE_IDX = 2
+# IMAGE_IDX = 2
 # Experimental image provided by Manojit Pramanik. It is a point absorber
 # in a homogeneous medium. SOS=1480
 #
 # #####################################################################
 #
-# IMAGE_IDX = 3
+IMAGE_IDX = 3
 # Simulated image of point sources in a homogeneous medium provided by
 # François Varray. 10 point absorbers are located in a homogeneous medium
 # at depths between 10 and 40 mm. With increasing depth, they are
@@ -58,7 +58,7 @@ IMAGE_IDX = 2
 #
 # #####################################################################
 
-SPEED_OF_SOUND = 1480
+SPEED_OF_SOUND = 1540
 ENVELOPE_TYPE = "log"  # One of "log", "hilbert", "abs", "zero", "hilbert_squared", "log_squared"
 LOWCUT = None  # 5e4
 HIGHCUT = None  # 1e7

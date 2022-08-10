@@ -7,7 +7,7 @@ from simpa import Tags
 import numpy as np
 from data_generation.simpa_data_generation.utils.settings import generate_base_settings
 from data_generation.simpa_data_generation.ipasc_simpa_kwave_adapter import IpascSimpaKWaveAdapter
-from data_generation.simpa_data_generation.phantom_designs.phantom001 import phantom001
+from data_generation.simpa_data_generation.phantom_designs import phantom002
 from image_reconstruction.batch_reconstruction import reconstruct_ipasc_hdf5
 from image_reconstruction.reconstruction_algorithms import BackProjection, DelayMultiplyAndSumAlgorithm, FFTbasedHauptmann2018
 import quality_assessment as qa
@@ -31,7 +31,7 @@ spacing = settings[Tags.SPACING_MM]
 # Case 1: using the SIMPA volume creation module
 #
 # ###################################################################################
-settings.set_volume_creation_settings(phantom001(dim_x_mm, dim_y_mm, dim_z_mm))
+settings.set_volume_creation_settings(phantom002(dim_x_mm, dim_y_mm, dim_z_mm))
 
 acoustic_settings = settings.get_acoustic_settings()
 # For this simulation: Use the created absorption map as the input initial pressure
@@ -55,9 +55,9 @@ device.set_detection_geometry(sp.LinearArrayDetectionGeometry(device_position_mm
                                                               field_of_view_extent_mm=np.asarray([-20, 20, 0, 0, 0, 40])))
 device.add_illumination_geometry(sp.SlitIlluminationGeometry(slit_vector_mm=[100, 0, 0]))
 
-# sp.simulate(simulation_pipeline=pipeline,
-#             settings=settings,
-#             digital_device_twin=device)
+sp.simulate(simulation_pipeline=pipeline,
+            settings=settings,
+            digital_device_twin=device)
 
 sp.visualise_data(settings=settings,
                   path_manager=path_manager,
@@ -75,15 +75,15 @@ segmentation = sp.load_data_field(file_path, Tags.DATA_FIELD_SEGMENTATION, setti
 settings = {
             "spacing_m": settings[Tags.SPACING_MM] / 1000,
             "speed_of_sound_m_s": settings[Tags.DATA_FIELD_SPEED_OF_SOUND],
-            "lowcut": 5000,
-            "highcut": 7e6,
+            "lowcut": None,
+            "highcut": None,
             "order": 9,
             "envelope": True,
             "p_factor": 1,
             "p_SCF": 1,
             "p_PCF": 0,
             "fnumber": 0,
-            "envelope_type": "abs",
+            "envelope_type": "hilbert",
             "delay": 0,
             "zeroX": 1,
             "zeroT": 1,
@@ -95,17 +95,17 @@ algorithms = [(BackProjection(), settings),
 
 reconstructions = reconstruct_ipasc_hdf5(ipasc_hdf5, algorithms)
 
-fr_measures = [qa.RootMeanSquaredError(),
-               qa.UniversalQualityIndex(),
-               qa.StructuralSimilarityIndex(),
-               qa.MutualInformation()]
+full_reference_measures = [qa.RootMeanSquaredError(),
+                           qa.UniversalQualityIndex(),
+                           qa.StructuralSimilarityIndex(),
+                           qa.MutualInformation()]
 
-nr_measures = [qa.GeneralisedSignalToNoiseRatio()]
+no_reference_measures = [qa.GeneralisedSignalToNoiseRatio()]
 
 plt.figure()
 plt.subplot(1, len(algorithms)+1, 1)
 plt.title("Ground Truth")
-plt.imshow(initial_pressure)
+plt.imshow(initial_pressure.T)
 plt.colorbar()
 
 index = 2
@@ -114,12 +114,12 @@ for (algorithm, settings), reconstruction in zip(algorithms, reconstructions):
     print(algorithm.get_name())
     reconstruction = reconstruction[:, 0, :, 0, 0].astype(float)
     plt.title(algorithm.get_name())
-    plt.imshow(reconstruction)
+    plt.imshow(reconstruction.T)
     plt.colorbar()
-    for measure in fr_measures:
+    for measure in full_reference_measures:
         print(measure.get_name(), measure.compute_measure(initial_pressure, reconstruction))
 
-    for measure in nr_measures:
+    for measure in no_reference_measures:
         print(measure.get_name(), measure.compute_measure(reconstruction, segmentation > 0, segmentation < 0))
     index += 1
 
