@@ -68,7 +68,6 @@ def fft_hauptmann_2d(time_series_data, detection_elements, sampling_rate_hz,
             [len(set(positions[:, 0])), len(set(positions[:, 1])), len(set(positions[:, 2]))]) if e != 1]
 
         if len(sensor_axis) > 1:
-            
             print('ERROR: Sensor is not a planar sensor')
 
         # make grid for the sensor axis 

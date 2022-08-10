@@ -55,6 +55,7 @@ def fft_based_jaeger_2d(time_series_data,
     # Extract pitch from detection elements
     pitch_x_y_z = np.abs(detection_elements["positions"][1] - detection_elements["positions"][0])
     pitch = np.max(pitch_x_y_z)
+
     # Caution! This assumed that we have a linear uniform progression of
     # the elements along one axis only!
 
@@ -63,6 +64,7 @@ def fft_based_jaeger_2d(time_series_data,
     num_detectors = time_series_data.shape[0]  # check X is 128
     num_z_samples = time_series_data.shape[1]
     num_time_samples = num_z_samples
+
     # corresponding physical dimension of signal and image in [mm]
     image_extent_x_mm = num_detectors * pitch * 10 ** 3
 
