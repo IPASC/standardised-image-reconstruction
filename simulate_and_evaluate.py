@@ -9,13 +9,14 @@ from data_generation.simpa_data_generation.utils.settings import generate_base_s
 from data_generation.simpa_data_generation.ipasc_simpa_kwave_adapter import IpascSimpaKWaveAdapter
 from data_generation.simpa_data_generation.phantom_designs import phantom002
 from image_reconstruction.batch_reconstruction import reconstruct_ipasc_hdf5
-from image_reconstruction.reconstruction_algorithms import BackProjection, DelayMultiplyAndSumAlgorithm, FFTbasedHauptmann2018
+from image_reconstruction.reconstruction_algorithms import BackProjection, DelayMultiplyAndSumAlgorithm, \
+    FFTbasedHauptmann2018, FftBasedJaeger2007
 import quality_assessment as qa
 import matplotlib.pyplot as plt
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
 #  point to the correct file in the PathManager().
-path_manager = sp.PathManager()
+path_manager = sp.PathManager("path_config.env")
 
 settings = generate_base_settings(path_manager, volume_name="e44d831e-0eb8-4734-81d7-e399a255e0c3")
 
@@ -83,10 +84,10 @@ settings = {
             "p_SCF": 1,
             "p_PCF": 0,
             "fnumber": 0,
-            "envelope_type": "hilbert",
+            "envelope_type": "abs",
             "delay": 0,
-            "zeroX": 1,
-            "zeroT": 1,
+            "zeroX": 0,
+            "zeroT": 0,
             "fourier_coefficients_dim": 5,
         }
 algorithms = [(BackProjection(), settings),
