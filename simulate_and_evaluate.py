@@ -7,12 +7,13 @@ from simpa import Tags
 import numpy as np
 from data_generation.simpa_data_generation.utils.settings import generate_base_settings
 from data_generation.simpa_data_generation.ipasc_simpa_kwave_adapter import IpascSimpaKWaveAdapter
-from data_generation.simpa_data_generation.phantom_designs import phantom002
+from data_generation.simpa_data_generation.phantom_designs import phantom_random_vessels as phantom
 from image_reconstruction.batch_reconstruction import reconstruct_ipasc_hdf5
 from image_reconstruction.reconstruction_algorithms import BackProjection, DelayMultiplyAndSumAlgorithm, \
     FFTbasedHauptmann2018, FftBasedJaeger2007
 import quality_assessment as qa
 import matplotlib.pyplot as plt
+from random import choice
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
 #  point to the correct file in the PathManager().
@@ -32,7 +33,7 @@ spacing = settings[Tags.SPACING_MM]
 # Case 1: using the SIMPA volume creation module
 #
 # ###################################################################################
-settings.set_volume_creation_settings(phantom002(dim_x_mm, dim_y_mm, dim_z_mm))
+settings.set_volume_creation_settings(phantom(dim_x_mm, dim_y_mm, dim_z_mm))
 
 acoustic_settings = settings.get_acoustic_settings()
 # For this simulation: Use the created absorption map as the input initial pressure
@@ -48,12 +49,12 @@ pipeline = [
 device = sp.PhotoacousticDevice(device_position_mm=np.array([dim_x_mm/2,
                                                              dim_y_mm/2,
                                                              0]),
-                                field_of_view_extent_mm=np.asarray([-20, 20, 0, 0, 0, 40]))
+                                field_of_view_extent_mm=np.asarray([-128*0.15, 128*0.15, 0, 0, 0, 40]))
 device.set_detection_geometry(sp.LinearArrayDetectionGeometry(device_position_mm=device.device_position_mm,
                                                               pitch_mm=0.3,
                                                               number_detector_elements=128,
                                                               sampling_frequency_mhz=50,
-                                                              field_of_view_extent_mm=np.asarray([-20, 20, 0, 0, 0, 40])))
+                                                              field_of_view_extent_mm=np.asarray([-128*0.15, 128*0.15, 0, 0, 0, 40])))
 device.add_illumination_geometry(sp.SlitIlluminationGeometry(slit_vector_mm=[100, 0, 0]))
 
 sp.simulate(simulation_pipeline=pipeline,
@@ -71,6 +72,7 @@ file_path = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_
 ipasc_hdf5 = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_NAME] + "_ipasc.hdf5"
 
 initial_pressure = sp.load_data_field(file_path, acoustic_settings[Tags.DATA_FIELD], settings[Tags.WAVELENGTHS][0]).astype(float)
+
 segmentation = sp.load_data_field(file_path, Tags.DATA_FIELD_SEGMENTATION, settings[Tags.WAVELENGTHS][0])
 
 settings = {
@@ -92,6 +94,7 @@ settings = {
         }
 algorithms = [(BackProjection(), settings),
               (DelayMultiplyAndSumAlgorithm(), settings),
+              (FftBasedJaeger2007(), settings),
               (FFTbasedHauptmann2018(), settings)]
 
 reconstructions = reconstruct_ipasc_hdf5(ipasc_hdf5, algorithms)
