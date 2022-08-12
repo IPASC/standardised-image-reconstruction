@@ -240,7 +240,7 @@ def fft_based_jaeger_2d(time_series_data,
         field_of_view[5] = field_of_view[5] - field_of_view[4]
         field_of_view[4] = 0
 
-    target_voxels = (field_of_view / spacing_m).astype(np.int)
+    target_voxels = np.round(field_of_view / spacing_m).astype(np.int)
     if x_aligned:
         reconstructed_image = reconstructed_image.reshape((reko_shape[0], 1, reko_shape[1]))
         target_voxels[3] = 1
