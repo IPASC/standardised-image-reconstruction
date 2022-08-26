@@ -84,6 +84,30 @@ file for a coding reference.
 
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for information on how to contribute.
 
+## Known Issues
+
+- The path_config.env files need the full path. ~ signs for the home directory as commonly used on Linux systems do not work. 
+- MATLAB 2017b and earlier isn’t (yet) supported.
+
+## Frequently Asked Questions
+
+### What types of transducers are currently supported by the project?
+
+The project focuses on linear array transducers at this point in time. In the future, we hope to extend support of the project to other transducer designs as well.
+
+### The project dependencies cannot be installed/found. How can I set up the project correctly?
+
+Not all dependencies may be installable with your package manager of choice. For example, it is not possible to directly install the SIMPA project with Anaconda. SIMPA is distributed via pypi and can be installed with the pip package manager.
+
+This is the preferred workflow for setting up the dependencies:
+
+1. Set up a new virtual environment (python -m venv venv)
+2. Activate the virtual environment (linux: source venv/bin/activate, windows: venv/Scripts/activate.bat)
+3. Install all dependencies using (pip install -r requirements.txt)
+4. Configure your IDE to use the venv virtual environment
+(The name venv can be replaced by any name you like)
+
+
 ## Citations
 
 ### FFT-Based Jaeger
