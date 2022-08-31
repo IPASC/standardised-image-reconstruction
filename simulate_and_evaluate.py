@@ -7,12 +7,13 @@ from simpa import Tags
 import numpy as np
 from data_generation.simpa_data_generation.utils.settings import generate_base_settings
 from data_generation.simpa_data_generation.ipasc_simpa_kwave_adapter import IpascSimpaKWaveAdapter
-from data_generation.simpa_data_generation.phantom_designs import phantom001 as phantom
+from data_generation.simpa_data_generation.phantom_designs import phantom_random_vessels as phantom
 from image_reconstruction.batch_reconstruction import reconstruct_ipasc_hdf5
 from image_reconstruction.reconstruction_algorithms import BackProjection, DelayMultiplyAndSumAlgorithm, \
     FFTbasedHauptmann2018, FftBasedJaeger2007
 import quality_assessment as qa
 import matplotlib.pyplot as plt
+from random import choice
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
 #  point to the correct file in the PathManager().
@@ -71,6 +72,7 @@ file_path = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_
 ipasc_hdf5 = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_NAME] + "_ipasc.hdf5"
 
 initial_pressure = sp.load_data_field(file_path, acoustic_settings[Tags.DATA_FIELD], settings[Tags.WAVELENGTHS][0]).astype(float)
+
 segmentation = sp.load_data_field(file_path, Tags.DATA_FIELD_SEGMENTATION, settings[Tags.WAVELENGTHS][0])
 
 settings = {

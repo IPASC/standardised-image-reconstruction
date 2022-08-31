@@ -20,8 +20,9 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
         export_ipasc logical = true
         infinite_phantom logical = false
         PML_size {mustBeNumeric} = 15
+        
     end
-
+    
     data = load(load_path);
     initial_pressure = data.initial_pressure;
 
