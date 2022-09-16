@@ -11,6 +11,9 @@ from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorit
 
 class BackProjection(ReconstructionAlgorithm):
 
+    def get_name(self) -> str:
+        return "Delay-And-Sum"
+
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
                        field_of_view: np.ndarray,

@@ -28,7 +28,11 @@ class ReconstructionAlgorithm(ABC):
         It is independent of the actual algorithm implementation and performs input validation of the
         IPASC HDF5 file container and implements data loading.
 
-        :param path_to_ipasc_hdf5: A string that
+        Parameters
+        ----------
+        path_to_ipasc_hdf5
+            A string that points to an HDF5 file containing data that is compatible with the
+            IPASC data format
         :param kwargs:
         :return:
         """
@@ -48,8 +52,14 @@ class ReconstructionAlgorithm(ABC):
         # TODO: if field of view is None, set a default field of view.
         print("Reconstructing in this field of view FOV [m]:", field_of_view)
 
+        # Ensure positivity of the
+        positions = np.asarray(self.ipasc_data.get_detector_position())
+        for dimension in range(3):
+            if min(positions[:, dimension]) < 0:
+                positions[:, dimension] = positions[:, dimension] - min(positions[:, dimension])
+
         detection_elements = dict()
-        detection_elements['positions'] = self.ipasc_data.get_detector_position()
+        detection_elements['positions'] = positions
         detection_elements['orientations'] = self.ipasc_data.get_detector_orientation()
         detection_elements['geometry'] = self.ipasc_data.get_detector_geometry()
         detection_elements['geometry_type'] = self.ipasc_data.get_detector_geometry_type()
@@ -102,4 +112,12 @@ class ReconstructionAlgorithm(ABC):
                  [x samples, y samples, z samples, wavelength, frames]
         """
 
+        pass
+
+    @abstractmethod
+    def get_name(self) -> str:
+        """
+
+        :return: A human-interpretable string representing the name of this algorithm
+        """
         pass

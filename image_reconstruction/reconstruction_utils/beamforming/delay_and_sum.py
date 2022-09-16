@@ -55,7 +55,8 @@ def compute_delay_and_sum_values(time_series_data: torch.tensor,
                                                  field_of_view_voxels[5], device=torch_device)
                                     if (field_of_view_voxels[5] - field_of_view_voxels[4])
                                     >= 1 else torch.arange(1, device=torch_device),
-                                    torch.arange(n_sensor_elements, device=torch_device))
+                                    torch.arange(n_sensor_elements, device=torch_device),
+                                    indexing="ij")
 
     delays = torch.sqrt((yy * spacing_in_m - sensor_positions[:, 1][jj]) ** 2 +
                         (xx * spacing_in_m - sensor_positions[:, 0][jj]) ** 2 +

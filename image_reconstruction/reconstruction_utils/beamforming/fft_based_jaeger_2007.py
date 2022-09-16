@@ -55,6 +55,7 @@ def fft_based_jaeger_2d(time_series_data,
     # Extract pitch from detection elements
     pitch_x_y_z = np.abs(detection_elements["positions"][1] - detection_elements["positions"][0])
     pitch = np.max(pitch_x_y_z)
+
     # Caution! This assumed that we have a linear uniform progression of
     # the elements along one axis only!
 
@@ -63,6 +64,7 @@ def fft_based_jaeger_2d(time_series_data,
     num_detectors = time_series_data.shape[0]  # check X is 128
     num_z_samples = time_series_data.shape[1]
     num_time_samples = num_z_samples
+
     # corresponding physical dimension of signal and image in [mm]
     image_extent_x_mm = num_detectors * pitch * 10 ** 3
 
@@ -211,9 +213,11 @@ def fft_based_jaeger_2d(time_series_data,
     target_dimensions_m = np.asarray([(rekon_shape[0] * sos) /
                                       sampling_rate,
                                       rekon_shape[1] * pitch])
+    #target_dimensions_m = np.asarray([(rekon_shape[0] * sos) /
+                                      #sampling_rate,
+                                      #field_of_view[1]-field_of_view[0]]) # zoom in according to x span
     target_dimensions_voxels = target_dimensions_m / spacing_m
     zoom_values = target_dimensions_voxels / rekon_shape
-
     reconstructed_image = zoom(reconstructed_image, zoom_values)
 
     # Check along which axis the transducer elements are aligned.
@@ -238,7 +242,8 @@ def fft_based_jaeger_2d(time_series_data,
         field_of_view[5] = field_of_view[5] - field_of_view[4]
         field_of_view[4] = 0
 
-    target_voxels = (field_of_view / spacing_m).astype(np.int)
+    target_voxels = np.round(field_of_view / spacing_m).astype(np.int)
+
     if x_aligned:
         reconstructed_image = reconstructed_image.reshape((reko_shape[0], 1, reko_shape[1]))
         target_voxels[3] = 1

@@ -7,3 +7,5 @@ matplotlib
 imageio
 scipy
 simpa
+sewar
+scikit-learn

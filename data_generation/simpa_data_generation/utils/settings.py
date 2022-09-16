@@ -27,12 +27,13 @@ def generate_base_settings(path_manager: sp.PathManager,
     settings[Tags.DIM_VOLUME_X_MM] = 40
     settings[Tags.DIM_VOLUME_Y_MM] = 20
     settings[Tags.DIM_VOLUME_Z_MM] = 40
-    settings[Tags.SPACING_MM] = 0.0390625 * 4
+    settings[Tags.SPACING_MM] = 0.0390625 * 4  # TODO REMOVE the times 4 in the end!
     settings[Tags.DATA_FIELD_SPEED_OF_SOUND] = speed_of_sound
     settings[Tags.WAVELENGTHS] = [wavelength]
     settings[Tags.RANDOM_SEED] = random_seed
     settings[Tags.GPU] = True
     settings[Tags.DO_FILE_COMPRESSION] = True
+    settings[Tags.DO_IPASC_EXPORT] = False # use the k-Wave IPASC export
 
     settings.set_acoustic_settings({
         Tags.ACOUSTIC_MODEL_BINARY_PATH: path_manager.get_matlab_binary_path(),

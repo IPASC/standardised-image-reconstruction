@@ -20,8 +20,9 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
         export_ipasc logical = true
         infinite_phantom logical = false
         PML_size {mustBeNumeric} = 15
+        
     end
-
+    
     data = load(load_path);
     initial_pressure = data.initial_pressure;
 
@@ -120,9 +121,9 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
 
     if export_ipasc
         disp("Exporting to the IPASC data format...")
-        kwave_adapter = pacfish.kwave_adapter(sensor_array, time_series_data, medium, kgrid, ...
-            [-(N_elements/2 + 0.5)*pitch; (N_elements/2 + 0.5)*pitch; 0; 0; -Nz*dx / 2; Nz*dx / 2]);
-        pa_data = kwave_adapter.get_pa_data();
+        adapter = kwave_adapter(sensor_array, time_series_data, medium, kgrid, ...
+            [0; N_elements*pitch; 0; 0; 0; Nz*dx]);
+        pa_data = adapter.get_pa_data();
         pacfish.write_data(save_path, pa_data, 1)
     end
 

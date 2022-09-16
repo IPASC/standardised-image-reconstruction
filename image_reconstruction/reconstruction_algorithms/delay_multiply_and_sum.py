@@ -16,6 +16,9 @@ from image_reconstruction.reconstruction_utils.beamforming import delay_multiply
 
 class DelayMultiplyAndSumAlgorithm(ReconstructionAlgorithm):
 
+    def get_name(self) -> str:
+        return "Delay-Multiply-And-Sum"
+
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
                        field_of_view: np.ndarray,
