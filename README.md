@@ -88,6 +88,16 @@ Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for information on how to
 
 - The path_config.env files need the full path. ~ signs for the home directory as commonly used on Linux systems do not work. 
 - MATLAB 2017b and earlier isn’t (yet) supported.
+- If you have problems with SSL-certificate issues when using Anaconda, please add the following paths to your PATH environment variables:
+
+      path/to/Anaconda3
+      path/to/Scripts
+      path/to/Anaconda3/Library
+      path/to/Anaconda3/Library/Bin
+      
+  - Then run this command from your Anaconda terminal:
+
+      `python -m pip install --upgrade pip`
 
 ## Frequently Asked Questions
 
