@@ -47,10 +47,8 @@ class ReconstructionAlgorithm(ABC):
 
         # data loading
         self.ipasc_data = load_data(path_to_ipasc_hdf5)
-        print("Sampling rate: ", self.ipasc_data.get_sampling_rate())
         field_of_view = self.ipasc_data.get_field_of_view()
         # TODO: if field of view is None, set a default field of view.
-        print("Reconstructing in this field of view FOV [m]:", field_of_view)
 
         # Ensure positivity of the
         positions = np.asarray(self.ipasc_data.get_detector_position())
@@ -78,10 +76,15 @@ class ReconstructionAlgorithm(ABC):
             frames = []
             for frame_idx in range(num_frames):
                 ts_data = time_series_data[:, :, wl_idx, frame_idx]
-                ts_data = apply_pre_processing(ts_data, self.ipasc_data.get_sampling_rate(), **kwargs)
+                ts_data, detection_elements, sampling_rate = \
+                    apply_pre_processing(ts_data, detection_elements,
+                                         self.ipasc_data.get_sampling_rate(),
+                                         **kwargs)
                 reconstruction = self.implementation(time_series_data=ts_data,
                                                      detection_elements=detection_elements,
-                                                     field_of_view=field_of_view, **kwargs)
+                                                     sampling_rate=sampling_rate,
+                                                     field_of_view=field_of_view,
+                                                     **kwargs)
                 reconstruction = apply_post_processing(reconstruction, **kwargs)
                 frames.append(reconstruction)
             wavelengths.append(frames)
@@ -91,6 +94,7 @@ class ReconstructionAlgorithm(ABC):
 
     @abstractmethod
     def implementation(self, time_series_data: np.ndarray, detection_elements: dict,
+                       sampling_rate: float,
                        field_of_view: np.ndarray, **kwargs):
         """
         This method is extended by each class that represents one photoacoustic image reconstruction algorithm.
@@ -102,6 +106,7 @@ class ReconstructionAlgorithm(ABC):
                                    ** "positions": The positions of the detection elements relative to the field of view
                                    ** "orientations": The orientations of the detection elements
                                    ** "sizes": The sizes of the detection elements.
+        :param sampling_rate: The sampling rate in Hz
         :param field_of_view: A 1D 6 element-long numpy array that contains the extent of the field of view in x, y and
                               z direction in the same coordinate system as the detection element positions.
         :param kwargs: A dictionary containing any further parameters adjustible for the algorithm. Sensible defaults

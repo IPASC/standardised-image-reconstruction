@@ -20,6 +20,7 @@ class FftBasedJaeger2007(ReconstructionAlgorithm):
 
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
+                       sampling_rate: float,
                        field_of_view: np.ndarray,
                        **kwargs):
         """
@@ -85,7 +86,7 @@ class FftBasedJaeger2007(ReconstructionAlgorithm):
 
         reconstruction = fft_based_jaeger_2d(time_series_data,
                                              detection_elements=detection_elements,
-                                             sampling_rate=self.ipasc_data.get_sampling_rate(),
+                                             sampling_rate=sampling_rate,
                                              sos=speed_of_sound_in_m_per_s,
                                              delay=delay,
                                              zero_pad_detectors=zero_pad_detectors,
@@ -104,6 +105,7 @@ class FFTbasedHauptmann2018(ReconstructionAlgorithm):
 
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
+                       sampling_rate: float,
                        field_of_view: np.ndarray,
                        **kwargs):
         """
@@ -158,7 +160,7 @@ class FFTbasedHauptmann2018(ReconstructionAlgorithm):
         if "spacing_m" in kwargs:
             spacing_m = kwargs["spacing_m"]
 
-        reconstructed = fft_hauptmann_2d(time_series_data, detection_elements, self.ipasc_data.get_sampling_rate(),
+        reconstructed = fft_hauptmann_2d(time_series_data, detection_elements, sampling_rate,
                                          field_of_view, spacing_m, speed_of_sound_in_m_per_s)
 
         return reconstructed

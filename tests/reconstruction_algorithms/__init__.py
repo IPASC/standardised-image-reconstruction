@@ -29,6 +29,8 @@ class TestClassBase:
                                "17cruZhKispUzzqjRDmK9wQo63vItBas8"),
                               ("1Bf8Ttx5S_X44TxKCeHg5MzNZwsNRzKZU",
                                "1RtO1wPdkH1qivFXQLUyGBDGIp7VLXwID"),
+                              ("10ZOB6_Y24gexHgQwMHWUMyJl6GAYppAx",
+                               "1RtO1wPdkH1qivFXQLUyGBDGIp7VLXwID")
                               ]
 
         for download_url in self.download_urls:
