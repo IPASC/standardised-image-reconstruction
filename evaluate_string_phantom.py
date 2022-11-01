@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2022 International Photoacoustic Standardisation Consortium (IPASC)
 # SPDX-FileCopyrightText: 2022 Janek Gröhl
 # SPDX-License-Identifier: MIT
+# evaluation with a string phantom - mengjie 31102022
 
 import simpa as sp
 from simpa import Tags
