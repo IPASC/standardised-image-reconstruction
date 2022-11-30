@@ -52,9 +52,9 @@ class ReconstructionAlgorithm(ABC):
 
         # Ensure positivity of the
         positions = np.asarray(self.ipasc_data.get_detector_position())
-        for dimension in range(3):
-            if min(positions[:, dimension]) < 0:
-                positions[:, dimension] = positions[:, dimension] - min(positions[:, dimension])
+        #for dimension in range(3):
+        #    if min(positions[:, dimension]) < 0:
+        #       positions[:, dimension] = positions[:, dimension] - min(positions[:, dimension])
 
         detection_elements = dict()
         detection_elements['positions'] = positions
