@@ -10,6 +10,7 @@
 | Jenni Poimala | University of Oulu | Image Reconstruction: FFT-based image reconstruction |
 | Mengjie Shi | Kings College London | Image Reconstruction: FFT-based image reconstruction |
 | François Varray | Creatis, Université de Lyon | Image Reconstruction: back-projection variant implementations: fnumber, pDAS, SCF, PCF; general testing |
+| Shufan Yang | Edinburgh Napier University | Image Quality Measures |
 
 
 # How to contribute
