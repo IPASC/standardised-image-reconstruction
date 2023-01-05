@@ -117,45 +117,45 @@ out.envelope = True
 out.envelope_type = ENVELOPE_TYPE
 result7 = out.fft_recon(IMAGE_IDX, visualise=False)
 
-# out = TestDelayMultiplyAndSum()
-# out.speed_of_sound_m_s = SPEED_OF_SOUND
-# out.lowcut = LOWCUT
-# out.highcut = HIGHCUT
-# out.envelope = True
-# out.envelope_type = ENVELOPE_TYPE
-# out.fnumber = 0
-# out.signed_dmas = False
-# result8 = out.back_project(IMAGE_IDX, visualise=False)
-#
-# out = TestDelayMultiplyAndSum()
-# out.speed_of_sound_m_s = SPEED_OF_SOUND
-# out.lowcut = LOWCUT
-# out.highcut = HIGHCUT
-# out.envelope = True
-# out.envelope_type = ENVELOPE_TYPE
-# out.fnumber = 1
-# out.signed_dmas = False
-# result9 = out.back_project(IMAGE_IDX, visualise=False)
-#
-# out = TestDelayMultiplyAndSum()
-# out.speed_of_sound_m_s = SPEED_OF_SOUND
-# out.lowcut = LOWCUT
-# out.highcut = HIGHCUT
-# out.envelope = True
-# out.envelope_type = ENVELOPE_TYPE
-# out.fnumber = 0
-# out.signed_dmas = True
-# result10 = out.back_project(IMAGE_IDX, visualise=False)
-#
-# out = TestDelayMultiplyAndSum()
-# out.speed_of_sound_m_s = SPEED_OF_SOUND
-# out.lowcut = LOWCUT
-# out.highcut = HIGHCUT
-# out.envelope = True
-# out.envelope_type = ENVELOPE_TYPE
-# out.fnumber = 1
-# out.signed_dmas = True
-# result11 = out.back_project(IMAGE_IDX, visualise=False)
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 0
+out.signed_dmas = False
+result8 = out.back_project(IMAGE_IDX, visualise=False)
+
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 1
+out.signed_dmas = False
+result9 = out.back_project(IMAGE_IDX, visualise=False)
+
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 0
+out.signed_dmas = True
+result10 = out.back_project(IMAGE_IDX, visualise=False)
+
+out = TestDelayMultiplyAndSum()
+out.speed_of_sound_m_s = SPEED_OF_SOUND
+out.lowcut = LOWCUT
+out.highcut = HIGHCUT
+out.envelope = True
+out.envelope_type = ENVELOPE_TYPE
+out.fnumber = 1
+out.signed_dmas = True
+result11 = out.back_project(IMAGE_IDX, visualise=False)
 
 
 vmin = None
@@ -194,22 +194,22 @@ plt.subplot(3, 4, 7)
 plt.title("FFT-based (Hauptmann)")
 plt.imshow(result7[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-# plt.subplot(3, 4, 8)
-# plt.title("DMAS")
-# plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
-# plt.colorbar()
-# plt.subplot(3, 4, 9)
-# plt.title("DMAS + fnumber")
-# plt.imshow(result9[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
-# plt.colorbar()
-# plt.subplot(3, 4, 10)
-# plt.title("sDMAS")
-# plt.imshow(result10[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
-# plt.colorbar()
-# plt.subplot(3, 4, 11)
-# plt.title("sDMAS + fnumber")
-# plt.imshow(result11[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
-# plt.colorbar()
+plt.subplot(3, 4, 8)
+plt.title("DMAS")
+plt.imshow(result8[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
+plt.subplot(3, 4, 9)
+plt.title("DMAS + fnumber")
+plt.imshow(result9[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
+plt.subplot(3, 4, 10)
+plt.title("sDMAS")
+plt.imshow(result10[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
+plt.subplot(3, 4, 11)
+plt.title("sDMAS + fnumber")
+plt.imshow(result11[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
+plt.colorbar()
 
 plt.tight_layout()
 plt.show()

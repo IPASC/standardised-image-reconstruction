@@ -7,7 +7,7 @@ from simpa import Tags
 import numpy as np
 from data_generation.simpa_data_generation.utils.settings import generate_base_settings
 from data_generation.simpa_data_generation.ipasc_simpa_kwave_adapter import IpascSimpaKWaveAdapter
-from data_generation.simpa_data_generation.phantom_designs import phantom_random_vessels as phantom
+from data_generation.simpa_data_generation.phantom_designs import phantom001 as phantom
 from image_reconstruction.batch_reconstruction import reconstruct_ipasc_hdf5
 from image_reconstruction.reconstruction_algorithms import BackProjection, DelayMultiplyAndSumAlgorithm, \
     FFTbasedHauptmann2018, FftBasedJaeger2007
@@ -57,16 +57,16 @@ device.set_detection_geometry(sp.LinearArrayDetectionGeometry(device_position_mm
                                                               field_of_view_extent_mm=np.asarray([-128*0.15, 128*0.15, 0, 0, 0, 40])))
 device.add_illumination_geometry(sp.SlitIlluminationGeometry(slit_vector_mm=[100, 0, 0]))
 
-sp.simulate(simulation_pipeline=pipeline,
-            settings=settings,
-            digital_device_twin=device)
-
-sp.visualise_data(settings=settings,
-                  path_manager=path_manager,
-                  wavelength=800,
-                  show_absorption=True,
-                  show_time_series_data=True,
-                  show_segmentation_map=True)
+# sp.simulate(simulation_pipeline=pipeline,
+#             settings=settings,
+#             digital_device_twin=device)
+#
+# sp.visualise_data(settings=settings,
+#                   path_manager=path_manager,
+#                   wavelength=800,
+#                   show_absorption=True,
+#                   show_time_series_data=True,
+#                   show_segmentation_map=True)
 
 file_path = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_NAME] + ".hdf5"
 ipasc_hdf5 = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_NAME] + "_ipasc.hdf5"
@@ -101,8 +101,8 @@ reconstructions = reconstruct_ipasc_hdf5(ipasc_hdf5, algorithms)
 
 full_reference_measures = [qa.RootMeanSquaredError(),
                            qa.UniversalQualityIndex(),
-                           qa.StructuralSimilarityIndex(),
-                           qa.MutualInformation()]
+                           qa.MutualInformation(),
+                           qa.StructuralSimilarityIndexTorch()]
 
 no_reference_measures = [qa.GeneralisedSignalToNoiseRatio()]
 
@@ -115,7 +115,9 @@ plt.colorbar()
 index = 2
 for (algorithm, settings), reconstruction in zip(algorithms, reconstructions):
     plt.subplot(1, len(algorithms)+1, index)
+    print("")
     print(algorithm.get_name())
+    print("============================")
     reconstruction = reconstruction[:, 0, :, 0, 0].astype(float)
     plt.title(algorithm.get_name())
     plt.imshow(reconstruction.T)

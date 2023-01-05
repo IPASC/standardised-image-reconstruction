@@ -9,3 +9,4 @@ scipy
 simpa
 sewar
 scikit-learn
+torchmetrics
