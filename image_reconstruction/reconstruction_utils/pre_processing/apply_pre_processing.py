@@ -1,10 +1,25 @@
-
+"""
+SPDX-FileCopyrightText: 2021 International Photoacoustic Standardisation Consortium (IPASC)
+SPDX-FileCopyrightText: 2021 Janek Gröhl
+SPDX-License-Identifier: MIT
+"""
 
 from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
 from image_reconstruction.reconstruction_utils.pre_processing.interpolation import interpolate_time_series
+from image_reconstruction.reconstruction_utils.pre_processing.signal_scaling import scale_time_series
 
 
 def apply_pre_processing(time_series_data, detection_elements, sampling_rate, **kwargs):
+    """
+    Applies all preprocessing steps as defined by the given keywod arguments.
+
+    :param time_series_data: np.ndarray with the following definition [detectors, time samples]
+    :param detection_elements: np.ndarray
+    :param sampling_rate: float
+    :param kwargs: dict
+    :return: (time_series_data, detection_elements, sampling_rate)
+        This function returns all parameters that can change during the preprocessing.
+    """
 
     lowcut = None
     if "lowcut" in kwargs:
@@ -25,6 +40,13 @@ def apply_pre_processing(time_series_data, detection_elements, sampling_rate, **
     time_interpolation_factor = 1
     if "time_interpolation_factor" in kwargs:
         time_interpolation_factor = kwargs["time_interpolation_factor"]
+
+    scaling_method = None
+    if "scaling_method" in kwargs:
+        scaling_method = kwargs["scaling_method"]
+
+    if scaling_method is not None:
+        time_series_data = scale_time_series(time_series_data, scaling_method)
 
     if lowcut is not None or highcut is not None:
         time_series_data = butter_bandpass_filter(signal=time_series_data,

@@ -14,9 +14,9 @@ from data_generation.simpa_data_generation.ipasc_simpa_kwave_adapter import Ipas
 from data_generation.simpa_data_generation.phantom_designs import phantom001 as phantom
 from image_reconstruction.batch_reconstruction import reconstruct_ipasc_hdf5
 from image_reconstruction.reconstruction_algorithms import BackProjection, DelayMultiplyAndSumAlgorithm, \
-    FFTbasedHauptmann2018, FftBasedJaeger2007
+    FftBasedJaeger2007
 
-NAME = "FREQUENCY_RESPONSE"
+NAME = "FULL_BANDWIDTH"
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
 #  point to the correct file in the PathManager().
@@ -97,6 +97,7 @@ settings = {
             "zeroX": 0,
             "zeroT": 0,
             "fourier_coefficients_dim": 5,
+            "scaling_method": "mean"
         }
 algorithms = [(BackProjection(), settings),
               (DelayMultiplyAndSumAlgorithm(), settings),
