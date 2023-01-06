@@ -3,42 +3,38 @@ import numpy as np
 from image_reconstruction.reconstruction_utils.post_processing.envelope_detection import hilbert_transform_1_d
 
 
-def apply_post_processing(reconstruction, **kwargs):
+def apply_post_processing(recon, **kwargs):
 
-    envelope = False
-    if "envelope" in kwargs:
-        envelope = kwargs["envelope"]
+    non_negativity_method = None
+    if "non_negativity_method" in kwargs:
+        non_negativity_method = kwargs["non_negativity_method"]
 
-    envelope_type = None
-    if "envelope_type" in kwargs:
-        envelope_type = kwargs["envelope_type"]
-
-    if envelope:
-        if envelope_type == "hilbert":
+    if non_negativity_method is not None:
+        if non_negativity_method == "hilbert":
             # hilbert transform
-            reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
-        elif envelope_type == "hilbert_squared":
+            recon = hilbert_transform_1_d(recon, axis=0)
+        elif non_negativity_method == "hilbert_squared":
             # hilbert transform + squaring
-            reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
-            reconstruction = reconstruction**2
-        elif envelope_type == "log":
+            recon = hilbert_transform_1_d(recon, axis=0)
+            recon = recon ** 2
+        elif non_negativity_method == "log":
             # hilbert transform + log-compression
-            reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
+            recon = hilbert_transform_1_d(recon, axis=0)
             # do 20log10 on the normalized image
-            reconstruction = 20 * np.log10(reconstruction / np.nanmax(reconstruction))
-        elif envelope_type == "log_squared":
+            recon = 20 * np.log10(recon / np.nanmax(recon))
+        elif non_negativity_method == "log_squared":
             # hilbert transform + squaring + log-compression
-            reconstruction = hilbert_transform_1_d(reconstruction, axis=0)
-            reconstruction = reconstruction ** 2
+            recon = hilbert_transform_1_d(recon, axis=0)
+            recon = recon ** 2
             # do 20log10 on the normalized image
-            reconstruction = 20 * np.log10(reconstruction / np.nanmax(reconstruction))
-        elif envelope_type == "zero":
+            recon = 20 * np.log10(recon / np.nanmax(recon))
+        elif non_negativity_method == "zero":
             # zero forcing
-            reconstruction[reconstruction < 0] = 0
-        elif envelope_type == "abs":
+            recon[recon < 0] = 0
+        elif non_negativity_method == "abs":
             # absolute value
-            reconstruction = np.abs(reconstruction)
+            recon = np.abs(recon)
         else:
-            print(f"WARN: No valid envelope type specified! Was: {envelope_type}")
+            print(f"WARN: No valid envelope type specified! Was: {non_negativity_method}")
 
-    return reconstruction
+    return recon
