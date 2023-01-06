@@ -31,6 +31,8 @@ def _butter_bandpass(sampling_rate, lowcut=None, highcut=None, order=5):
         high = 0.999999999
     else:
         high = highcut / nyq
+        if high > 1 - 1e-10:
+            high = 1 - 1e-10
     b, a = butter(N=order, Wn=[low, high], btype='band')
     return b, a
 
