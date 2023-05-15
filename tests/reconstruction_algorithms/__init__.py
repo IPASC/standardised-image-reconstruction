@@ -29,6 +29,8 @@ class TestClassBase:
                                "17cruZhKispUzzqjRDmK9wQo63vItBas8"),
                               ("1Bf8Ttx5S_X44TxKCeHg5MzNZwsNRzKZU",
                                "1RtO1wPdkH1qivFXQLUyGBDGIp7VLXwID"),
+                              ("10ZOB6_Y24gexHgQwMHWUMyJl6GAYppAx",
+                               "1RtO1wPdkH1qivFXQLUyGBDGIp7VLXwID")
                               ]
 
         for download_url in self.download_urls:
@@ -39,15 +41,11 @@ class TestClassBase:
                 GoogleDriveDownloader.download_file_from_google_drive(file_id=download_url[0],
                                                                       dest_path=ts_path,
                                                                       overwrite=False)
-            else:
-                print(f"File {ts_path} already in folder. Did not re-download")
 
             if not os.path.exists(reco_path):
                 GoogleDriveDownloader.download_file_from_google_drive(file_id=download_url[1],
                                                                       dest_path=reco_path,
                                                                       overwrite=False)
-            else:
-                print(f"File {reco_path} already in folder. Did not re-download")
 
             self.assert_file_download_successful(download_url[0], ts_path)
             self.assert_file_download_successful(download_url[1], reco_path)

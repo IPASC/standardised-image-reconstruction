@@ -12,9 +12,14 @@ import numpy as np
 def hilbert_transform_1_d(signal, axis=-1):
     """
 
-    :param signal:
-    :param axis: The axis the hilbert transform should be computed on
-    :return:
+    Parameters
+    ----------
+    signal: np.ndarray a NxM numpy ndarray
+    axis: int The axis the hilbert transform should be computed on
+
+    Returns
+    -------
+    The 1D hilbert transform along a specified axis
     """
     return np.abs(hilbert(signal, axis=axis))
 

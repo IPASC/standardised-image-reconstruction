@@ -19,9 +19,9 @@ class TestFFTbasedJaeger(TestClassBase):
     zero_padding_transducer_dimension = 1
     zero_padding_time_dimension = 1
     coefficientT = 5
-    envelope = False
-    envelope_type = None
+    non_negativity_method = None
     spacing_m = 0.0001
+    scaling = "mean"
 
     def fftbasedJaeger(self, image_idx=0, visualise=True):
         return self.run_tests(FftBasedJaeger2007(), image_idx=image_idx, visualise=visualise, **{
@@ -31,9 +31,9 @@ class TestFFTbasedJaeger(TestClassBase):
             "zeroX": self.zero_padding_transducer_dimension,
             "zeroT": self.zero_padding_time_dimension,
             "fourier_coefficients_dim": self.coefficientT,
-            "envelope": self.envelope,
-            "envelope_type": self.envelope_type,
+            "non_negativity_method": self.non_negativity_method,
             "lowcut": self.lowcut,
             "highcut": self.highcut,
-            "order": self.order
+            "order": self.order,
+            "scaling_method": self.scaling
         })
