@@ -15,7 +15,11 @@ VOLUME_TRANSDUCER_DIM_IN_MM = 30 #
 VOLUME_PLANAR_DIM_IN_MM = 30
 VOLUME_HEIGHT_IN_MM = 30
 SPACING = 0.2
-RANDOM_SEED = 4712 #4711
+
+# Seed the numpy random configuration prior to creating the global_settings file in
+# order to ensure that the same volume
+# is generated with the same random seed every time.
+RANDOM_SEED = 4712 
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
 #  point to the correct file in the PathManager().
@@ -54,13 +58,6 @@ def create_example_tissue():
 
     return tissue_dict
 
-
-# Seed the numpy random configuration prior to creating the global_settings file in
-# order to ensure that the same volume
-# is generated with the same random seed every time.
-
-#np.random.seed(RANDOM_SEED)
-#VOLUME_NAME = "CompletePipelineTestMSOT_"+str(RANDOM_SEED)
 
 general_settings = {
             # These parameters set the general properties of the simulated volume
@@ -107,52 +104,6 @@ settings.set_acoustic_settings({
     Tags.ACOUSTIC_LOG_SCALE: True
 })
 
-settings.set_reconstruction_settings({
-    Tags.RECONSTRUCTION_PERFORM_BANDPASS_FILTERING: False,
-    Tags.ACOUSTIC_MODEL_BINARY_PATH: path_manager.get_matlab_binary_path(),
-    Tags.ACOUSTIC_SIMULATION_3D: False,
-    Tags.KWAVE_PROPERTY_ALPHA_POWER: 0.00,
-    Tags.TUKEY_WINDOW_ALPHA: 0.5,
-    Tags.BANDPASS_CUTOFF_LOWPASS: int(8e6),
-    Tags.BANDPASS_CUTOFF_HIGHPASS: int(0.1e4),
-    Tags.RECONSTRUCTION_BMODE_AFTER_RECONSTRUCTION: False,
-    Tags.RECONSTRUCTION_BMODE_METHOD: Tags.RECONSTRUCTION_BMODE_METHOD_HILBERT_TRANSFORM,
-    Tags.RECONSTRUCTION_APODIZATION_METHOD: Tags.RECONSTRUCTION_APODIZATION_BOX,
-    Tags.RECONSTRUCTION_MODE: Tags.RECONSTRUCTION_MODE_PRESSURE,
-    Tags.KWAVE_PROPERTY_SENSOR_RECORD: "p",
-    Tags.KWAVE_PROPERTY_PMLInside: False,
-    Tags.KWAVE_PROPERTY_PMLSize: [31, 32],
-    Tags.KWAVE_PROPERTY_PMLAlpha: 1.5,
-    Tags.KWAVE_PROPERTY_PlotPML: False,
-    Tags.RECORDMOVIE: False,
-    Tags.MOVIENAME: "visualization_log",
-    Tags.ACOUSTIC_LOG_SCALE: True,
-    Tags.DATA_FIELD_SPEED_OF_SOUND: 1540,
-    Tags.DATA_FIELD_ALPHA_COEFF: 0.01,
-    Tags.DATA_FIELD_DENSITY: 1000,
-    Tags.SPACING_MM: SPACING
-})
-
-settings["noise_initial_pressure"] = {
-    Tags.NOISE_MEAN: 1,
-    Tags.NOISE_STD: 0.01,
-    Tags.NOISE_MODE: Tags.NOISE_MODE_MULTIPLICATIVE,
-    Tags.DATA_FIELD: Tags.DATA_FIELD_INITIAL_PRESSURE,
-    Tags.NOISE_NON_NEGATIVITY_CONSTRAINT: True
-}
-
-settings["noise_time_series"] = {
-    Tags.NOISE_STD: 1,
-    Tags.NOISE_MODE: Tags.NOISE_MODE_ADDITIVE,
-    Tags.DATA_FIELD: Tags.DATA_FIELD_TIME_SERIES_DATA
-}
-
-# TODO: For the device choice, uncomment the undesired device
-
-# device = sp.MSOTAcuityEcho(device_position_mm=np.array([VOLUME_TRANSDUCER_DIM_IN_MM/2,
-#                                                      VOLUME_PLANAR_DIM_IN_MM/2,
-#                                                      0]))
-# device.update_settings_for_use_of_model_based_volume_creator(settings)
 
 device = sp.PhotoacousticDevice(device_position_mm=np.array([VOLUME_TRANSDUCER_DIM_IN_MM/2,
                                                              VOLUME_PLANAR_DIM_IN_MM/2,
@@ -169,11 +120,7 @@ device.add_illumination_geometry(sp.SlitIlluminationGeometry(slit_vector_mm=[100
 SIMULATION_PIPELINE = [
     sp.ModelBasedVolumeCreationAdapter(settings),
     sp.MCXAdapter(settings),
-    sp.GaussianNoise(settings, "noise_initial_pressure"),
-    sp.KWaveAdapter(settings),
-    sp.GaussianNoise(settings, "noise_time_series"),
-    sp.TimeReversalAdapter(settings),
-    sp.FieldOfViewCropping(settings)
+    sp.KWaveAdapter(settings)
     ]
 
 sp.simulate(SIMULATION_PIPELINE, settings, device)
@@ -184,20 +131,16 @@ segmentation_mask = sp.load_data_field(file_path=file_path,
                                        wavelength=wavelength,
                                        data_field=Tags.DATA_FIELD_SEGMENTATION)
 
-reco = np.rot90(sp.load_data_field(file_path, wavelength=wavelength, data_field=Tags.DATA_FIELD_RECONSTRUCTED_DATA), -1)
 time_series = np.rot90(sp.load_data_field(file_path, wavelength=wavelength, data_field=Tags.DATA_FIELD_TIME_SERIES_DATA), -1)
 initial_pressure = np.rot90(sp.load_data_field(file_path, wavelength=wavelength, data_field=Tags.DATA_FIELD_INITIAL_PRESSURE), -1)
 
 plt.figure(figsize=(7, 3))
-plt.subplot(1, 3, 1)
+plt.subplot(1, 2, 1)
 plt.axis('off')
 plt.imshow(initial_pressure)
-plt.subplot(1, 3, 2)
+plt.subplot(1, 2, 2)
 plt.axis('off')
 plt.imshow(time_series, aspect=0.18)
-plt.subplot(1, 3, 3)
-plt.axis('off')
-plt.imshow(reco)
 plt.tight_layout()
 plt.show()
 # plt.savefig(os.path.join(SAVE_PATH, "result.svg"), dpi=300)
