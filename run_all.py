@@ -186,6 +186,6 @@ plt.axis("off")
 plt.title("sDMAS")
 plt.imshow(result10[:, 0, :, 0, 0].T, vmin=vmin, vmax=vmax)
 plt.colorbar()
-
+plt.show()
 plt.tight_layout()
 plt.savefig("overview.png")
