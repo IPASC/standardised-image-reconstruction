@@ -21,8 +21,10 @@ def compute_FWHM(reconstructed_image, spacing, NON_NEGATIVITY_METHOD="log", roi=
     if len(roi)==0:
         roi = 1 + 0*reconstructed_image #np.array(np.shape(reconstructed_image))
         roi = roi>0.5
+
     # reduce the data to the ROI
     data = reconstructed_image
+
     #suppress the nan
     data[np.isnan(data)] = np.nanmin(data)
 
