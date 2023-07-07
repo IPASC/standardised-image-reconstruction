@@ -87,6 +87,10 @@ class DelayMultiplyAndSumAlgorithm(ReconstructionAlgorithm):
         if "signed_dmas" in kwargs:
             signed_dmas = kwargs["signed_dmas"]
 
+        apodisation = None
+        if "apodisation" in kwargs:
+            apodisation = kwargs["apodisation"]
+
         reconstructed = delay_multiply_and_sum(time_series_data=time_series_data,
                                                detection_elements=detection_elements,
                                                sampling_rate=sampling_rate,
@@ -94,6 +98,7 @@ class DelayMultiplyAndSumAlgorithm(ReconstructionAlgorithm):
                                                spacing_m=spacing_m,
                                                speed_of_sound_in_m_per_s=speed_of_sound_in_m_per_s,
                                                fnumber=fnumber,
-                                               signed_dmas=signed_dmas)
+                                               signed_dmas=signed_dmas,
+                                               apodisation=apodisation)
 
         return reconstructed

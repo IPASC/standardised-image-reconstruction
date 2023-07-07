@@ -103,6 +103,10 @@ class BackProjection(ReconstructionAlgorithm):
         if "fnumber" in kwargs:
             fnumber = kwargs["fnumber"]
 
+        apodisation = "box"
+        if "apodisation" in kwargs:
+            apodisation = kwargs["apodisation"]
+
         reconstructed = back_projection(time_series_data=time_series_data,
                                         detection_elements=detection_elements,
                                         sampling_rate=sampling_rate,
@@ -112,6 +116,7 @@ class BackProjection(ReconstructionAlgorithm):
                                         fnumber=fnumber,
                                         p_scf=p_scf,
                                         p_factor=p_factor,
-                                        p_pcf=p_pcf)
+                                        p_pcf=p_pcf,
+                                        apodisation=apodisation)
 
         return reconstructed

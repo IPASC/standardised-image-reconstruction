@@ -18,12 +18,12 @@ from image_reconstruction.batch_reconstruction import reconstruct_ipasc_hdf5
 from image_reconstruction.reconstruction_algorithms import BackProjection, DelayMultiplyAndSumAlgorithm, \
     FftBasedJaeger2007
 
-NAME = "FULL_BANDWIDTH"
+NAME = "SEGMENTATION_LOADER"
 INPUT_MASK_PATH = "segmentations/finger_model/1-PA-labels.nrrd"
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
 #  point to the correct file in the PathManager().
-path_manager = sp.PathManager("path_config.env")
+path_manager = sp.PathManager("C:/Users/grohl01/path_config.env")
 
 settings = generate_base_settings(path_manager, volume_name=NAME)
 
@@ -42,6 +42,14 @@ spacing = settings[Tags.SPACING_MM]
 
 label_mask, _ = nrrd.read(INPUT_MASK_PATH)
 label_mask = label_mask.reshape((label_mask.shape[0], 1, label_mask.shape[1]))
+
+first_pixel_tissue = [np.asarray(np.argwhere(label_mask[x, 0, :] == 3))[0].item() for x in range(0, label_mask.shape[0])]
+
+for idx, x in enumerate(range(0, label_mask.shape[0])):
+    label_mask[x, :, first_pixel_tissue[idx]] = 2
+    label_mask[x, :, first_pixel_tissue[idx]+1] = 2
+    label_mask[x, :, first_pixel_tissue[idx]+2] = 2
+
 xdim, ydim, zdim = int(np.round(dim_x_mm/spacing)), int(np.round(dim_y_mm/spacing)), int(np.round(dim_z_mm/spacing))
 input_spacing = 0.06946983546
 num_mask_voxels_y = int(np.round((dim_y_mm / spacing) * (spacing / input_spacing)))
@@ -56,17 +64,11 @@ z_offset = int((zdim-segmentation_volume.shape[2]) / 2)
 segmentation_volume_mask[x_offset:x_offset+segmentation_volume.shape[0],
                          y_offset:y_offset+segmentation_volume.shape[1],
                          0:segmentation_volume.shape[2]] = segmentation_volume
-first_pixel_tissue = [np.asarray(np.argwhere(segmentation_volume_mask[x, 100, :] == 3))[0].item() for x in range(x_offset, x_offset+segmentation_volume.shape[0])]
-
-for idx, x in enumerate(range(x_offset, x_offset+segmentation_volume.shape[0])):
-    segmentation_volume_mask[x, :, first_pixel_tissue[idx]] = 2
-    segmentation_volume_mask[x, :, first_pixel_tissue[idx]+1] = 2
-    segmentation_volume_mask[x, :, first_pixel_tissue[idx]+2] = 2
 
 def segmentation_class_mapping():
     ret_dict = dict()
-    ret_dict[0] = sp.TISSUE_LIBRARY.water()
-    ret_dict[1] = sp.TISSUE_LIBRARY.water()
+    ret_dict[0] = sp.MolecularCompositionGenerator().append(sp.MoleculeLibrary().water()).get_molecular_composition(sp.SegmentationClasses.WATER)
+    ret_dict[1] = sp.MolecularCompositionGenerator().append(sp.MoleculeLibrary().water()).get_molecular_composition(sp.SegmentationClasses.WATER)
     ret_dict[2] = sp.TISSUE_LIBRARY.epidermis()
     ret_dict[3] = sp.TISSUE_LIBRARY.muscle(background_oxy=0.7, blood_volume_fraction=0.1)
     ret_dict[4] = sp.TISSUE_LIBRARY.blood(oxygenation=0.9)
@@ -85,6 +87,7 @@ acoustic_settings[Tags.DATA_FIELD] = Tags.DATA_FIELD_ABSORPTION_PER_CM
 
 pipeline = [
     sp.SegmentationBasedVolumeCreationAdapter(settings),
+    sp.MCXAdapter(settings),
     IpascSimpaKWaveAdapter(settings),
     sp.FieldOfViewCropping(settings, "FieldOfViewCropping")
 ]
@@ -101,9 +104,9 @@ device.set_detection_geometry(sp.LinearArrayDetectionGeometry(device_position_mm
                                                               field_of_view_extent_mm=np.asarray([-128*0.15, 128*0.15, 0, 0, 0, 40])))
 device.add_illumination_geometry(sp.SlitIlluminationGeometry(slit_vector_mm=[100, 0, 0]))
 
-sp.simulate(simulation_pipeline=pipeline,
-            settings=settings,
-            digital_device_twin=device)
+# sp.simulate(simulation_pipeline=pipeline,
+#             settings=settings,
+#             digital_device_twin=device)
 
 file_path = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_NAME] + ".hdf5"
 ipasc_hdf5 = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_NAME] + "_ipasc.hdf5"
@@ -128,17 +131,17 @@ settings = {
             "lowcut": 1e4,
             "highcut": 2e7,
             "order": 9,
-            "envelope": True,
             "p_factor": 1,
             "p_SCF": 1,
             "p_PCF": 0,
             "fnumber": 0,
-            "envelope_type": "hilbert",
+            "non_negativity_method": "hilbert",
             "delay": 0,
             "zeroX": 0,
             "zeroT": 0,
             "fourier_coefficients_dim": 5,
-            "scaling_method": "mean"
+            "scaling_method": "mean",
+            "apodisation": "hamming"
         }
 algorithms = [(BackProjection(), settings),
               (DelayMultiplyAndSumAlgorithm(), settings),
@@ -150,7 +153,7 @@ recons_noise = reconstruct_ipasc_hdf5(ipasc_hdf5_noise, algorithms)
 full_reference_measures = [qa.RootMeanSquaredError(),
                            qa.UniversalQualityIndex(),
                            qa.MutualInformation(),
-                           qa.StructuralSimilarityIndexTorch()]
+                           qa.StructuralSimilarityIndex()]
 
 no_reference_measures = [qa.GeneralisedSignalToNoiseRatio()]
 

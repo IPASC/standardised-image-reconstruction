@@ -23,6 +23,7 @@ class TestDelayAndSum(TestClassBase):
     p_PCF = 0
     fnumber = 2
     scaling = "mean"
+    apodisation="hanning"
 
     def back_project(self, image_idx=0, visualise=True):
         return self.run_tests(BackProjection(), image_idx=image_idx, visualise=visualise, **{
@@ -36,5 +37,6 @@ class TestDelayAndSum(TestClassBase):
             "p_PCF": self.p_PCF,
             "fnumber": self.fnumber,
             "non_negativity_method": self.non_negativity_method,
-            "scaling_method": self.scaling
+            "scaling_method": self.scaling,
+            "apodisation": self.apodisation
         })

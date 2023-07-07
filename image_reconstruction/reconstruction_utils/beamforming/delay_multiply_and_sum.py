@@ -17,7 +17,7 @@ from image_reconstruction.reconstruction_utils.beamforming.delay_and_sum import 
 
 def delay_multiply_and_sum(time_series_data, detection_elements, sampling_rate,
                            field_of_view, spacing_m, speed_of_sound_in_m_per_s,
-                           fnumber, signed_dmas):
+                           fnumber, signed_dmas, apodisation):
     """
     Implementation of the delay-multiply-and-sum algorithm.
 
@@ -81,7 +81,7 @@ def delay_multiply_and_sum(time_series_data, detection_elements, sampling_rate,
                                                              speed_of_sound_in_m_per_s,
                                                              time_spacing_in_s,
                                                              torch_device,
-                                                             fnumber)
+                                                             fnumber, apodisation)
 
     for x in range(x_dim):
         yy, zz, nn, mm = torch.meshgrid(torch.arange(y_dim, device=torch_device),
