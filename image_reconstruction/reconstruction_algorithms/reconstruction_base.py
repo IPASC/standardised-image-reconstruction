@@ -50,11 +50,7 @@ class ReconstructionAlgorithm(ABC):
         field_of_view = self.ipasc_data.get_field_of_view()
         # TODO: if field of view is None, set a default field of view.
 
-        # Ensure positivity of the
         positions = np.asarray(self.ipasc_data.get_detector_position())
-        #for dimension in range(3):
-        #    if min(positions[:, dimension]) < 0:
-        #       positions[:, dimension] = positions[:, dimension] - min(positions[:, dimension])
 
         detection_elements = dict()
         detection_elements['positions'] = positions
@@ -99,7 +95,7 @@ class ReconstructionAlgorithm(ABC):
         """
         This method is extended by each class that represents one photoacoustic image reconstruction algorithm.
 
-        :param time_series_data: A 4D numpy array with the following internal array definition:
+        :param time_series_data: A 2D numpy array with the following internal array definition:
                                 [detectors, time samples]
         :param detection_elements: A dictionary that describes the detection geometry.
                                    The dictionary contains three entries:

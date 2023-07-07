@@ -13,12 +13,12 @@ class TestDelayMultiplyAndSum(TestClassBase):
     lowcut = None
     highcut = None
     order = 9
-    envelope = False
-    envelope_type = "hilbert"
+    non_negativity_method = "hilbert"
     spacing_m = 0.0001
     speed_of_sound_m_s = 1540
     fnumber = 0
     signed_dmas = False
+    scaling = "mean"
 
     def back_project(self, image_idx=0, visualise=True):
         return self.run_tests(DelayMultiplyAndSumAlgorithm(), image_idx=image_idx, visualise=visualise, **{
@@ -27,8 +27,8 @@ class TestDelayMultiplyAndSum(TestClassBase):
             "lowcut": self.lowcut,
             "highcut": self.highcut,
             "order": self.order,
-            "envelope": self.envelope,
             "fnumber": self.fnumber,
-            "envelope_type": self.envelope_type,
-            "signed_dmas": self.signed_dmas
+            "non_negativity_method": self.non_negativity_method,
+            "signed_dmas": self.signed_dmas,
+            "scaling_method": self.scaling
         })

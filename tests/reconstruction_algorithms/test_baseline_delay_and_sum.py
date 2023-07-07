@@ -15,14 +15,14 @@ class TestDelayAndSum(TestClassBase):
     lowcut = 5000
     highcut = 7e6
     order = 9
-    envelope = False
-    envelope_type = None
+    non_negativity_method = None
     spacing_m = 0.0001
     speed_of_sound_m_s = 1540
     p_factor = 1
     p_SCF = 1
     p_PCF = 0
     fnumber = 2
+    scaling = "mean"
 
     def back_project(self, image_idx=0, visualise=True):
         return self.run_tests(BackProjection(), image_idx=image_idx, visualise=visualise, **{
@@ -31,10 +31,10 @@ class TestDelayAndSum(TestClassBase):
             "lowcut": self.lowcut,
             "highcut": self.highcut,
             "order": self.order,
-            "envelope": self.envelope,
             "p_factor": self.p_factor,
             "p_SCF": self.p_SCF,
             "p_PCF": self.p_PCF,
             "fnumber": self.fnumber,
-            "envelope_type": self.envelope_type
+            "non_negativity_method": self.non_negativity_method,
+            "scaling_method": self.scaling
         })

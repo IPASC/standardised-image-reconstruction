@@ -16,7 +16,7 @@ from image_reconstruction.reconstruction_algorithms import ReconstructionAlgorit
 class FftBasedJaeger2007(ReconstructionAlgorithm):
 
     def get_name(self) -> str:
-        return "FFT-based reconstruction (Jaeger 2007)"
+        return "FFT-based recon (Jae07)"
 
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,
@@ -101,7 +101,7 @@ class FftBasedJaeger2007(ReconstructionAlgorithm):
 class FFTbasedHauptmann2018(ReconstructionAlgorithm):
 
     def get_name(self) -> str:
-        return "FFT-based reconstruction (Hauptmann 2018)"
+        return "FFT-based recon (Ha18)"
 
     def implementation(self, time_series_data: np.ndarray,
                        detection_elements: dict,

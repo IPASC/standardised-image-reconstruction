@@ -1,3 +1,8 @@
+"""
+SPDX-FileCopyrightText: 2022 International Photoacoustic Standardisation Consortium (IPASC)
+SPDX-FileCopyrightText: 2022 Janek Gröhl
+SPDX-License-Identifier: MIT
+"""
 import numpy as np
 from scipy.interpolate import interp2d
 
@@ -5,6 +10,14 @@ from scipy.interpolate import interp2d
 def interpolate_time_series(time_series_data, detector_positions,
                             detector_interpolation_factor: int = 1,
                             time_interpolation_factor: float = 1):
+    """
+
+    :param time_series_data: np.ndarray
+    :param detector_positions: np.ndarray
+    :param detector_interpolation_factor: float
+    :param time_interpolation_factor: float
+    :return: (time_series, detector_positions)
+    """
 
     new_detector_positions = np.asarray([detector_positions[i, :] for i in range(len(detector_positions)) for _ in
                                          range(detector_interpolation_factor)])
