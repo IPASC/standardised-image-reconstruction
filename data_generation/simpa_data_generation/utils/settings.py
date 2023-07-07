@@ -39,6 +39,11 @@ def generate_base_settings(path_manager: sp.PathManager,
         Tags.ACOUSTIC_MODEL_BINARY_PATH: path_manager.get_matlab_binary_path(),
     })
 
+    settings.set_optical_settings({
+        Tags.OPTICAL_MODEL_NUMBER_PHOTONS: 5e7,
+        Tags.OPTICAL_MODEL_BINARY_PATH: path_manager.get_mcx_binary_path()
+    })
+
     settings.set_reconstruction_settings({
         Tags.ACOUSTIC_MODEL_BINARY_PATH: path_manager.get_matlab_binary_path(),
         Tags.ACOUSTIC_SIMULATION_3D: False,
@@ -59,6 +64,6 @@ def generate_base_settings(path_manager: sp.PathManager,
     })
 
     settings["FieldOfViewCropping"] = Settings({
-        Tags.DATA_FIELD: TissueProperties.property_tags})
+        Tags.DATA_FIELD: TissueProperties.property_tags + [Tags.DATA_FIELD_INITIAL_PRESSURE]})
 
     return settings

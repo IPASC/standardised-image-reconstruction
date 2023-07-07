@@ -18,7 +18,7 @@ from image_reconstruction.reconstruction_utils.beamforming import compute_delay_
 
 def back_projection(time_series_data, detection_elements, sampling_rate,
                     field_of_view, spacing_m, speed_of_sound_in_m_per_s,
-                    fnumber, p_scf, p_factor, p_pcf):
+                    fnumber, p_scf, p_factor, p_pcf, apodisation):
     """
     Implementation of a delay and sum algorithm.
     
@@ -39,6 +39,7 @@ def back_projection(time_series_data, detection_elements, sampling_rate,
     p_scf
     p_factor
     p_pcf
+    apodisation
 
     Returns
     -------
@@ -75,7 +76,8 @@ def back_projection(time_series_data, detection_elements, sampling_rate,
                                              speed_of_sound_in_m_per_s,
                                              time_spacing_in_s,
                                              torch_device,
-                                             fnumber)
+                                             fnumber,
+                                             apodisation)
 
     if p_pcf:
         # compute the phase -> we impose a fnumber = 0 for maximum phase calculation

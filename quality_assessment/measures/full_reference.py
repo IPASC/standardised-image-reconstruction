@@ -5,6 +5,7 @@ SPDX-FileCopyrightText: 2022 Lina Hacker
 SPDX-FileCopyrightText: 2022 Shufan Yang
 SPDX-License-Identifier: MIT
 """
+
 import torch
 import numpy as np
 from sewar import rmse
@@ -33,8 +34,7 @@ def get_torch_tensor(np_array):
     return torch.from_numpy(np_array.reshape((1, sz, sx, sy)))
 
 
-class StructuralSimilarityIndexTorch(FullReferenceMeasure):
-
+class StructuralSimilarityIndex(FullReferenceMeasure):
     def compute_measure(self, expected_result, reconstructed_image):
         gt = get_torch_tensor(expected_result)
         reco = get_torch_tensor(reconstructed_image)
@@ -42,7 +42,6 @@ class StructuralSimilarityIndexTorch(FullReferenceMeasure):
 
     def get_name(self):
         return "SSIM"
-
 
 class UniversalQualityIndex(FullReferenceMeasure):
 

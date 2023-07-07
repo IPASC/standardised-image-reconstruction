@@ -12,6 +12,7 @@ https://github.com/IMSY-DKFZ/simpa
 
 import torch
 import numpy as np
+from image_reconstruction.reconstruction_utils.beamforming.apodisation import get_apodisation_factor
 
 
 def compute_delay_and_sum_values(time_series_data: torch.tensor,
@@ -21,7 +22,8 @@ def compute_delay_and_sum_values(time_series_data: torch.tensor,
                                  speed_of_sound_in_m_per_s: float,
                                  time_spacing_in_s: float,
                                  torch_device: torch.device,
-                                 fnumber: float = 1.0) -> (torch.tensor, int):
+                                 fnumber: float = 1.0,
+                                 apodisation=None) -> (torch.tensor, int):
     """
     Perform the core computation of Delay and Sum, without summing up the delay dependend values.
 
@@ -34,6 +36,7 @@ def compute_delay_and_sum_values(time_series_data: torch.tensor,
     :param time_spacing_in_s: Inverse sampling rate in units of seconds
     :param torch_device: the pytorch device to compute everything on
     :param fnumber: the fnumber parameter to limit the sum angles
+    :param apodisation: the desired apodisation function for the reconstruction
 
     :return: returns a tuple with
              ** values (torch tensor) of the time series data corrected for delay and sensor positioning, ready to
@@ -67,9 +70,33 @@ def compute_delay_and_sum_values(time_series_data: torch.tensor,
     invalid_indices = torch.where(torch.logical_or(delays < 0, delays >= float(time_series_data.shape[1])))
     torch.clip_(delays, min=0, max=time_series_data.shape[1] - 1)
 
-    delays = (torch.round(delays)).long()
-    values = time_series_data[jj, delays]
+    # interpolation of delays
+    lower_delays = (torch.floor(delays)).long()
+    upper_delays = lower_delays + 1
+    torch.clip_(upper_delays, min=0, max=time_series_data.shape[1] - 1)
+    lower_values = time_series_data[jj, lower_delays]
+    upper_values = time_series_data[jj, upper_delays]
+    values = lower_values * (upper_delays - delays) + upper_values * (delays - lower_delays)
+
     values[invalid_indices] = 0
+
+    if apodisation is not None:
+        print("APPLYING APODISATION", apodisation)
+        xdim, ydim, zdim = (field_of_view_voxels[1] - field_of_view_voxels[0],
+                            field_of_view_voxels[3] - field_of_view_voxels[2],
+                            field_of_view_voxels[5] - field_of_view_voxels[4])
+        if xdim == 0:
+            xdim = 1
+        if ydim == 0:
+            ydim = 1
+        if zdim == 0:
+            zdim = 1
+
+        apo_funct = get_apodisation_factor(
+            apodization_method=apodisation,
+            dimensions=(xdim, ydim, zdim), n_sensor_elements=n_sensor_elements,
+            device=torch_device)
+        values = values * apo_funct
 
     # Add fNumber
     if fnumber > 0:
