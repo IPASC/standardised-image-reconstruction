@@ -81,7 +81,6 @@ def compute_delay_and_sum_values(time_series_data: torch.tensor,
     values[invalid_indices] = 0
 
     if apodisation is not None:
-        print("APPLYING APODISATION", apodisation)
         xdim, ydim, zdim = (field_of_view_voxels[1] - field_of_view_voxels[0],
                             field_of_view_voxels[3] - field_of_view_voxels[2],
                             field_of_view_voxels[5] - field_of_view_voxels[4])

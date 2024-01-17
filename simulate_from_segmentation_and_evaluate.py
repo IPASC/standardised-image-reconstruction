@@ -20,6 +20,7 @@ from image_reconstruction.reconstruction_algorithms import BackProjection, Delay
 
 NAME = "SEGMENTATION_LOADER"
 INPUT_MASK_PATH = "segmentations/finger_model/1-PA-labels.nrrd"
+OUT_OF_PLANE_VESSEL_CUTOFF = True
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
 #  point to the correct file in the PathManager().
@@ -47,14 +48,22 @@ first_pixel_tissue = [np.asarray(np.argwhere(label_mask[x, 0, :] == 3))[0].item(
 
 for idx, x in enumerate(range(0, label_mask.shape[0])):
     label_mask[x, :, first_pixel_tissue[idx]] = 2
-    label_mask[x, :, first_pixel_tissue[idx]+1] = 2
-    label_mask[x, :, first_pixel_tissue[idx]+2] = 2
+    label_mask[x, :, first_pixel_tissue[idx] + 1] = 2
+    label_mask[x, :, first_pixel_tissue[idx] + 2] = 2
+    label_mask[x, :, first_pixel_tissue[idx] + 3] = 2
 
 xdim, ydim, zdim = int(np.round(dim_x_mm/spacing)), int(np.round(dim_y_mm/spacing)), int(np.round(dim_z_mm/spacing))
 input_spacing = 0.06946983546
 num_mask_voxels_y = int(np.round((dim_y_mm / spacing) * (spacing / input_spacing)))
 
 segmentation_volume_tiled = np.tile(label_mask, (1, num_mask_voxels_y, 1))
+
+if OUT_OF_PLANE_VESSEL_CUTOFF:
+    segmentation_volume_tiled[:, 0:int(num_mask_voxels_y / 2 - 5), :][
+        segmentation_volume_tiled[:, 0:int(num_mask_voxels_y / 2 - 5), :] == 4] = 3
+    segmentation_volume_tiled[:, int(num_mask_voxels_y / 2 + 5):, :][
+        segmentation_volume_tiled[:, int(num_mask_voxels_y / 2 + 5):, :] == 4] = 3
+
 segmentation_volume = np.round(zoom(segmentation_volume_tiled, input_spacing/spacing,
                                          order=0)).astype(int)
 segmentation_volume_mask = np.ones((xdim, ydim, zdim))
@@ -69,8 +78,8 @@ def segmentation_class_mapping():
     ret_dict = dict()
     ret_dict[0] = sp.MolecularCompositionGenerator().append(sp.MoleculeLibrary().water()).get_molecular_composition(sp.SegmentationClasses.WATER)
     ret_dict[1] = sp.MolecularCompositionGenerator().append(sp.MoleculeLibrary().water()).get_molecular_composition(sp.SegmentationClasses.WATER)
-    ret_dict[2] = sp.TISSUE_LIBRARY.epidermis()
-    ret_dict[3] = sp.TISSUE_LIBRARY.muscle(background_oxy=0.7, blood_volume_fraction=0.1)
+    ret_dict[2] = sp.TISSUE_LIBRARY.epidermis(melanosom_volume_fraction=0.005)
+    ret_dict[3] = sp.TISSUE_LIBRARY.muscle(background_oxy=0.7, blood_volume_fraction=0.01)
     ret_dict[4] = sp.TISSUE_LIBRARY.blood(oxygenation=0.9)
     return ret_dict
 
@@ -83,7 +92,7 @@ settings.set_volume_creation_settings({
 
 acoustic_settings = settings.get_acoustic_settings()
 # For this simulation: Use the created absorption map as the input initial pressure
-acoustic_settings[Tags.DATA_FIELD] = Tags.DATA_FIELD_ABSORPTION_PER_CM
+acoustic_settings[Tags.DATA_FIELD] = Tags.DATA_FIELD_INITIAL_PRESSURE
 
 pipeline = [
     sp.SegmentationBasedVolumeCreationAdapter(settings),
@@ -104,21 +113,20 @@ device.set_detection_geometry(sp.LinearArrayDetectionGeometry(device_position_mm
                                                               field_of_view_extent_mm=np.asarray([-128*0.15, 128*0.15, 0, 0, 0, 40])))
 device.add_illumination_geometry(sp.SlitIlluminationGeometry(slit_vector_mm=[100, 0, 0]))
 
-# sp.simulate(simulation_pipeline=pipeline,
-#             settings=settings,
-#             digital_device_twin=device)
+sp.simulate(simulation_pipeline=pipeline,
+            settings=settings,
+            digital_device_twin=device)
 
 file_path = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_NAME] + ".hdf5"
 ipasc_hdf5 = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_NAME] + "_ipasc.hdf5"
 ipasc_hdf5_noise = path_manager.get_hdf5_file_save_path() + "/" + settings[Tags.VOLUME_NAME] + "noise_ipasc.hdf5"
 
-if not os.path.exists(ipasc_hdf5_noise):
-    pa_data = pf.load_data(ipasc_hdf5)
-    pa_data.binary_time_series_data = np.random.normal(0, 0.2*np.max(pa_data.binary_time_series_data)) + \
-                                       pa_data.binary_time_series_data
-    pa_data.binary_time_series_data = np.random.normal(1.0, 0.2, pa_data.binary_time_series_data.shape) * \
-                                       pa_data.binary_time_series_data
-    pf.write_data(ipasc_hdf5_noise, pa_data)
+pa_data = pf.load_data(ipasc_hdf5)
+pa_data.binary_time_series_data = np.random.normal(0, 0.1*np.max(pa_data.binary_time_series_data)) + \
+                                   pa_data.binary_time_series_data
+pa_data.binary_time_series_data = np.random.normal(1.0, 0.1, pa_data.binary_time_series_data.shape) * \
+                                   pa_data.binary_time_series_data
+pf.write_data(ipasc_hdf5_noise, pa_data)
 
 initial_pressure = sp.load_data_field(file_path, acoustic_settings[Tags.DATA_FIELD],
                                       settings[Tags.WAVELENGTHS][0]).astype(float)
@@ -129,13 +137,13 @@ settings = {
             "spacing_m": settings[Tags.SPACING_MM] / 1000,
             "speed_of_sound_m_s": settings[Tags.DATA_FIELD_SPEED_OF_SOUND],
             "lowcut": 1e4,
-            "highcut": 2e7,
+            "highcut": None,
             "order": 9,
             "p_factor": 1,
             "p_SCF": 1,
             "p_PCF": 0,
-            "fnumber": 0,
-            "non_negativity_method": "hilbert",
+            "fnumber": 2,
+            "non_negativity_method": "abs",
             "delay": 0,
             "zeroX": 0,
             "zeroT": 0,

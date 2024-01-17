@@ -109,7 +109,7 @@ recons_noise = reconstruct_ipasc_hdf5(ipasc_hdf5_noise, algorithms)
 full_reference_measures = [qa.RootMeanSquaredError(),
                            qa.UniversalQualityIndex(),
                            qa.MutualInformation(),
-                           qa.StructuralSimilarityIndexTorch()]
+                           qa.StructuralSimilarityIndex()]
 
 no_reference_measures = [qa.GeneralisedSignalToNoiseRatio()]
 

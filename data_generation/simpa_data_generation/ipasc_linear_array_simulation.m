@@ -68,7 +68,7 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
 
     % define rectangular element size, orientation, and array pitch
     Lx    = 0.2e-3;       % [m]
-    Ly    = 8e-3;         % [m]
+    Ly    = 0.2e-3;         % [m]
     theta = [0, 0, 0];    % [deg]
     pitch = 0.3e-3;       % [m]
 
@@ -83,7 +83,7 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
 
     % assign off-grid sensor to source structure for input to kspaceFirstOrder3D
     sensor.mask = sensor_array.getArrayBinaryMask(kgrid);
-    sensor.frequency_response = [5e6, 12]; % 7MHz, 80% bandwidth
+    %sensor.frequency_response = [5e6, 12]; % 7MHz, 80% bandwidth
 
     % =========================================================================
     % RUN SIMULATION
