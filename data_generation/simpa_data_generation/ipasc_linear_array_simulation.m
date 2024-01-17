@@ -83,7 +83,9 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
 
     % assign off-grid sensor to source structure for input to kspaceFirstOrder3D
     sensor.mask = sensor_array.getArrayBinaryMask(kgrid);
-    sensor.frequency_response = [5e6, 12]; % 7MHz, 80% bandwidth
+    % sensor.frequency_response = [5e6, 12]; % 7MHz, 80% bandwidth
+    sensor.frequency_response = [7e6, 80]; % 7MHz, 80% bandwidth
+
 
     % =========================================================================
     % RUN SIMULATION
