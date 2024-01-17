@@ -49,6 +49,15 @@ def back_projection(time_series_data, detection_elements, sampling_rate,
     torch_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     time_spacing_in_s = 1.0 / sampling_rate
     time_series_data = torch.from_numpy(time_series_data).to(torch_device)
+
+    # Uncomment for differential mode reconstruction; currently not in use!
+    # zeros = torch.zeros([time_series_data.shape[0], 1], names=None).to(time_series_data.device)
+    # time_vector = torch.arange(1, time_series_data.shape[1] + 1).to(time_series_data.device)
+    # time_derivative_pressure = time_series_data[:, 1:] - time_series_data[:, 0:-1]
+    # time_derivative_pressure = torch.cat([time_derivative_pressure, zeros], dim=1)
+    # time_derivative_pressure = torch.mul(time_derivative_pressure, time_vector)
+    # time_series_data = time_derivative_pressure
+
     positions = detection_elements["positions"]
     sensor_positions = torch.from_numpy(positions).to(torch_device)
 

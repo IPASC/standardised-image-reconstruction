@@ -49,7 +49,7 @@ class StructuralSimilarityIndex(FullReferenceMeasure):
     def compute_measure(self, expected_result, reconstructed_image):
         gt = get_torch_tensor(expected_result)
         reco = get_torch_tensor(reconstructed_image)
-        return StructuralSimilarityIndexMeasure()(gt, reco).item()
+        return 1 - StructuralSimilarityIndexMeasure()(gt, reco).item()
 
     def get_name(self):
         return "Structural Similarity Index"
@@ -60,7 +60,7 @@ class UniversalQualityIndex(FullReferenceMeasure):
     def compute_measure(self, expected_result, reconstructed_image):
         gt = get_torch_tensor(expected_result)
         reco = get_torch_tensor(reconstructed_image)
-        return UniversalImageQualityIndex()(gt, reco).item()
+        return 1 - UniversalImageQualityIndex()(gt, reco).item()
 
     def get_name(self):
         return "Universal Quality Index"
@@ -80,7 +80,10 @@ class MutualInformation(FullReferenceMeasure):
     def compute_measure(self, expected_result, reconstructed_image):
         gt = self.precompute(expected_result)
         reco = self.precompute(reconstructed_image)
-        return mutual_info_score(gt, reco)
+        res = mutual_info_score(gt, reco)
+        if res == 0:
+            return 1
+        return 1 / res
 
     def precompute(self, data):
         data = data.reshape((-1, ))
@@ -94,7 +97,7 @@ class MutualInformation(FullReferenceMeasure):
 
 class WassersteinDistance(FullReferenceMeasure):
     def compute_measure(self, expected_result, reconstructed_image):
-        return self.compute_wasserstein_distance()
+        return self.compute_wasserstein_distance(expected_result, reconstructed_image)
 
     @staticmethod
     def compute_wasserstein_distance(data1, data2):
@@ -133,8 +136,12 @@ class CosineDistance(FullReferenceMeasure):
 class NormalisedCrossCorrelation(FullReferenceMeasure):
 
     def compute_measure(self, expected_result, reconstructed_image):
-        return self.compute_normalized_cross_correlation(np.reshape(expected_result, (1, -1)),
-                                                         np.reshape(reconstructed_image, (1, -1)))
+        res = self.compute_normalized_cross_correlation(np.reshape(expected_result, (1, -1)),
+                                                        np.reshape(reconstructed_image, (1, -1)))
+        if res == 0:
+            return 1
+        else:
+            return 1/res
 
     @staticmethod
     def compute_normalized_cross_correlation(data1, data2):
@@ -166,6 +173,7 @@ class NormalisedCrossCorrelation(FullReferenceMeasure):
 
     def get_name(self):
         return "Normalised Cross Correlation"
+
 
 class BhattacharyyaDistance(FullReferenceMeasure):
 
@@ -215,8 +223,8 @@ class KullbackLeiblerDivergence(FullReferenceMeasure):
     def compute_kullback_leibler_divergence(a, b):
         validate_input(a, b)
         # Normalise the data
-        a = (a - np.mean(a, axis=0)[np.newaxis, :]) / np.std(a, axis=0)[np.newaxis, :]
-        b = (b - np.mean(b, axis=0)[np.newaxis, :]) / np.std(b, axis=0)[np.newaxis, :]
+        a = (a - np.mean(a)) / np.std(a)
+        b = (b - np.mean(b)) / np.std(b)
 
         # Compute discrete KLD from marginal histograms
         kld = 0
@@ -243,8 +251,8 @@ class JensenShannonDivergence(FullReferenceMeasure):
     def compute_jensen_shannon_divergence(a, b):
         validate_input(a, b)
         # Normalise the data
-        a = (a - np.mean(a, axis=0)[np.newaxis, :]) / np.std(a, axis=0)[np.newaxis, :]
-        b = (b - np.mean(b, axis=0)[np.newaxis, :]) / np.std(b, axis=0)[np.newaxis, :]
+        a = (a - np.mean(a)) / np.std(a)
+        b = (b - np.mean(b)) / np.std(b)
 
         # Compute discrete JSD from marginal histograms
         jsd = 0

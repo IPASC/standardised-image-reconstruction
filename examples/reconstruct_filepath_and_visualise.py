@@ -10,23 +10,23 @@ from pacfish import load_data
 
 # TODO Add path to IPASC HDF5 file here.
 name = "Data_0729_1825_foot_try1_80mm_0_4mm_PA_Rcv.mat_68"
-#FILE_PATH = f"../10ZOB6_Y24gexHgQwMHWUMyJl6GAYppAx_ipasc.hdf5"
-FILE_PATH = rf"C:\Users\jgroe\Downloads\POSTECH\{name}.hdf5"
+# FILE_PATH = f"../10ZOB6_Y24gexHgQwMHWUMyJl6GAYppAx_ipasc.hdf5"
+# FILE_PATH = rf"C:\Users\jgroe\Downloads\POSTECH\{name}.hdf5"
+FILE_PATH = r"C:\Users\grohl01\Downloads\CYBERDYNE DATA/mengjie_data_ipasc.hdf5"
 
 params = {
     "spacing_m": 0.0002,
     "speed_of_sound_m_s": 1500,
     "lowcut": None,
-    "highcut": 5e6,
+    "highcut": 2e7,
     "order": 3,
-    "envelope": True,
     "p_factor": 1,
     "p_SCF": 0,
     "p_PCF": 0,
     "fnumber": 0,
-    "envelope_type": "hilbert",
-    "time_interpolation_factor": 3,
-    "detector_interpolation_factor": 3
+    "non_negativity_method": "hilbert",
+    "time_interpolation_factor": 1,
+    "detector_interpolation_factor": 1
          }
 
 algo = BackProjection()

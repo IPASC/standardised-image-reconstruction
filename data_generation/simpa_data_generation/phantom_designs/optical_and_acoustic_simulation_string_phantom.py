@@ -52,7 +52,7 @@ def create_example_tissue():
             tube_start_mm=[7.5 + strings_spacing * j, 0, 5 + int(strings_spacing * i)],
             tube_end_mm=[7.5 + strings_spacing * j, VOLUME_PLANAR_DIM_IN_MM, 5 + int(strings_spacing * i)],
             molecular_composition=sp.TISSUE_LIBRARY.constant(1.3, 10.0, 0.9),
-            radius_mm=1, priority=1, consider_partial_volume=False,
+            radius_mm=0.2, priority=1, consider_partial_volume=False,
             adhere_to_deformation=False
             )
 
@@ -62,7 +62,7 @@ def create_example_tissue():
 general_settings = {
             # These parameters set the general properties of the simulated volume
             Tags.RANDOM_SEED: RANDOM_SEED,
-            Tags.VOLUME_NAME: "BlobPhantom_" + str(RANDOM_SEED),
+            Tags.VOLUME_NAME: "StringPhantom_" + str(RANDOM_SEED),
             Tags.SIMULATION_PATH: path_manager.get_hdf5_file_save_path(),
             Tags.SPACING_MM: SPACING,
             Tags.DIM_VOLUME_Z_MM: VOLUME_HEIGHT_IN_MM,
@@ -127,7 +127,7 @@ SIMULATION_PIPELINE = [
 sp.simulate(SIMULATION_PIPELINE, settings, device)
 
 wavelength = settings[Tags.WAVELENGTHS][0]
-file_path=path_manager.get_hdf5_file_save_path() + "/" + "BlobPhantom_" + str(RANDOM_SEED)+".hdf5"
+file_path=path_manager.get_hdf5_file_save_path() + "/" + "StringPhantom_" + str(RANDOM_SEED)+".hdf5"
 segmentation_mask = sp.load_data_field(file_path=file_path,
                                        wavelength=wavelength,
                                        data_field=Tags.DATA_FIELD_SEGMENTATION)

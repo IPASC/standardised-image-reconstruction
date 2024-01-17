@@ -61,6 +61,7 @@ def compute_delay_and_sum_values(time_series_data: torch.tensor,
                                     torch.arange(n_sensor_elements, device=torch_device),
                                     indexing="ij")
 
+    jj = jj.long()
     delays = torch.sqrt((yy * spacing_in_m - sensor_positions[:, 1][jj]) ** 2 +
                         (xx * spacing_in_m - sensor_positions[:, 0][jj]) ** 2 +
                         (zz * spacing_in_m - sensor_positions[:, 2][jj]) ** 2) / (speed_of_sound_in_m_per_s *
@@ -77,8 +78,6 @@ def compute_delay_and_sum_values(time_series_data: torch.tensor,
     lower_values = time_series_data[jj, lower_delays]
     upper_values = time_series_data[jj, upper_delays]
     values = lower_values * (upper_delays - delays) + upper_values * (delays - lower_delays)
-
-    values[invalid_indices] = 0
 
     if apodisation is not None:
         xdim, ydim, zdim = (field_of_view_voxels[1] - field_of_view_voxels[0],
@@ -102,6 +101,7 @@ def compute_delay_and_sum_values(time_series_data: torch.tensor,
         values[torch.where(torch.logical_not(torch.abs(xx * spacing_in_m - sensor_positions[:, 0][jj])
                < (zz * spacing_in_m - sensor_positions[:, 1][jj]) / fnumber / 2))] = 0
 
+    values[invalid_indices] = 0
     del delays  # free memory of delays
 
     return values, n_sensor_elements
