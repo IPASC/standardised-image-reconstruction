@@ -20,7 +20,6 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
         export_ipasc logical = true
         infinite_phantom logical = false
         PML_size {mustBeNumeric} = 15
-        
     end
     
     data = load(load_path);
@@ -68,7 +67,7 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
 
     % define rectangular element size, orientation, and array pitch
     Lx    = 0.2e-3;       % [m]
-    Ly    = 8e-3;         % [m]
+    Ly    = 0.2e-3;         % [m]
     theta = [0, 0, 0];    % [deg]
     pitch = 0.3e-3;       % [m]
 
@@ -83,9 +82,8 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
 
     % assign off-grid sensor to source structure for input to kspaceFirstOrder3D
     sensor.mask = sensor_array.getArrayBinaryMask(kgrid);
-    % sensor.frequency_response = [5e6, 12]; % 7MHz, 80% bandwidth
+    
     sensor.frequency_response = [7e6, 80]; % 7MHz, 80% bandwidth
-
 
     % =========================================================================
     % RUN SIMULATION
@@ -124,8 +122,8 @@ function [time_series_data] = ipasc_linear_array_simulation( ...
 
     if export_ipasc
         disp("Exporting to the IPASC data format...")
-        adapter = kwave_adapter(sensor_array, time_series_data, medium, kgrid, ...
-            [0; N_elements*pitch; 0; 0; 0; Nz*dx]);
+        adapter = kwave_adapter(sensor_array, time_series_data, medium, kgrid, 1, ...
+        [0; N_elements*pitch; 0; 0; 0; Nz*dx]);
         pa_data = adapter.get_pa_data();
         pacfish.write_data(save_path, pa_data, 1)
     end

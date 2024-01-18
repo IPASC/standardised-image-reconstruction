@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
-VOLUME_TRANSDUCER_DIM_IN_MM = 30 #
+VOLUME_TRANSDUCER_DIM_IN_MM = 30
 VOLUME_PLANAR_DIM_IN_MM = 30
 VOLUME_HEIGHT_IN_MM = 30
 SPACING = 0.2
@@ -38,49 +38,43 @@ def create_example_tissue():
 
     tissue_dict = sp.Settings()
     background_dictionary = sp.Settings()
-    background_dictionary[Tags.MOLECULE_COMPOSITION] = sp.TISSUE_LIBRARY.ultrasound_gel()
+    background_dictionary[Tags.MOLECULE_COMPOSITION] = sp.TISSUE_LIBRARY.constant(0.001, 1.0, 1.0)
     background_dictionary[Tags.STRUCTURE_TYPE] = Tags.BACKGROUND
-    tissue_dict[Tags.BACKGROUND]=background_dictionary
-    tissue_dict["epidermis"] = sp.define_horizontal_layer_structure_settings(z_start_mm=0+2, thickness_mm=0.4,
-                                                                                molecular_composition=
-                                                                                sp.TISSUE_LIBRARY.constant(0.5, 10, 0.9),
-                                                                                consider_partial_volume=False,
-                                                                                adhere_to_deformation=False)
-    tissue_dict["dermis"] = sp.define_horizontal_layer_structure_settings(z_start_mm=2.4, thickness_mm=4,
+    background_dictionary[Tags.PRIORITY] = 0
+    tissue_dict[Tags.BACKGROUND] = background_dictionary
+
+    tissue_dict["epidermis"] = sp.define_horizontal_layer_structure_settings(z_start_mm=2, thickness_mm=0.4,
                                                                              molecular_composition=
-                                                                             sp.TISSUE_LIBRARY.constant(0.05, 10, 0.9),
+                                                                             sp.TISSUE_LIBRARY.constant(0.5, 10, 0.9),
                                                                              consider_partial_volume=False,
-                                                                             adhere_to_deformation=False)
+                                                                             adhere_to_deformation=False, priority=12)
+    tissue_dict["dermis"] = sp.define_horizontal_layer_structure_settings(z_start_mm=2.4, thickness_mm=4,
+                                                                          molecular_composition=
+                                                                          sp.TISSUE_LIBRARY.constant(0.05, 10, 0.9),
+                                                                          consider_partial_volume=False,
+                                                                          adhere_to_deformation=False, priority=2)
     tissue_dict["muscle"] = sp.define_horizontal_layer_structure_settings(z_start_mm=5.4, thickness_mm=30,
-                                                                            molecular_composition=
-                                                                            sp.TISSUE_LIBRARY.constant(0.05, 10, 0.9),
-                                                                            consider_partial_volume=False,
-                                                                            adhere_to_deformation=False)
+                                                                          molecular_composition=
+                                                                          sp.TISSUE_LIBRARY.constant(0.05, 10, 0.9),
+                                                                          consider_partial_volume=False,
+                                                                          adhere_to_deformation=False, priority=2)
     tissue_dict["vessel_1"] = sp.define_circular_tubular_structure_settings(
-            tube_start_mm=[VOLUME_TRANSDUCER_DIM_IN_MM/2 - 5, 0, 8],
-            tube_end_mm=[VOLUME_TRANSDUCER_DIM_IN_MM/2 - 5, VOLUME_PLANAR_DIM_IN_MM, 8],
-            molecular_composition=sp.TISSUE_LIBRARY.constant(1.3, 10, 0.9),
-            radius_mm=1)
+            tube_start_mm=[VOLUME_TRANSDUCER_DIM_IN_MM/2 - 5, 0, 7],
+            tube_end_mm=[VOLUME_TRANSDUCER_DIM_IN_MM/2 - 5, VOLUME_PLANAR_DIM_IN_MM, 7],
+            molecular_composition=sp.TISSUE_LIBRARY.constant(10, 10, 0.9),
+            radius_mm=1, priority=12)
     tissue_dict["vessel_2"] = sp.define_circular_tubular_structure_settings(
-            tube_start_mm=[VOLUME_TRANSDUCER_DIM_IN_MM / 2 + 5, 0, 12],
-            tube_end_mm=[VOLUME_TRANSDUCER_DIM_IN_MM / 2 + 5, VOLUME_PLANAR_DIM_IN_MM, 12],
-            molecular_composition=sp.TISSUE_LIBRARY.constant(1.3, 10, 0.9),
-            radius_mm=2)
+            tube_start_mm=[VOLUME_TRANSDUCER_DIM_IN_MM / 2 + 5, 0, 9],
+            tube_end_mm=[VOLUME_TRANSDUCER_DIM_IN_MM / 2 + 5, VOLUME_PLANAR_DIM_IN_MM, 9],
+            molecular_composition=sp.TISSUE_LIBRARY.constant(10, 10, 0.9),
+            radius_mm=2, priority=12)
     return tissue_dict
 
-
-# assign sound speed of the bulk areas layer by layer
-# ultrasound gel
-# background_sos = 1583
-# sound_speed_map = background_sos * np.ones((int(VOLUME_TRANSDUCER_DIM_IN_MM / SPACING), int(VOLUME_PLANAR_DIM_IN_MM / SPACING), int(VOLUME_HEIGHT_IN_MM /SPACING)))
-# sound_speed_map[:, :, 10:13] = 1624 # epidermis
-# sound_speed_map[:, :, 13:33] = 1624 # dermis
-# sound_speed_map[:, :, 33:] = 1540 # muscle
 
 general_settings = {
             # These parameters set the general properties of the simulated volume
             Tags.RANDOM_SEED: RANDOM_SEED,
-            Tags.VOLUME_NAME: "CompletePipelineExample_" + str(RANDOM_SEED),
+            Tags.VOLUME_NAME: "SkinModel_" + str(RANDOM_SEED),
             Tags.SIMULATION_PATH: path_manager.get_hdf5_file_save_path(),
             Tags.SPACING_MM: SPACING,
             Tags.DIM_VOLUME_Z_MM: VOLUME_HEIGHT_IN_MM,
@@ -88,7 +82,7 @@ general_settings = {
             Tags.DIM_VOLUME_Y_MM: VOLUME_PLANAR_DIM_IN_MM,
             Tags.VOLUME_CREATOR: Tags.VOLUME_CREATOR_VERSATILE,
             Tags.GPU: True,
-            Tags.WAVELENGTHS: [850],
+            Tags.WAVELENGTHS: [800],
             Tags.DO_FILE_COMPRESSION: True,
             Tags.DO_IPASC_EXPORT: True
         }
@@ -132,19 +126,19 @@ device.set_detection_geometry(sp.LinearArrayDetectionGeometry(device_position_mm
                                                               pitch_mm=0.25,
                                                               number_detector_elements=100,
                                                               field_of_view_extent_mm=np.asarray([-12.5+0.125, 12.5-0.125, 0, 0, 0, 30])))
-print(device.get_detection_geometry().get_detector_element_positions_base_mm())
-device.add_illumination_geometry(sp.SlitIlluminationGeometry(slit_vector_mm=[100, 0, 0]))
+device.add_illumination_geometry(sp.SlitIlluminationGeometry(slit_vector_mm=[30, 0, 0]))
 
 SIMULATION_PIPELINE = [
     sp.ModelBasedVolumeCreationAdapter(settings),
     sp.MCXAdapter(settings),
-    sp.KWaveAdapter(settings)
+    sp.KWaveAdapter(settings),
+    sp.FieldOfViewCropping(settings)
     ]
 
 sp.simulate(SIMULATION_PIPELINE, settings, device)
 
 wavelength = settings[Tags.WAVELENGTHS][0]
-file_path=path_manager.get_hdf5_file_save_path() + "/" + "CompletePipelineExample_" + str(RANDOM_SEED)+".hdf5"
+file_path=path_manager.get_hdf5_file_save_path() + "/" + "SkinModel_" + str(RANDOM_SEED)+".hdf5"
 segmentation_mask = sp.load_data_field(file_path=file_path,
                                        wavelength=wavelength,
                                        data_field=Tags.DATA_FIELD_SEGMENTATION)
@@ -155,7 +149,7 @@ initial_pressure = np.rot90(sp.load_data_field(file_path, wavelength=wavelength,
 plt.figure(figsize=(7, 3))
 plt.subplot(1, 2, 1)
 plt.axis('off')
-plt.imshow(initial_pressure)
+plt.imshow(np.log(initial_pressure))
 plt.subplot(1, 2, 2)
 plt.axis('off')
 plt.imshow(time_series, aspect=0.18)

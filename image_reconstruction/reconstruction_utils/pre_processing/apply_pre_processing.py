@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter import butter_bandpass_filter
 from image_reconstruction.reconstruction_utils.pre_processing.interpolation import interpolate_time_series
 from image_reconstruction.reconstruction_utils.pre_processing.signal_scaling import scale_time_series
-
+from simpa.core.simulation_modules.reconstruction_module.reconstruction_utils import tukey_bandpass_filtering
 
 def apply_pre_processing(time_series_data, detection_elements, sampling_rate, **kwargs):
     """
@@ -49,11 +49,14 @@ def apply_pre_processing(time_series_data, detection_elements, sampling_rate, **
         time_series_data = scale_time_series(time_series_data, scaling_method)
 
     if lowcut is not None or highcut is not None:
-        time_series_data = butter_bandpass_filter(signal=time_series_data,
-                                                  sampling_rate=sampling_rate,
-                                                  lowcut=lowcut,
-                                                  highcut=highcut,
-                                                  order=filter_order)
+        if lowcut is None:
+            lowcut = 0
+        if highcut is None:
+            highcut = 1e7
+        time_series_data = tukey_bandpass_filtering(data=time_series_data,
+                                                    time_spacing_in_ms=(1/sampling_rate) * 1000,
+                                                    cutoff_lowpass_in_Hz=highcut,
+                                                    cutoff_highpass_in_Hz=lowcut)
 
     if detector_interpolation_factor != 1 or time_interpolation_factor != 1:
         time_series_data, positions = interpolate_time_series(time_series_data=time_series_data,

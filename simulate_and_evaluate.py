@@ -87,12 +87,13 @@ settings = {
             "lowcut": 1e4,
             "highcut": 2e7,
             "order": 9,
+            "apodization"
             "envelope": True,
             "p_factor": 1,
             "p_SCF": 1,
             "p_PCF": 0,
             "fnumber": 0,
-            "envelope_type": "hilbert",
+            "envelope_type": "log",
             "delay": 0,
             "zeroX": 0,
             "zeroT": 0,
@@ -109,7 +110,7 @@ recons_noise = reconstruct_ipasc_hdf5(ipasc_hdf5_noise, algorithms)
 full_reference_measures = [qa.RootMeanSquaredError(),
                            qa.UniversalQualityIndex(),
                            qa.MutualInformation(),
-                           qa.StructuralSimilarityIndexTorch()]
+                           qa.StructuralSimilarityIndex()]
 
 no_reference_measures = [qa.GeneralisedSignalToNoiseRatio()]
 
