@@ -10,3 +10,4 @@ simpa
 sewar
 scikit-learn
 torchmetrics
+mat73

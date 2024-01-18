@@ -19,8 +19,8 @@ from image_reconstruction.reconstruction_algorithms import BackProjection, Delay
     FftBasedJaeger2007
 
 NAME = "SEGMENTATION_LOADER"
-INPUT_MASK_PATH = "segmentations/finger_model/1-PA-labels.nrrd"
-# INPUT_MASK_PATH = "segmentations/human_forearm_model/1-PA-labels.nrrd"
+#INPUT_MASK_PATH = "segmentations/finger_model/1-PA-labels.nrrd"
+INPUT_MASK_PATH = "segmentations/human_forearm_model/1-PA-labels.nrrd"
 OUT_OF_PLANE_VESSEL_CUTOFF = True
 
 # TODO: Please make sure that a valid path_config.env file is located in your home directory, or that you
@@ -162,7 +162,7 @@ recons_noise = reconstruct_ipasc_hdf5(ipasc_hdf5_noise, algorithms)
 full_reference_measures = [qa.RootMeanSquaredError(),
                            qa.UniversalQualityIndex(),
                            qa.MutualInformation(),
-                           qa.StructuralSimilarityIndex()]
+                           qa.StructuralSimilarityIndexTorch()]
 
 no_reference_measures = [qa.GeneralisedSignalToNoiseRatio()]
 

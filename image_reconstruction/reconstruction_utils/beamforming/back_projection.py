@@ -113,13 +113,15 @@ def back_projection(time_series_data, detection_elements, sampling_rate,
         _SCF = torch.pow(torch.abs(1 - torch.sqrt(1 - torch.pow(_SCF, 2))), p_scf)
 
     # We do sign(s)*abs(s)^(1/p)
-    values = torch.mul(torch.sign(values), torch.pow(torch.abs(values), 1 / p_factor))
+    if p_factor:
+        values = torch.mul(torch.sign(values), torch.pow(torch.abs(values), 1 / p_factor))
 
     # we do the sum
     _sum = torch.sum(values, dim=3)
 
     # we come back in the correct domain : sign(s)*abs(s)^(p)
-    _sum = torch.mul(torch.sign(_sum), torch.pow(torch.abs(_sum), p_factor))
+    if p_factor:
+        _sum = torch.mul(torch.sign(_sum), torch.pow(torch.abs(_sum), p_factor))
     counter = torch.count_nonzero(values, dim=3)
 
     # We multiply with the SCF coeeficient

@@ -8,6 +8,7 @@ from image_reconstruction.reconstruction_utils.pre_processing.bandpass_filter im
 from image_reconstruction.reconstruction_utils.pre_processing.interpolation import interpolate_time_series
 from image_reconstruction.reconstruction_utils.pre_processing.signal_scaling import scale_time_series
 from simpa.core.simulation_modules.reconstruction_module.reconstruction_utils import tukey_bandpass_filtering
+from scipy.ndimage.filters import gaussian_filter1d
 
 def apply_pre_processing(time_series_data, detection_elements, sampling_rate, **kwargs):
     """
@@ -20,6 +21,10 @@ def apply_pre_processing(time_series_data, detection_elements, sampling_rate, **
     :return: (time_series_data, detection_elements, sampling_rate)
         This function returns all parameters that can change during the preprocessing.
     """
+
+    # gaussian = None
+    # if "gaussian" in kwargs:
+    #     gaussian = kwargs["gaussian"]
 
     lowcut = None
     if "lowcut" in kwargs:
@@ -65,5 +70,10 @@ def apply_pre_processing(time_series_data, detection_elements, sampling_rate, **
                                                               time_interpolation_factor=time_interpolation_factor)
         sampling_rate = sampling_rate * time_interpolation_factor
         detection_elements["positions"] = positions
+
+    # if gaussian is not None:
+    #     time_series_data = gaussian_filter1d(time_series_data,
+    #                                          sigma=gaussian,
+    #                                          axis=0)
 
     return time_series_data, detection_elements, sampling_rate

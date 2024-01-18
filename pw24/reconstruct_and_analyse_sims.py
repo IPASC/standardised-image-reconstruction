@@ -11,7 +11,7 @@ from pw24.utils import create_image_view, calc_results
 # BlobPhantom_4712
 # StringPhantom_4712
 # SkinModel_4713
-FILENAME = "SkinModel_4713"
+FILENAME = "BlobPhantom_4712"
 PATH = fr"D:\image_recon_project\in_silico_data\{FILENAME}_ipasc.hdf5"
 SPACING = 0.2 / 1000
 Y_UPPER = 65
@@ -30,12 +30,12 @@ segmentation = sp.load_data_field(PATH.replace("_ipasc", ""),
 settings = {
             "spacing_m": SPACING,
             "speed_of_sound_m_s": 1540,
-            "lowcut": 1e4,
-            "highcut": 2e7,
+            "lowcut": 5e5,
+            "highcut": 7e6,
             "order": 3,
             "non_negativity_method": "hilbert",
-            "p_factor": 1,
-            "p_SCF": 1,
+            "p_factor": 0,
+            "p_SCF": 0,
             "p_PCF": 0,
             "fnumber": 0,
             "apodisation": "box",
@@ -52,6 +52,9 @@ algorithms = [(BackProjection(), settings),
               (FftBasedJaeger2007(), settings)]
 
 reconstructions = reconstruct_ipasc_hdf5(PATH, algorithms)
+
+for recon_idx, recon in enumerate(reconstructions):
+    reconstructions[recon_idx] = (recon - np.mean(recon)) / np.std(recon)
 
 fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6), (ax7, ax8)) = plt.subplots(4, 2,
                                                                      layout="constrained",

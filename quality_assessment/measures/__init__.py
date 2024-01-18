@@ -22,10 +22,9 @@ class FullReferenceMeasure(PerformanceMeasure):
     def compute_measure(self, expected_result, reconstructed_image):
         pass
 
-"""
+
 class NoReferenceMeasure(PerformanceMeasure):
 
     @abc.abstractmethod
-    def compute_measure(self, reconstructed_image, signal_roi, noise_roi):
+    def compute_measure(self, reconstructed_image, signal_roi=None, noise_roi=None):
         pass
-"""
